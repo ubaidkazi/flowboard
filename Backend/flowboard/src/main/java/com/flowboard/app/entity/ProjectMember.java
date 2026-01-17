@@ -1,6 +1,7 @@
 package com.flowboard.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.flowboard.app.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,6 @@ public class ProjectMember
     @ManyToOne
     private User user;
 
-    //@Enumerated(EnumType.STRING)
-    //private Role role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
