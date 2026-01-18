@@ -26,21 +26,21 @@ public class TeamService
 
 
 
-    public ResponseEntity<Team> createTeam(Team team)
-    {
-        User owner = userService.getCurrentUser();
-        team.setOwner(owner);
-        teamRepo.save(team);
-        return new ResponseEntity<>(team, HttpStatus.OK);
-    }
+//    public ResponseEntity<Team> createTeam(Team team)
+//    {
+//        User owner = userService.getCurrentUser();
+//        team.setOwner(owner);
+//        teamRepo.save(team);
+//        return new ResponseEntity<>(team, HttpStatus.OK);
+//    }
 
-    public ResponseEntity<List<Team>> getTeams()
-    {
-        User owner = userService.getCurrentUser();
-        List<Team> teams = teamRepo.findByOwnerId(owner.getId());
-
-        return new ResponseEntity<>(teams, HttpStatus.OK);
-
-    }
+//    public ResponseEntity<List<Team>> getTeams()
+//    {
+//        User owner = userService.getCurrentUser();
+//        List<Team> teams = teamRepo.findByOwnerId(owner.getId());
+//
+//        return new ResponseEntity<>(teams, HttpStatus.OK);
+//
+//    }
 
 }

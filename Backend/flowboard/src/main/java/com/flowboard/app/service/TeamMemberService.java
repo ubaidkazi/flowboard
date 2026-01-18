@@ -27,8 +27,9 @@ public class TeamMemberService
     public ResponseEntity<String> addATeamMember(Long teamId, String userName)
     {
 
-        User userToAdd = userService.findUserByUsername(userName);
-        TeamMember foundMember = teamMemberRepo.findByUserId(userToAdd.getId());
+        //User userToAdd = userService.findUserByUsername(userName);
+        //TeamMember foundMember = teamMemberRepo.findByUserId(userToAdd.getId());
+        TeamMember foundMember = teamMemberRepo.findByUserId(1);
         boolean isMember = (foundMember != null);
         if(isMember)
         {
@@ -38,7 +39,7 @@ public class TeamMemberService
         TeamMember teamMember = new TeamMember();
         Team team = teamRepo.findById(teamId).get();
         teamMember.setTeam(team);
-        teamMember.setUser(userToAdd);
+        //teamMember.setUser(userToAdd);
         teamMemberRepo.save(teamMember);
         return new ResponseEntity<>("Added Successfully", HttpStatus.OK);
 
