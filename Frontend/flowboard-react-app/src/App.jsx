@@ -5,6 +5,7 @@ import Signup from './Pages/Signup';
 import Login from './Pages/Login';
 import PrivateRoute from '../PrivateRoute';
 import Dashboard from './Pages/Dashboard';
+import ProjectsListView from './Pages/ProjectsListView';
 
 function App() {
 
@@ -25,6 +26,13 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
+
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/Dashboard/Projects" element={<ProjectsListView/>} />
+        </Route>
+
+        
 
         
 
