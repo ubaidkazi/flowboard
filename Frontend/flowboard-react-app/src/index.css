@@ -1,4 +1,40 @@
-:root {
+/* :root 
+{
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+ */
+
+:root
+{
+  
+  font-family: 'Geist', sans-serif;
+}
+
+
+body {
+  /* display: flex;
+  justify-content: safe;
+  align-items: top; */
+
+
+
+  /* min-height: 100vh; */
+
+  
+
+
+  background-color: rgba(0, 0, 0, 0.946);
+  box-sizing:border-box;
+  /* outline: 3px dashed rgb(233, 10, 245); */
+  /* overflow-x: scroll; */
+  /* height: 100vh; */
+
+}
+
+
+
+
+/* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -12,6 +48,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 
 a {
   font-weight: 500;
@@ -65,4 +102,6 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
+
+

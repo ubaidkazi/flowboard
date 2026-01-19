@@ -1,0 +1,177 @@
+.header
+{
+  background-color: rgba(255, 255, 255, 0.801);
+  height: 8vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  max-width: 100%;
+  min-width: 100vw;
+  overflow-y: hidden;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;      
+  border: 12px black;
+
+}
+
+.navbar
+{
+  display: flex;
+  justify-content: space-between;
+  /* flex-wrap:nowrap; */
+  /* overflow: hidden; */
+  height: 100%;
+  align-items: center;
+  padding: 0 0rem;
+  margin: 0 3rem;
+
+}
+.home-link
+{
+ 
+  font-size: 2rem;
+  font-weight: bolder;
+  margin: 0 1rem;
+  padding: 0 1.2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* background-color: cadetblue; */
+}
+
+.home-link-w-img
+{
+  display: flex;
+  align-items: center;
+}
+.icon
+{
+   
+  /* transform: translateY(22px); */
+}
+
+
+.other-nav-links
+{
+  display: flex;
+  justify-content: space-around;
+  gap: 1.2rem;
+  font-size: 1.5rem;
+  margin: 0 1.2rem;
+  padding: 0 1.2rem;
+
+}
+
+.home-link-text-1
+{
+
+    color: #1462df;
+    padding: 0;
+    margin: 0 3px;
+
+}
+.home-link-text-2
+{
+    color: #000000;
+    padding: 0;
+    margin: 0;
+}
+
+.header a
+{
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+}
+
+
+/* .header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;       /* Ensures it always spans the screen
+  height: 60px;        /* or whatever height you want 
+  background-color: #026aa7; /* or your preferred color 
+  z-index: 999;        /* High enough to stay on top */
+  /*
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+} */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: row;
+    align-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    margin-left: 1rem;
+    padding: 1.5rem 0rem;
+    height: auto;
+  }
+
+  .home-link {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+
+  .other-nav-links {
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    font-size: 0.54rem;
+  }
+  .other-nav-links  a{
+    font-size: 0.8rem;
+    
+  }
+}
+
+.hide {
+  transform: translateY(-100%);
+}
+.nav-btn
+{
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: lighter;
+    color: white !important; 
+    background-color: black;
+    cursor: pointer;
+    border: none;
+    padding: 9px 1px;
+    width: 7rem;
+    /* max-width: 220px; */
+    text-align: center;
+    align-self: center;
+    margin: 2px 0;
+    transition: background-color 0.3s ease;
+}
+.nav-link
+{
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 550;
+    color: rgb(0, 0, 0) !important; 
+    /* background-color: antiquewhite; */
+    cursor: pointer;
+    border: none;
+    padding: 9px 1px;
+    width: 7rem;
+    /* max-width: 2200px; */
+    align-self: center;
+    text-align: center;
+    margin: 2px 0;
+    transition: background-color 0.3s ease;
+}
+
+.kanban-img 
+{
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  
+}

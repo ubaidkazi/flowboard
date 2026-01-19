@@ -1,0 +1,230 @@
+body
+{
+    background-color: white;
+    overflow-x: hidden;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+.hero-section
+{
+    height: 80vh;
+    width: 100vw;
+    background-color: hsla(206, 90%, 84%, 0.235);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+} 
+.hero-text-1 , .hero-text-2
+{
+    font-size: 5rem;
+    text-align: center;
+    font-weight: bolder;
+    padding: none;
+    margin: 0;
+    transition: transform 0.3s ease;
+
+}
+
+.hero-text-1:hover , .hero-text-2:hover , .hero-text-3:hover{
+  
+  transform: translateY(-7px);
+}
+
+.hero-text-1
+{
+    color: #1e293b;
+}
+.hero-text-2
+{
+    color: #1462df;
+}
+
+.hero-text-3
+{
+
+  font-size: 1.25rem;         /* text-xl = 20px */
+  line-height: 1.75rem;       /* Tailwind's leading-relaxed for this size */
+  color: #475569;             /* text-slate-600 */
+  margin-bottom: 2rem;        /* mb-8 = 32px */
+  max-width: 48rem;           /* max-w-3xl = 768px */
+  margin-left: auto;          /* mx-auto centers the element horizontally */
+  margin-right: auto;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+
+
+.hero-btns
+{
+    align-self: center;
+    display: flex;
+}
+
+.hero-btn-1, .hero-btn-2, .cta-btn-1, .cta-btn-2
+{
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: lighter;
+    color: white;
+    background-color: black;
+    cursor: pointer;
+    border: none;
+    padding: 12px 20px;
+    max-width: 220px;
+    align-self: center;
+    margin: 2px 6px;
+    transition: background-color 0.3s ease;
+}
+.hero-btn-2
+{
+    background-color: rgba(255, 255, 255, 0.735);
+    color: black;
+    font-weight: bold;
+    border: 0.5px solid lightgray;
+}
+.hero-btn-1:hover{
+    background-color: rgba(0, 0, 0, 0.462);
+}
+.hero-btn-2:hover{
+    background-color: rgba(234, 227, 227, 0.462);
+}
+.feature-section
+{
+    background-color: rgb(255, 255, 255);
+    height: 80%;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+
+
+.feature-text-1
+{
+    font-size: 2.5rem;
+    font-weight: bolder;
+    margin-top: 5rem;
+    color: rgba(16, 20, 34, 0.915);
+    margin-bottom: 15px;
+
+}
+.feature-text-2, .cta-text
+{
+    text-align: center;
+    color: rgba(0, 0, 0, 0.572);
+    font-weight: lighter;
+    font-size: 1.2rem;
+    margin: 0 auto;
+}
+
+.feature-grid
+{
+    margin: 60px 10px;  
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    /* gap: 10px; */
+    height: 100%;
+    width: 90%;
+    max-width: 100%;
+    flex-wrap: wrap;
+    /* background-color: black; */
+    align-items: center;
+
+}
+
+.cta-section
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    background-color: #1462df;
+    min-width: 100vw;
+    min-height: 40vh;
+}
+.cta-heading
+{
+    text-align: center;
+    font-weight: 770;
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 10px;
+    
+}
+.cta-text
+{
+    color: white;
+    margin-bottom: 3rem;
+
+}
+.cta-btns
+{
+    align-self: center ;
+}
+/* 
+.cta-btn-1, .cta-btn-2
+{
+    width: 12.3rem;
+    height: 2.4rem;
+    padding: 5px 10px;
+    margin: 2px 6px;
+    background-color: rgb(255, 255, 255);
+    color: #1462df;
+    font-size: 1.2rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 5px;
+} */
+
+.cta-btn-1, .cta-btn-2
+{
+    background-color: white;
+    color: #1462df;
+    font-weight: lighter;
+
+}
+
+.footer
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    background-color: #0f172a; /* Tailwind's slate-900 */
+    min-width: 100vw;
+    min-height: 20vh;
+    text-align: center;
+    color: white;
+}
+
+.footer-brandname
+{
+    padding: 10px 10px;
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: bold;
+
+}
+
+.footer-text
+{
+    margin: 0;
+    font-weight: 100;
+    font-size: 0.8rem;
+
+}
+
+.footer-dev-link
+{
+    color: white;
+}
