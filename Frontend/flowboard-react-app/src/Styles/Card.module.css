@@ -1,0 +1,139 @@
+/* OUTER container — minimal, for DnD */
+.card {
+  width: 100%;
+}
+
+/* INNER container — full visual styling */
+.cardContent {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+.cardContent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+
+.dragging {
+  transition: none !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* HEADER: flex row */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Checkbox + Name */
+.nameCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trelloCheckbox {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.trelloCheckbox input[type="checkbox"] {
+  display: none;
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #dfe1e6;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: all 0.25s ease-in-out;
+}
+
+.trelloCheckbox:hover .circle {
+  border-color: #0079bf;
+  transform: scale(1.05);
+}
+
+.trelloCheckbox input[type="checkbox"]:checked + .circle {
+  background-color: #0079bf;
+  border-color: #0079bf;
+  box-shadow: 0 0 5px rgba(0, 121, 191, 0.3);
+}
+
+/* Card title */
+.cardName {
+  font-weight: 500;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Delete icon */
+.cardDelete {
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.cardDelete:hover {
+  color: #e53e3e;
+  transform: scale(1.2);
+}
+
+/* Due date styling */
+.dueDateDiv {
+  width: fit-content;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-top: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.onTrack { background-color: #e6f4ea; color: #137333; }
+.dueSoon { background-color: #fff4e5; color: #b06000; }
+.overdue { background-color: #fde8e8; color: #d93025; }
+
+.dueDateDiv:hover { transform: scale(1.05); cursor: default; }
+
+
+
+
+
+.card {
+  will-change: transform;
+  transition: transform 120ms ease, box-shadow 150ms ease; /* ✅ only transforms */
+}
+.dragging {
+  transition: none !important; /* ✅ disable transitions while dragging */
+}
+.cards > * {
+  transition: transform 150ms ease; /* ✅ cards animate moving around placeholder */
+  will-change: transform;
+}
+
+.dragging {
+  transform: scale(1.03) !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+}
+

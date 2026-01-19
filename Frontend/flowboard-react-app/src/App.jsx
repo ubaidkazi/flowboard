@@ -7,6 +7,7 @@ import PrivateRoute from '../PrivateRoute';
 import Dashboard from './Pages/Dashboard';
 import ProjectsListView from './Pages/ProjectsListView';
 import ProjectView from './Pages/ProjectView';
+import Board from './Pages/Board';
 
 function App() {
 
@@ -24,16 +25,21 @@ function App() {
 
 
          {/* Protected routes */}
+
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
 
-
         <Route element={<PrivateRoute />}>
           <Route path="/Dashboard/Projects" element={<ProjectsListView/>} />
         </Route>
+
         <Route element={<PrivateRoute />}>
           <Route path="/Dashboard/Projects/:projectId/:projectName" element={<ProjectView/>} />
+        </Route>
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/board/:boardId" element={<Board/>} />
         </Route>
 
 
