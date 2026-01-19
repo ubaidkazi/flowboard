@@ -6,6 +6,7 @@ import Login from './Pages/Login';
 import PrivateRoute from '../PrivateRoute';
 import Dashboard from './Pages/Dashboard';
 import ProjectsListView from './Pages/ProjectsListView';
+import ProjectView from './Pages/ProjectView';
 
 function App() {
 
@@ -31,6 +32,10 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/Dashboard/Projects" element={<ProjectsListView/>} />
         </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/Dashboard/Projects/:projectId/:projectName" element={<ProjectView/>} />
+        </Route>
+
 
         
 
