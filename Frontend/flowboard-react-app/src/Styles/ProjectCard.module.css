@@ -1,0 +1,130 @@
+.project-card
+{
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    /* gap:0px; */
+    height: 150px;
+
+    width: 94%;
+    
+    padding: 1.5% 2%;
+    margin: 10px 0;
+    background-color: white;
+    border: 0.1px solid lightgray;
+    /* box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.242),
+              0 1px 2px -1px rgba(0, 0, 0, 0.242); */
+    /* border: 0.3px solid rgba(0, 0, 0, 0.242); */
+    border-radius: 10px;
+}
+.project-card:hover
+{
+    background-color: 	#fafafa;
+    /* background-color: rgba(196, 215, 244, 0.176); */
+}
+
+.title
+{
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+}
+
+.description, .members, .due-date
+{
+    color: rgba(38, 39, 38, 0.54);
+    font-weight: lighter;
+    font-size: 1rem;
+    /* background-color: navajowhite; */
+
+}
+
+.progress-container
+{
+    color: rgba(38, 39, 38, 0.54);
+}
+
+.progress-container h1
+{
+    font-size: 1rem;
+    color: rgba(38, 39, 38, 0.54);
+    font-weight: lighter;
+
+}
+
+.bottom-section
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background-color: #3b82f6; */
+    
+
+}
+.left-section
+{
+    display: flex;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+.members
+{
+    font-size: 1rem;
+    padding: 2px 2px;
+}
+
+.due-date
+{
+    font-size: 1rem;
+    
+    padding: 2px 2px;
+}
+.view-board
+{
+    text-decoration: none;
+    color: rgba(38, 39, 38, 0.54);
+    font-weight: lighter;
+    padding: 10px 15px;
+    border-radius: 3px;
+    /* background-color: rgb(220, 245, 233); */
+}
+.view-board:hover
+{
+    background-color: rgba(211, 211, 211, 0.83);
+}
+
+
+
+.progress-container {
+  width: 100%;
+  
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #3333338e;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #e5e7eb;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill 
+{
+  width: 10%;
+  height: 100%;
+  background-color: #3b82f6; 
+  transition: width 0.3s ease;
+  border-radius: 5px;
+}

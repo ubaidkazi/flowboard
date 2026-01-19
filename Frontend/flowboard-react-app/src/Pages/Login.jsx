@@ -24,7 +24,7 @@ function Login()
     
     const proceedFromLogin = () => {
     setTimeout(() => {
-          navigate("/newdashboard");
+          navigate("/dashboard");
             }, 1500);
     }
 

@@ -1,0 +1,32 @@
+.button
+{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.899);
+    padding: 3px 20px;
+    border-radius: 8px;
+    height: 10%;
+    margin: 5px 5px;
+}
+.button:hover
+{
+    background-color: hsla(0, 0%, 0%, 0.79);
+}
+.nav-link
+{
+    text-decoration: none;
+    color: white;
+    width: 100%;
+}
+
+.icon
+{
+    margin-right: 5px
+
+}
+.btn-name
+{
+    font-size: 0.9rem;
+    font-weight: 500;
+}

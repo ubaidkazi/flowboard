@@ -1,0 +1,49 @@
+.card
+{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 5px 10px;
+    margin: 10px 4px;
+    
+    
+    
+    
+}
+.content
+{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.bullet-icon
+{
+    transform: translateY(-2px);
+    padding: 0;
+    margin: 0;
+}
+
+.title
+{
+    color: rgba(0, 0, 0, 0.807);
+    font-weight: bold;
+    
+}
+
+
+.description, .details
+{
+    color: gray;
+
+}
+.user-name
+{
+   
+}
+
+.details
+{
+    display: flex;
+    gap: 5px;
+
+}
