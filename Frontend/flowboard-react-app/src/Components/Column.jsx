@@ -1,4 +1,5 @@
 import React, { useState, memo } from 'react';
+import { Droppable, Draggable } from '@hello-pangea/dnd';
 import Card from './Card';
 import styles from '../styles/Column.module.css';
 import { Plus, X } from 'lucide-react';
@@ -37,37 +38,62 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
   };
 
   return (
-    <div className={styles.columnOuter}>
-      <div className={styles["col-name-div"]}>
-        <div
-          className={styles['column-name']}
-        >
-          {column.name}
-        </div>
+    <Draggable draggableId={`col-${column.id}`} index={index}>
+  {(provided) => (
+    <div
+      className={styles.columnOuter}
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+    >
+      <div className={styles["col-name-div"]}
+      {...provided.dragHandleProps}
+      >
+
 
         <div
-          className={styles['column-del']}
-          
-          onClick={handleDeleteColumn}
-        >
-          <X strokeWidth={3} size={20}></X> 
-        </div>
+        className={styles['column-name']}
+        // {...provided.dragHandleProps}
+        // onClick={handleDeleteColumn}
+      >
+        {column.name}
       </div>
 
-      <div className={styles.columnScroll}>
-        <div className={styles.cards}>
-          {column.cards?.map((card, index) => (
-            <Card
-              key={card.id}
-              card={card}
-              index={index}
-              onDelete={() => onDeleteCard(card.id, column.id)}
-              onClick={() => onCardClick(card)}
-              onUpdate={onCardUpdate}
-            />
-          ))}
-        </div>
+      <div
+        className={styles['column-del']}
+        // {...provided.dragHandleProps}
+        onClick={handleDeleteColumn}
+      >
+        <X strokeWidth={3} size={20}></X> 
       </div>
+
+
+
+      </div>
+      
+
+      <Droppable droppableId={column.id.toString()} type="CARD">
+        {(provided) => (
+          <div
+            className={styles.columnScroll}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <div className={styles.cards}>
+              {column.cards?.map((card, index) => (
+                <Card
+                  key={card.id}
+                  card={card}
+                  index={index}
+                  onDelete={() => onDeleteCard(card.id, column.id)}
+                  onClick={() => onCardClick(card)}
+                  onUpdate={onCardUpdate}
+                />
+              ))}
+              {provided.placeholder}
+            </div>
+          </div>
+        )}
+      </Droppable>
 
       {!showAddCard ? (
         <button
@@ -97,6 +123,9 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
         </div>
       )}
     </div>
+  )}
+</Draggable>
+
   );
 }
 
