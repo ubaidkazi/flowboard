@@ -251,7 +251,7 @@ const handleLogout = () => {
       updatedCards: []
     };
 
-    // ✅ Update UI once (no flicker)
+    //Update UI once (no flicker)
     setBoardData(prev => ({ ...prev, columns: newColumns }));
 
     sendReorderRequest(payload); // fire & forget
@@ -299,7 +299,7 @@ const sendReorderRequest = async (payload) => {
 
     if(res.ok)
     {
-      console.log("Board reordered successfully");
+      console.log("Board reordered successfully in the backend");
       // refreshContent();
       
     }

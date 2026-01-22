@@ -2,6 +2,7 @@ package com.flowboard.app.controller;
 
 import com.flowboard.app.dto.request.LoginRequest;
 import com.flowboard.app.entity.User;
+import com.flowboard.app.security.JWTService;
 import com.flowboard.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,10 @@ public class UserController
     UserService userService;
 
 
+    @Autowired
+    JWTService jwtService;
+
+
 
     @PostMapping("register")
     public User register(@RequestBody User user)
@@ -35,8 +40,8 @@ public class UserController
     {
         try
         {
-            //String token = jwtService.generateToken(user.getUsername());
-            //System.out.println("Generated token: " + token);
+            String token = jwtService.generateToken(user.getUsername());
+            System.out.println("Generated token: " + token);
             return userService.verify(user.getUsername(), user.getPassword());
         }
         catch (Exception e)

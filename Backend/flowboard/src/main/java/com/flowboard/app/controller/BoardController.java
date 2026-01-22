@@ -2,6 +2,7 @@ package com.flowboard.app.controller;
 
 
 
+import com.flowboard.app.dto.request.UpdateBoardRequest;
 import com.flowboard.app.entity.Board;
 import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.TaskColumn;
@@ -109,6 +110,14 @@ public class BoardController
     {
         return boardService.deleteBoard(id);
     }
+
+    @PostMapping("/reorder")
+    public ResponseEntity<String> updateBoardPositions(@RequestBody UpdateBoardRequest board)
+    {
+        return boardService.updateBoardPositions(board);
+
+    }
+
 
 
 
