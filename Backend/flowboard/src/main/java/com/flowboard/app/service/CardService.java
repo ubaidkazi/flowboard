@@ -47,4 +47,43 @@ public class CardService {
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
+
+    //method to update card meta data
+    public Card updatePartially(int id, Map<String, Object> updates) {
+        Card card = cardRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+
+        // --- Handle checked <-> progress sync logic first ---
+        if (updates.containsKey("checked")) {
+            boolean newChecked = (boolean) updates.get("checked");
+            card.setChecked(newChecked);
+            if (newChecked) {
+                card.setProgress("Completed");
+            } else if ("Completed".equalsIgnoreCase(card.getProgress())) {
+                // Choose your fallback here: "In Progress" or "Not Started"
+                card.setProgress("In Progress");
+            }
+        }
+
+        if (updates.containsKey("progress")) {
+            String newProgress = (String) updates.get("progress");
+            card.setProgress(newProgress);
+            card.setChecked("Completed".equalsIgnoreCase(newProgress));
+        }
+
+        // --- Handle other independent fields ---
+        if (updates.containsKey("priority"))
+            card.setPriority((String) updates.get("priority"));
+
+        if (updates.containsKey("description"))
+            card.setDescription((String) updates.get("description"));
+
+        if (updates.containsKey("dueDate") && updates.get("dueDate") != null)
+            card.setDueDate(LocalDate.parse((String) updates.get("dueDate")));
+
+        return cardRepo.save(card);
+    }
+
+
+
     }

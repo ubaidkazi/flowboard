@@ -2,8 +2,9 @@ import styles from "../styles/Board.module.css";
 import { useState, useEffect,useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
-import Column from "../Components/Column.jsx";
+import Column from "../components/Column.jsx";
 import { Plus, X, ArrowBigLeft } from "lucide-react";
+import CardOpenModal from "../Components/CardOpenModal.jsx";
 
 
 
@@ -497,6 +498,19 @@ const handleDeleteCard = async (cardId, columnId) => {
   )}
   </div>
   </div>
+
+
+  {showModal && selectedCard && (
+  <CardOpenModal
+    CurrentCard={selectedCard}
+    columnId={selectedCard.columnId}
+    onClose={closeModal}
+    onUpdate={handleCardUpdate}
+    onDelete={handleDeleteCard}
+  />
+   )}
+
+
 
 
 

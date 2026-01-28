@@ -7,7 +7,7 @@
   max-width: 240px;
   margin: 20px 5px;
 
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.678);
   border-radius: 10px;
   color: #000;
 
@@ -72,6 +72,207 @@
   cursor: pointer;
 
 }
+
+.add-card-button
+{
+  /* border: 0.1px soild lightgray; */
+  border: none;
+  border: 1px solid lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 2px;
+  border-radius: 5px;
+  background-color: rgb(255, 255, 255);
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: black;
+
+  
+}
+
+.add-card-button:hover
+{
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.37);
+  
+
+}
+
+
+.add-card-button {
+  user-select: none;
+}
+
+
+.add-card-button {
+  position: relative;
+  overflow: hidden;
+
+  border: 1px solid lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: 6px;
+
+  background-color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* animated background layer */
+.add-card-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(0, 0, 0, 0.05),
+    transparent
+  );
+
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+
+/* hover state */
+.add-card-button:hover {
+  cursor: pointer;
+  transform: translateY(-1px);
+  border-color: #cfcfcf;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* animate the sweep */
+.add-card-button:hover::before {
+  transform: translateX(100%);
+}
+
+/* keep text above animation */
+.add-card-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* container */
+.add-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 12px;
+  border-radius: 8px;
+
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+
+  animation: fadeIn 0.15s ease-out;
+}
+
+/* input */
+.card-name-input {
+  padding: 10px 12px;
+  font-size: 0.95rem;
+
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  outline: none;
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-name-input::placeholder {
+  color: #9ca3af;
+}
+
+.card-name-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* buttons wrapper */
+.card-btn-div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* primary action */
+.card-btn {
+  flex: 1;
+  padding: 8px 12px;
+
+  border-radius: 6px;
+  border: none;
+
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.card-btn:hover {
+  background: #2563eb;
+}
+
+.card-btn:active {
+  transform: scale(0.97);
+}
+
+/* cancel button */
+.card-cancel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px;
+  border-radius: 6px;
+
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.card-cancel-btn:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* entrance animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
+
 
 
 /* Scrollbar styling */

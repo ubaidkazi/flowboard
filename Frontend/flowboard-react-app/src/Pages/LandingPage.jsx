@@ -1,6 +1,6 @@
 import styles from '../styles/LandingPage.module.css';
-import FeatureCard from '../Components/Feature-card';
-import NewNavBar from '../Components/NavBar';
+import FeatureCard from '../components/Feature-card';
+import NewNavBar from '../components/NavBar';
 import { NavLink } from 'react-router-dom';
 import { Kanban, Target, Clock4, Users, ChartColumn, Calendar  } from 'lucide-react';
 

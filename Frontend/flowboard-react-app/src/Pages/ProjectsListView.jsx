@@ -1,10 +1,10 @@
-import Sidebar from '../Components/Sidebar';
+import Sidebar from '../components/Sidebar';
 import styles from '../styles/ProjectsListView.module.css';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Funnel, Grid3X3, List} from 'lucide-react';
-import ProjectListCard from '../Components/ProjectListCard';
+import ProjectListCard from '../components/ProjectListCard';
 import { useState, useEffect} from 'react';
-import NewProjectModal from '../Components/NewProjectModal';
+import NewProjectModal from '../components/NewProjectModal';
 
 
 function ProjectsListView()

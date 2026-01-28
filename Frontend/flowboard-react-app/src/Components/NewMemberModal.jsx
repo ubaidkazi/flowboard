@@ -1,7 +1,7 @@
 import styles from '../styles/NewMemberModal.module.css';
 import { Save, CirclePlus, CircleX, Variable } from 'lucide-react';
 import { useState, useRef, useEffect} from 'react';
-import UserResultCard from '../Components/UserResultCard';
+import UserResultCard from './UserResultCard';
 
 function NewMemberModal({open, close, projectId, addMember, currentUsers})
 {

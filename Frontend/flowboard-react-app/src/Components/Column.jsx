@@ -1,7 +1,7 @@
 import React, { useState, memo } from 'react';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import Card from './Card';
-import styles from '../styles/Column.module.css';
+import styles from '../Styles/Column.module.css';
 import { Plus, X } from 'lucide-react';
 
 function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, onDeleteCard }) {

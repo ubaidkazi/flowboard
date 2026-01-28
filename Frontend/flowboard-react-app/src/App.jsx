@@ -1,13 +1,13 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from './Pages/LandingPage'
-import Signup from './Pages/Signup';
-import Login from './Pages/Login';
+import LandingPage from './pages/LandingPage'
+import Signup from './pages/Signup';
+import Login from './pages/Login';
 import PrivateRoute from '../PrivateRoute';
-import Dashboard from './Pages/Dashboard';
-import ProjectsListView from './Pages/ProjectsListView';
-import ProjectView from './Pages/ProjectView';
-import Board from './Pages/Board';
+import Dashboard from './pages/Dashboard';
+import ProjectsListView from './pages/ProjectsListView';
+import ProjectView from './pages/ProjectView';
+import Board from './pages/Board';
 
 function App() {
 

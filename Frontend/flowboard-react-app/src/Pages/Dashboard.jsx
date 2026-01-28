@@ -1,11 +1,11 @@
 import styles from '../styles/Dashboard.module.css';
-import NewSidebar from '../Components/Sidebar';
-import DashboardCard from '../Components/DashboardCard';
-import ProjectCard from '../Components/ProjectCard';
+import NewSidebar from '../components/Sidebar';
+import DashboardCard from '../components/DashboardCard';
+import ProjectCard from '../components/ProjectCard';
 import { Kanban, CircleCheckBig, Users, Clock4Icon, ChartColumn, Plus} from 'lucide-react';
-import QuickActionButton from '../Components/QuickActionBtn';
-import QuickActionButtonBlack from '../Components/QuickActionBtnBlack';
-import RecentActivityCard from '../Components/RecentActivityCard';
+import QuickActionButton from '../components/QuickActionBtn';
+import QuickActionButtonBlack from '../components/QuickActionBtnBlack';
+import RecentActivityCard from '../components/RecentActivityCard';
 
 
 function Dashboard()

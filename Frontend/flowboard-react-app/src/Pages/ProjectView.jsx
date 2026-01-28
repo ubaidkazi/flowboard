@@ -1,19 +1,19 @@
-import Sidebar from '../Components/Sidebar';
+import Sidebar from '../components/Sidebar';
 import styles from '../styles/ProjectView.module.css';
 import { NavLink, useNavigate } from 'react-router-dom';
-import DashboardCard from '../Components/DashboardCard';
-import ProjectCard from '../Components/ProjectCard';
+import DashboardCard from '../components/DashboardCard';
+import ProjectCard from '../components/ProjectCard';
 import { Kanban, CircleCheckBig, Users, Clock4Icon, ChartColumn, Plus, Search, Funnel, Grid3X3, List, FolderPen, NotepadText, Clock, User, CircleAlertIcon, Table} from 'lucide-react';
-import QuickActionButton from '../Components/QuickActionBtn';
-import QuickActionButtonBlack from '../Components/QuickActionBtnBlack';
-import RecentActivityCard from '../Components/RecentActivityCard';
-import ProjectListCard from '../Components/ProjectListCard';
-import BoardListCard from '../Components/BoardListCard';
+import QuickActionButton from '../components/QuickActionBtn';
+import QuickActionButtonBlack from '../components/QuickActionBtnBlack';
+import RecentActivityCard from '../components/RecentActivityCard';
+import ProjectListCard from '../components/ProjectListCard';
+import BoardListCard from '../components/BoardListCard';
 import { useState, useEffect, act} from 'react';
-import NewBoardModal from '../Components/NewBoardModal';
+import NewBoardModal from '../components/NewBoardModal';
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import NewMemberModal from '../Components/NewMemberModal'
+import NewMemberModal from '../components/NewMemberModal'
 
 function ProjectView()
 {
