@@ -7,6 +7,7 @@ import com.flowboard.app.repository.CardRepo;
 import com.flowboard.app.repository.TaskColumnRepo;
 import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.events.CardCreatedEvent;
+import com.flowboard.app.websocket.events.CardDeletedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,11 +73,21 @@ public class CardService {
 
     public ResponseEntity<Card> deleteCard(int boardId, int columnId, int cardId)
     {
-        Card card = cardRepo.findById(cardId).get();
-        cardRepo.delete(card);
+        Card cardToDelete = cardRepo.findById(cardId).get();
+        cardRepo.delete(cardToDelete);
         //normalizeCardPositions(columnId);
 
-        return new ResponseEntity<>(card, HttpStatus.OK);
+        CardDeletedEvent event = new CardDeletedEvent(
+                "CARD_DELETED",
+                cardToDelete.getId(),
+                boardId,
+                columnId,
+                userService.getCurrentUser().getId(),
+                Instant.now());
+
+        eventPublisher.publishCardDeleted(event);
+
+        return new ResponseEntity<>(cardToDelete, HttpStatus.OK);
     }
 
 

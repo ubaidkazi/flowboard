@@ -120,8 +120,10 @@ const closeModal = ()=>
 
 
 const handleBoardEvent = (event) => {
-  if (event.type === "CARD_CREATED") {
-    const newCard = {
+  switch (event.type) {
+  case "CARD_CREATED":
+
+   const newCard = {
       id: event.cardId,
       title: event.title,
       position: event.position,
@@ -145,8 +147,65 @@ const handleBoardEvent = (event) => {
             : col
         )
       };
-    });
-  }
+    });  
+  break;
+  case "CARD_DELETED":
+
+  
+  console.log(`Card deleted event received from the board topic.. by user: ${event.deletedBy} CARD ID: ${event.cardId}  DELETED AT:${event.createdAt} `);
+
+
+  setBoardData(prev => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        columns: prev.columns.map(col =>
+          col.id === event.columnId
+            ? {
+                ...col,
+                cards: col.cards.filter(
+                  card => card.id !== event.cardId
+                )
+              }
+            : col
+        )
+      }})
+  
+  break;
+}
+
+
+
+  // if (event.type === "CARD_CREATED") {
+  //   const newCard = {
+  //     id: event.cardId,
+  //     title: event.title,
+  //     position: event.position,
+  //     checked: false,
+  //     description: "",
+  //     dueDate: null,
+  //     priority: null,
+  //     progress: null,
+  //     createdAt: event.createdAt,
+  //     updatedAt: event.createdAt
+  //   };
+
+  //   setBoardData(prev => {
+  //     if (!prev) return prev;
+
+  //     return {
+  //       ...prev,
+  //       columns: prev.columns.map(col =>
+  //         col.id === event.columnId
+  //           ? { ...col, cards: [...col.cards, newCard] }
+  //           : col
+  //       )
+  //     };
+  //   });
+  // }
+
+
 };
 
 

@@ -1,6 +1,7 @@
 package com.flowboard.app.websocket;
 
 import com.flowboard.app.websocket.events.CardCreatedEvent;
+import com.flowboard.app.websocket.events.CardDeletedEvent;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -19,5 +20,14 @@ public class BoardEventPublisher {
                 event
         );
     }
+
+
+    public void publishCardDeleted(CardDeletedEvent event) {
+        messagingTemplate.convertAndSend(
+                "/topic/boards/" + event.getBoardId(),
+                event
+        );
+    }
+
 
 }
