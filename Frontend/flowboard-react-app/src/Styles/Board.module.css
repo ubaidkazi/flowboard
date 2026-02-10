@@ -33,10 +33,24 @@
 
 .nav-bar h3
 {
-    color: #e21414;
+    color: #f1f1f1;
+    font-family: inherit;
+    font-weight: lighter;
 }
 
 
+.nav-bar button
+{
+    border: none;
+    padding: 4px 13px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: grey;
+}
+.nav-bar button:hover
+{
+    cursor: pointer;
+}
 
 
 .nav-link

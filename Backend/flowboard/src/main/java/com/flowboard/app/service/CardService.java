@@ -2,13 +2,17 @@ package com.flowboard.app.service;
 
 import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.TaskColumn;
+import com.flowboard.app.entity.User;
 import com.flowboard.app.repository.CardRepo;
 import com.flowboard.app.repository.TaskColumnRepo;
+import com.flowboard.app.websocket.BoardEventPublisher;
+import com.flowboard.app.websocket.events.CardCreatedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -16,12 +20,18 @@ import java.util.Map;
 @Service
 public class CardService {
 
+    @Autowired
+    BoardEventPublisher eventPublisher;
+
 
     @Autowired
     TaskColumnRepo taskColumnRepo;
 
     @Autowired
     CardRepo cardRepo;
+
+    @Autowired
+    UserService userService;
 
 
 
@@ -34,7 +44,29 @@ public class CardService {
         int newPosition = cardRepo.findMaxPositionByListId(columnId) + 1;
         card.setPosition(newPosition);
 
-        cardRepo.save(card);
+        Card savedCard = cardRepo.save(card);
+
+        //create new card added event
+        CardCreatedEvent event = new CardCreatedEvent(
+                "CARD_CREATED",
+                savedCard.getId(),
+                boardId,
+                columnId,
+                savedCard.getTitle(),
+                savedCard.getPosition(),
+                userService.getCurrentUser().getId(),
+                Instant.now()
+        );
+
+
+        eventPublisher.publishCardCreated(event);
+
+
+
+
+
+
+
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
 

@@ -52,14 +52,14 @@ public class UserService
     }
 
 
-    //add this one later
+
     public User findUserByUsername(String username)
     {
         return repo.findByUsername(username).get();
     }
 
 
-    //add this one later
+
     public ResponseEntity<List<User>> searchUsers(String query)
     {
         User currentUser = getCurrentUser();
@@ -75,7 +75,7 @@ public class UserService
     }
 
 
-    //add this one later
+    //get current logged in user
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();

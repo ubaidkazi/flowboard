@@ -3,12 +3,20 @@ import { useState, useEffect,useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import Column from "../components/Column.jsx";
-import { Plus, X, ArrowBigLeft } from "lucide-react";
+import { Plus, X, CircleArrowLeft, LogOut} from "lucide-react";
 import CardOpenModal from "../Components/CardOpenModal.jsx";
+
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+
+
 
 
 
 function Board() {
+
+
+
   const { boardId } = useParams();
   const [boardData, setBoardData] = useState(null);
   const [columnName, setColumnName] = useState("");
@@ -24,6 +32,15 @@ function Board() {
 const [selectedCard, setSelectedCard] = useState(null);
 const [showModal, setShowModal] = useState(false);
 
+const boardDataRef = useRef(null);
+
+
+useEffect(() => {
+  boardDataRef.current = boardData;
+}, [boardData]);
+
+
+
 
 const closeModal = ()=>
 {
@@ -38,31 +55,101 @@ const closeModal = ()=>
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  let stompClient;
 
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`http://localhost:8080/board/${boardId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/board/${boardId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (!res.ok) throw new Error("Failed to fetch");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setBoardData(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-        const data = await res.json();
-        console.log("Fetched data:", data);
-        setBoardData(data);
-      } catch (err) {
-        console.error("Error:", err);
-      }
+  const socket = new SockJS("http://localhost:8080/ws");
+
+  stompClient = new Client({
+    webSocketFactory: () => socket,
+    connectHeaders: {
+      Authorization: `Bearer ${token}`,
+    },
+    onConnect: () => {
+      console.log("STOMP connected");
+
+      stompClient.subscribe(
+        `/topic/boards/${boardId}`,
+        (message) => {
+          const event = JSON.parse(message.body);
+          handleBoardEvent(event);
+        }
+      );
+    },
+  });
+
+  stompClient.activate();
+  fetchData();
+
+  return () => {
+    stompClient.deactivate();
+  };
+}, [boardId]);
+
+
+// const handleBoardEvent = (event) => {
+//   if (event.type === "CARD_CREATED") {
+//     setBoardData(prev => ({
+//       ...prev,
+//       columns: prev.columns.map(col =>
+//         col.id === event.columnId
+//           ? { ...col, cards: [...col.cards, event.card] }
+//           : col
+//       )
+//     }));
+//   }
+
+// }
+
+
+const handleBoardEvent = (event) => {
+  if (event.type === "CARD_CREATED") {
+    const newCard = {
+      id: event.cardId,
+      title: event.title,
+      position: event.position,
+      checked: false,
+      description: "",
+      dueDate: null,
+      priority: null,
+      progress: null,
+      createdAt: event.createdAt,
+      updatedAt: event.createdAt
     };
 
-    fetchData();
+    setBoardData(prev => {
+      if (!prev) return prev;
 
-  }, [refreshTrigger]);
+      return {
+        ...prev,
+        columns: prev.columns.map(col =>
+          col.id === event.columnId
+            ? { ...col, cards: [...col.cards, newCard] }
+            : col
+        )
+      };
+    });
+  }
+};
+
+
 
 
 
@@ -76,8 +163,8 @@ const closeModal = ()=>
 
   // Detect if mousedown was on a drag handle
   const isDraggingHandle = (target) => {
-    // Hello-pangea-dnd adds this attribute to drag handles
-    return target.closest('[data-rbd-drag-handle-context-id]');
+  // Hello-pangea-dnd adds this attribute to drag handles
+  return target.closest('[data-rbd-drag-handle-context-id]');
   };
 
   const handleMouseDown = (e) => {
@@ -163,45 +250,6 @@ const handleLogout = () => {
     }
   };
 
-  const handleAddCard = async (boardId, columnId) => {
-    const token = localStorage.getItem("token");
-    const url = `http://localhost:8080/board/card/${boardId}/${columnId}`;
-    const cardData = {
-      title: cardName,
-      description: "description",
-    };
-
-    try {
-      await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cardData),
-      });
-
-      setRefreshTrigger((prev) => prev + 1);
-    } catch (error) {
-      console.error("Error adding card:", error.message);
-    }
-  };
-
-  const handleDeleteColumn = async (boardId, columnId) => {
-    const token = localStorage.getItem("token");
-    const url = `http://localhost:8080/board/${boardId}/${columnId}`;
-
-    try {
-      await fetch(url, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setRefreshTrigger((prev) => prev + 1);
-    } catch (error) {
-      console.error("Error deleting column:", error.message);
-    }
-  };
 
   // const handleDeleteCard = async (boardId, columnId, cardId) => {
   //   const token = localStorage.getItem("token");
@@ -397,7 +445,8 @@ const handleDeleteCard = async (cardId, columnId) => {
     } catch (err) {
       console.error("Error deleting card:", err);
     }
-  };
+    refreshContent();
+  }
 
 
 
@@ -414,10 +463,10 @@ const handleDeleteCard = async (cardId, columnId) => {
       <div className={styles["board-wrapper"]}>
         <div className={styles["nav-bar"]}>
           {/* <h3>Board ID: {boardId} </h3> */}
-          <h3>Board Name: {boardData?.name || "Loading..."} </h3>
-       
-          <button onClick={handleLogout}>Log out</button>
-          <button onClick={goBack}> <ArrowBigLeft></ArrowBigLeft>  </button>
+          <h3>Name: {boardData?.name || "Loading..."} </h3>
+          <button onClick={goBack}> <CircleArrowLeft></CircleArrowLeft>  </button>
+          <button onClick={handleLogout}><LogOut></LogOut></button>
+          
         </div>
         
         <div className={styles["board-content"]}>

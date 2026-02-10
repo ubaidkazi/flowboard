@@ -31,7 +31,6 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
       });
       setCardName("");
       setShowAddCard(false);
-      refresh();
     } catch (err) {
       console.error("Error adding card:", err);
     }
