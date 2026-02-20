@@ -1,247 +1,167 @@
 import styles from "../styles/CardOpenModal.module.css";
-import {X, Check, UserRoundPlus, Tag, Trash2, Save} from "lucide-react";
+import { X, Check, UserRoundPlus, Tag, Trash2, Save } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useCallback } from "react";
-import Column from "./Column";
 
+function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId }) {
+  const card = CurrentCard;
 
-function CardOpenModal({CurrentCard, onClose, onUpdate, onDelete, columnId})
-{
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(card.title);
 
-    const [card, setCard] = useState(CurrentCard);
-    const [checked, setChecked] = useState(card.checked || false);
+  // Keep editedTitle in sync when card changes
+  useEffect(() => {
+    setEditedTitle(card.title);
+  }, [card.title]);
 
-
-    const [selectedDate, setSelectedDate] = useState(card.dueDate || "");
-    const [priority, setPriority] = useState(card.priority || "Low");
-    const [progress, setProgress] = useState(card.progress || "Not Started");
-
-    const handleDateChange = (event) => {
-      setSelectedDate(event.target.value);
-        };
-
-
-    // Simple debounce helper
-    function debounce(fn, delay) {
-         let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn(...args), delay);
-    };
+  // Helper to update card
+  const updateCard = (updates) => {
+    // Sync checked <-> progress for three states
+    if (updates.checked !== undefined) {
+      updates.progress = updates.checked ? "Completed" : card.progress === "Completed" ? "In Progress" : card.progress;
     }
 
-    // Debounced PATCH request
-  const sendUpdate = useCallback(
-    debounce(async (updates) => {
-        const token = localStorage.getItem("token");
-      try {
-        await fetch(`http://localhost:8080/cards/${card.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-           },
-          body: JSON.stringify(updates),
-        });
-      } catch (err) {
-        console.error("Failed to update card:", err);
-      }
-    }, 600),
-    [card.id]
-  );
+    if (updates.progress !== undefined) {
+      updates.checked = updates.progress === "Completed";
+    }
 
-  const updateCard = (updates) => {
-    const newCard = { ...card, ...updates };
-    setCard(newCard);
-    sendUpdate(updates); // send only changed fields
-    onUpdate(newCard); //notify parent on the update
-
+    onUpdate(card.id, updates);
   };
 
+  return (
+    <>
+      <div className={styles.modalOverlay} onClick={onClose}>
+        <div></div>
+        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalHeader}>
+            <div className={styles["checkbox-and-name"]}>
+              {/* Checkbox */}
+              <label className={styles["trello-checkbox"]}>
+                <input
+                  type="checkbox"
+                  checked={card.checked}
+                  onChange={(e) => updateCard({ checked: e.target.checked })}
+                />
+                <span className={styles.circle}>
+                  {card.checked && <Check size={14} strokeWidth={3} color="#fff" />}
+                </span>
+              </label>
 
-    useEffect(() => {
-    setCard(CurrentCard);
-    setChecked(CurrentCard.checked || false);
-    }, [CurrentCard]);
+              {/* Editable Title */}
+              {isEditingTitle ? (
+                <input
+                  className={styles["editable-input"]}
+                  type="text"
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onBlur={() => {
+                    if (editedTitle.trim() !== "") updateCard({ title: editedTitle });
+                    setIsEditingTitle(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      updateCard({ title: editedTitle });
+                      setIsEditingTitle(false);
+                    }
+                    if (e.key === "Escape")
+                    {
+                      setIsEditingTitle(false);
+                      setEditedTitle(card.title);
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <h2 onClick={() => setIsEditingTitle(true)} className={styles["card-title"]}>
+                  {card.title}
+                </h2>
+              )}
+            </div>
 
+            <div className={styles.closeBtn} onClick={onClose}>
+              <X size={20} />
+            </div>
+          </div>
 
+          <div className={styles["assign-people"]}>
+            <p>
+              <UserRoundPlus size={20} /> Assign
+            </p>
+          </div>
 
+          <div className={styles["labels"]}>
+            <p>
+              <Tag /> Add Labels
+            </p>
+          </div>
 
+          <div className={styles["options-div"]}>
+            {/* Priority */}
+            <div className={styles["option"]}>
+              <label>Priority</label>
+              <select
+                value={card.priority || "Low"}
+                onChange={(e) => updateCard({ priority: e.target.value })}
+              >
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="Important">Important</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
 
+            {/* Progress */}
+            <div className={styles["option"]}>
+              <label>Progress</label>
+              <select
+                value={card.progress || "Not Started"}
+                onChange={(e) => updateCard({ progress: e.target.value })}
+              >
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
 
+            {/* Due Date */}
+            <div className={styles["option"]}>
+              <label>Due Date</label>
+              <input
+                type="date"
+                value={card.dueDate || ""}
+                onChange={(e) => updateCard({ dueDate: e.target.value })}
+              />
+            </div>
+          </div>
 
-    return(
-        <>
-        <div className={styles.modalOverlay} onClick={()=> {console.log("close modal clicked!");
-            onClose();
-        }}>
-    {/* prevent close on inner click */}
-    <div>
-        
-    </div>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}> 
-        <div className={styles.modalHeader}>
+          {/* Description */}
+          <div className={styles.section}>
+            <h4>Description</h4>
+            <textarea
+              value={card.description || ""}
+              placeholder="Write a comment..."
+              className={styles["des-box"]}
+              onChange={(e) => updateCard({ description: e.target.value })}
+            />
+          </div>
 
-        <div className={styles["checkbox-and-name"]}>
-        <label className={styles["trello-checkbox"]}>
-        <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => {
-    const newChecked = e.target.checked;
-    let newProgress;
-
-     if (newChecked) {
-    newProgress = "Completed";
-        } else {
-    // If user unchecks a completed task, you decide where to fall back:
-    // Either go back to "In Progress" or "Not Started"
-      newProgress = progress === "Completed" ? "In Progress" : progress;
-    }
-
-    setChecked(newChecked);
-    setProgress(newProgress);
-    updateCard({ checked: newChecked, progress: newProgress });
-    }}
-
-      />
-      <span className={styles.circle}>
-        {checked && <Check size={14} strokeWidth={3} color="#fff" />}
-      </span>
-       {/* <p>{checked ? "Checked" : "Unchecked"}</p> */}
-    </label>
-    <h2>{card.title}</h2>
-
-        </div>
-   
-
-          <div className={styles.closeBtn}  onClick={()=> {console.log("close modal clicked!");
-            onClose();
-          }}>
-            <X size={20} />
+          {/* Actions */}
+          <div className={styles.section}>
+            <div className={styles["action-div"]}>
+              <Trash2
+                size={30}
+                className={styles["action-icon-delete"]}
+                onClick={() => {
+                  onDelete(card.id, columnId);
+                  onClose();
+                }}
+              />
+              <Save size={30} className={styles["action-icon-save"]} onClick={onClose} />
+            </div>
           </div>
         </div>
-
-
-        <div className={styles["assign-people"]}>
-
-            <p> <UserRoundPlus size={20}/> Assign    </p>
-            
-        </div>
-
-        <div className={styles["labels"]}>
-             <p> <Tag/> Add Lables </p>
-        </div>
-
-        {/* <p className={styles.description}>{CurrentCard.description}</p> */}
-
-        <div className={styles["options-div"]}>
-
-        
-
-        <div className={styles["option"]}> 
-            <label> Priority </label>
-            <select value={priority} 
-            onChange={(e) => {
-            const newPriority = e.target.value;
-            setPriority(newPriority);
-            updateCard({ priority: newPriority });
-            }}>
-            {/* <option value="">-- Choose a Priority --</option> */}
-            <option value="Low"> Low </option>
-            <option value="Medium"> Medium </option>
-            <option value="Important"> Important </option>
-            <option value="Urgent"> Urgent </option>
-            </select>
-        </div>
-
-
-        <div className={styles["option"]}>
-            <label> Progress </label>
-            <select value={progress} 
-            onChange={(e) => {
-      const newProgress = e.target.value;
-      let newChecked = checked;
-
-      // sync logic: if progress is "Completed", checkbox should be checked
-      if (newProgress === "Completed") {
-        newChecked = true;
-      } else {
-        newChecked = false;
-      }
-
-      setProgress(newProgress);
-      setChecked(newChecked);
-
-      // send both fields in one update
-      updateCard({ progress: newProgress, checked: newChecked });
-    }}>
-            {/* <option value="">-- Choose a Progress Status --</option> */}
-            <option value="Not Started"> Not Started </option>
-            <option value="In Progress"> In Progress </option>
-            <option value="Completed"> Completed </option>
-            </select>
-        </div>
-
-
-
-    <div className={styles["option"]}>
-      <label>Due Date </label>
-
-      <input type="date" value={selectedDate} 
-      onChange={(e) => {
-        const newDate = e.target.value;
-        setSelectedDate(newDate);
-        updateCard({ dueDate: newDate });
-        }}/>
-
-      {/* {selectedDate && <p>Due Date: {selectedDate}</p>} */}
-    </div>
-
-
-    </div>
-
-
-
-        
-
-        
-
-        <div className={styles.section}>
-          <h4>Description</h4>
-          <textarea value={card.description}  placeholder="Write a comment..." className={styles["des-box"]}   onChange={(e) => updateCard({ description: e.target.value })}/>
-          
-        </div>
-        <div className={styles.section}>
-
-            <div className={styles["action-div"]}> 
-            {/* <h4>Actions</h4> */}
-          {/* <textarea value={card.description}  placeholder="Write a comment..." className={styles["des-box"]}   onChange={(e) => updateCard({ description: e.target.value })}/> */}
-          <Trash2 size={30} className={styles["action-icon-delete"]}
-          onClick={()=> {
-            onDelete(card.id, columnId);
-            onClose();
-            
-          }}
-
-          ></Trash2>
-          
-          <Save size={30} className={styles["action-icon-save"]} onClick={onClose}></Save>
-
-
-
-
-            </div>
-          
-        </div>
-
-
       </div>
-        </div>
-
-
-        
-        
-        </>
-    );
+    </>
+  );
 }
+
 export default CardOpenModal;

@@ -14,7 +14,7 @@ function LandingPage()
         <section className= {styles['hero-section']}>
             <NewNavBar></NewNavBar>
             <h1 className={styles['hero-text-1']}>
-                Organize Tasks with 
+                Organize Tasks with
             </h1>
             <h1 className={styles['hero-text-2']}>
                 Visual Kanban Boards

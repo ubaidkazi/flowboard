@@ -82,6 +82,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  padding: 5px;
 }
 
 /* Delete icon */
@@ -137,3 +139,16 @@
   box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
 }
 
+
+.editable-input
+{
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  background: transparent;
+  width: 80%;
+  padding: 2px;
+  margin: 17px 0;
+}

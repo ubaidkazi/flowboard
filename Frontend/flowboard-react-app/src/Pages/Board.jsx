@@ -4,7 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import Column from "../components/Column.jsx";
 import { Plus, X, CircleArrowLeft, LogOut} from "lucide-react";
-import CardOpenModal from "../Components/CardOpenModal.jsx";
+import CardOpenModal from "../components/CardOpenModal.jsx";
+
 
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
@@ -29,7 +30,9 @@ function Board() {
   const [showAddColumn, setShowAddColumn] = useState(false);
 
 
-const [selectedCard, setSelectedCard] = useState(null);
+const [selectedCardId, setSelectedCardId] = useState(null);
+const [selectedColumnId, setSelectedColumnId] = useState(null);
+
 const [showModal, setShowModal] = useState(false);
 
 const boardDataRef = useRef(null);
@@ -133,7 +136,7 @@ const handleBoardEvent = (event) => {
       priority: null,
       progress: null,
       createdAt: event.createdAt,
-      updatedAt: event.createdAt
+      updatedAt: event.updatedAt
     };
 
     setBoardData(prev => {
@@ -143,11 +146,14 @@ const handleBoardEvent = (event) => {
         ...prev,
         columns: prev.columns.map(col =>
           col.id === event.columnId
-            ? { ...col, cards: [...col.cards, newCard] }
+            ? { ...col, 
+              cards: [...col.cards, newCard] }
             : col
         )
       };
     });  
+
+    
   break;
   case "CARD_DELETED":
 
@@ -171,6 +177,47 @@ const handleBoardEvent = (event) => {
             : col
         )
       }})
+  
+  break;
+
+  case "CARD_UPDATED":
+
+  
+  console.log(`Card updated event received from the board topic.. by user: ${event.updatedBy} CARD ID: ${event.cardId}  Updated AT:${event.updatedAt} `);
+  console.log(event);
+  const updatedCard = {
+      id: event.cardId,
+      title: event.cardTitle,
+      checked: event.checked,
+      description: event.description,
+      dueDate: event.dueDate,
+      priority: event.prority,
+      progress: event.progress,
+      createdAt: event.createdAt,
+      updatedAt: event.updatedAt
+    };
+
+    setBoardData(prev => {
+  if (!prev) return prev;
+
+  return {
+    ...prev,
+    columns: prev.columns.map(col =>
+      col.id === event.columnId
+        ? {
+            ...col,
+            cards: col.cards.map(card =>
+              card.id === updatedCard.id
+                ? { ...card, ...updatedCard }
+                : card
+            )
+          }
+        : col
+    )
+  };
+});
+
+
   
   break;
 }
@@ -446,48 +493,12 @@ const handleCardClick = (card) => {
     col.cards.some(c => c.id === card.id)
   );
 
-  setSelectedCard({ ...card, columnId: column?.id });
+  setSelectedCardId(card.id);
+  setSelectedColumnId(column?.id);
   setShowModal(true);
 };
 
 
-
-let updateTimeout;
-
-const handleCardUpdate = (updatedCard) => {
-  // Update UI immediately
-  setBoardData((prev) => ({
-    ...prev,
-    columns: prev.columns.map((col) => ({
-      ...col,
-      cards: col.cards.map((card) =>
-        card.id === updatedCard.id ? updatedCard : card
-      ),
-    })),
-  }));
-
-  clearTimeout(updateTimeout);
-
-  // Wait 300ms before persisting (to avoid spamming backend)
-  updateTimeout = setTimeout(async () => {
-    const token = localStorage.getItem("token");
-    try {
-      await fetch(`http://localhost:8080/cards/${updatedCard.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          checked: updatedCard.checked,
-          progress: updatedCard.progress,
-        }),
-      });
-    } catch (error) {
-      console.error("Error syncing card:", error);
-    }
-  }, 300);
-};
 
 
 
@@ -508,8 +519,81 @@ const handleDeleteCard = async (cardId, columnId) => {
   }
 
 
+  function debounce(fn, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+}
 
 
+
+ const debouncedSendUpdate = useRef(
+  debounce(async (cardId, updates) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      await fetch(`http://localhost:8080/cards/${cardId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updates),
+      });
+    } catch (err) {
+      console.error("Failed to update card:", err);
+    }
+  }, 500)
+).current;
+
+
+const handleCardUpdate = (cardId, updates) => {
+  if (!updates) return;
+
+
+  const finalUpdates = { ...updates };
+
+  /// Checkbox → Progress
+  if (updates.checked !== undefined) {
+    finalUpdates.progress = updates.checked
+      ? "Completed"
+      : "In Progress";
+  }
+
+  // Progress → Checkbox
+  if (updates.progress !== undefined) {
+    finalUpdates.checked = updates.progress === "Completed";
+  }
+
+
+  setBoardData(prev => ({
+    ...prev,
+    columns: prev.columns.map(col => ({
+      ...col,
+      cards: col.cards.map(card =>
+        card.id === cardId
+          ? { ...card, ...updates }
+          : card
+      )
+    }))
+  }));
+
+  debouncedSendUpdate(cardId, updates);
+};
+
+  
+
+
+  
+
+
+
+
+const selectedCard = boardData?.columns
+  .flatMap(col => col.cards)
+  .find(card => card.id === selectedCardId);
 
 
 
@@ -578,11 +662,26 @@ const handleDeleteCard = async (cardId, columnId) => {
   <div className={styles["add-column"]}>
     <input
       name="columnName"
-      onChange={(e) => setColumnName(e.target.value)}
+      onChange={(e) => 
+        {setColumnName(e.target.value)}
+      }
+      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                        handleAddColumn();
+                        setColumnName("");
+                        setShowAddColumn(false);
+                        }
+                        if (e.key === "Escape") {
+                          setShowAddColumn(false);
+                          setColumnName("");
+                        }
+                        
+                      }}
       value={columnName}
       placeholder="Enter list name"
       required
       className={styles["col-name-input"]}
+      autoFocus
     />
     <div className={styles["col-btn-div"]}>
       <button
@@ -608,21 +707,15 @@ const handleDeleteCard = async (cardId, columnId) => {
   </div>
 
 
-  {showModal && selectedCard && (
+  {showModal && selectedCardId && selectedCard && (
   <CardOpenModal
     CurrentCard={selectedCard}
-    columnId={selectedCard.columnId}
+    columnId={selectedColumnId}
     onClose={closeModal}
     onUpdate={handleCardUpdate}
     onDelete={handleDeleteCard}
   />
-   )}
-
-
-
-
-
-
+  )}
   </>
   );
 }

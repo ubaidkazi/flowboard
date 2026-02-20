@@ -1,29 +1,54 @@
 // src/Components/Card.jsx
 import React, { useState, useEffect, memo } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { Check, Trash2 } from 'lucide-react';
+import { Check, Trash2, Calendar } from 'lucide-react';
 import styles from '../styles/Card.module.css';
 
 function Card({ card, index, onDelete, onClick, onUpdate }) {
-  const [isChecked, setIsChecked] = useState(card.checked);
+  
 
-  useEffect(() => {
-    setIsChecked(card.checked);
-  }, [card.checked]);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedCardTitle, setEditedCardTitle] = useState(card.title);
 
+
+
+   
   const handleCheckChange = (e) => {
     e.stopPropagation();
     const newChecked = e.target.checked;
-    setIsChecked(newChecked);
-
-    const newProgress = newChecked ? 'Completed' : 'In Progress';
-
-    onUpdate?.({
-      ...card,
-      checked: newChecked,
-      progress: newProgress,
-    });
+    onUpdate(card.id, { checked: newChecked });
   };
+
+  useEffect(() => {
+  setEditedCardTitle(card.title);
+}, [card.title]);
+
+
+
+const formatDueDate = (dueDate) => {
+  const [year, month, day] = dueDate.split('-')
+  const date = new Date(year, month - 1, day)
+
+  const currentYear = new Date().getFullYear()
+
+  const options = {
+    month: 'short',
+    day: '2-digit',
+    ...(date.getFullYear() !== currentYear && { year: 'numeric' })
+  }
+
+  return date.toLocaleDateString('en-US', options)
+}
+
+
+
+
+
+
+
+
+
+
 
   return (
     <Draggable draggableId={card.id.toString()} index={index}>
@@ -57,12 +82,52 @@ function Card({ card, index, onDelete, onClick, onUpdate }) {
                     onClick={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
                   >
-                    <input type="checkbox" checked={isChecked} onChange={handleCheckChange} />
+                    <input type="checkbox" checked={card.checked} onChange={handleCheckChange} />
                     <span className={styles.circle}>
-                      {isChecked && <Check size={14} strokeWidth={3} color="#fff" />}
+                      {<Check size={14} strokeWidth={3} color="#fff" />}
                     </span>
                   </label>
-                  <p className={styles.cardName}>{card.title}</p>
+
+                  { isEditingTitle ? (
+                        <input
+                      className={styles["editable-input"]}
+                      type="text"
+                      value={editedCardTitle}
+                      onClick={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onChange={
+                        (e) => {setEditedCardTitle(e.target.value);}
+                      }
+                      onBlur={() => {
+                        if (editedCardTitle.trim() !== "")
+                        {
+                          onUpdate(card.id, { title: editedCardTitle });
+                        }
+                        setIsEditingTitle(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          onUpdate(card.id, { title: editedCardTitle });
+                          setIsEditingTitle(false);
+                        }
+                        if (e.key === "Escape") {
+                          setIsEditingTitle(false);
+                          setEditedCardTitle(card.title);
+                        }
+                        
+                      }}
+                      autoFocus
+                    />
+                      )
+                          : (<p onClick={(e) => {
+                            e.stopPropagation();
+                             setIsEditingTitle(true);
+                          }}  className={styles.cardName}>{card.title}</p>)}
+        
+
+                  
+
+
                 </div>
                 <div
                   className={styles.cardDelete}
@@ -77,7 +142,7 @@ function Card({ card, index, onDelete, onClick, onUpdate }) {
 
               {card.dueDate && (
                 <div className={`${styles.dueDateDiv} ${statusClass}`}>
-                  📅 {new Date(card.dueDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                <Calendar size={13}/> {formatDueDate(card.dueDate)}
                 </div>
               )}
             </div>

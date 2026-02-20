@@ -1,6 +1,7 @@
 package com.flowboard.app.service;
 
 import com.flowboard.app.entity.Card;
+import com.flowboard.app.entity.Project;
 import com.flowboard.app.entity.TaskColumn;
 import com.flowboard.app.entity.User;
 import com.flowboard.app.repository.CardRepo;
@@ -8,6 +9,7 @@ import com.flowboard.app.repository.TaskColumnRepo;
 import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.events.CardCreatedEvent;
 import com.flowboard.app.websocket.events.CardDeletedEvent;
+import com.flowboard.app.websocket.events.CardUpdatedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -118,14 +120,52 @@ public class CardService {
         if (updates.containsKey("priority"))
             card.setPriority((String) updates.get("priority"));
 
+        if (updates.containsKey("title")){
+            String newTitle = (String) updates.get("title");
+
+            if (!newTitle.equalsIgnoreCase(""))
+            {
+                card.setTitle(newTitle);
+            }
+            //card.setTitle((String) updates.get("title"));
+
+
+        }
+
+
         if (updates.containsKey("description"))
             card.setDescription((String) updates.get("description"));
 
         if (updates.containsKey("dueDate") && updates.get("dueDate") != null)
             card.setDueDate(LocalDate.parse((String) updates.get("dueDate")));
 
-        return cardRepo.save(card);
+        card.setUpdatedAt(LocalDateTime.now());
+        Card updatedCard = cardRepo.save(card);
+
+        CardUpdatedEvent event = new CardUpdatedEvent(
+                "CARD_UPDATED",
+                id,
+                updatedCard.getColumn().getBoard().getId(),
+                updatedCard.getColumn().getId().intValue(),
+                userService.getCurrentUser().getId(),
+                Instant.now(),
+                updatedCard.getTitle(),
+                updatedCard.getDescription(),
+                updatedCard.getPriority(),
+                updatedCard.getProgress(),
+                updatedCard.getDueDate(),
+                updatedCard.isChecked()
+
+        );
+
+        eventPublisher.publishCardUpdated(event);
+        //System.out.println(updatedCard);
+
+
+        return updatedCard;
     }
+
+
 
 
 

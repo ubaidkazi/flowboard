@@ -57,20 +57,22 @@ public class ProjectController
     }
 
 
-    //I will implement updating name and desc on a single endpoint later.
 
-    @PutMapping("/name/{id}")
-    public ResponseEntity<String> updateProjectName(@PathVariable Long id, @RequestBody String name)
-    {
-        return projectService.updateProjectName(id, name);
-
-    }
 
 
     @GetMapping("/desc/{id}")
     public ResponseEntity<String> getProjectDesc(@PathVariable Long id)
     {
         return projectService.getProjectDesc(id);
+    }
+
+
+    //implement updating name and desc on a single endpoint later.
+    @PutMapping("/name/{id}")
+    public ResponseEntity<String> updateProjectName(@PathVariable Long id, @RequestBody String name)
+    {
+        return projectService.updateProjectName(id, name);
+
     }
 
 

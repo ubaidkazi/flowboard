@@ -467,7 +467,7 @@ function ProjectView()
       });
 
       if (response.ok) {
-        const data = await response.text(); // ✅ await here
+        const data = await response.text(); //await here
       console.log("Project name retrieved:", data);
       setProjectName(data);
       } else {

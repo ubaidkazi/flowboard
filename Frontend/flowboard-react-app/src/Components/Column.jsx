@@ -106,6 +106,19 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
           <input
             name="cardName"
             onChange={(e) => setCardName(e.target.value)}
+            onKeyDown={(e) =>
+            {
+              if(e.key === "Enter")
+              {
+                handleAddCard();
+              }
+              else if(e.key=== "Escape")
+              {
+                setShowAddCard(false);
+                setCardName("");
+              }
+            }
+            }
             value={cardName}
             placeholder="Enter card name"
             required

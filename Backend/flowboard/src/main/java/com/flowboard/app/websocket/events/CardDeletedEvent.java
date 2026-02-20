@@ -19,6 +19,6 @@ public class CardDeletedEvent
     private int boardId;
     private int columnId;
     private int deletedBy;
-    private Instant createdAt;
+    private Instant deletedAt;
 
 }
