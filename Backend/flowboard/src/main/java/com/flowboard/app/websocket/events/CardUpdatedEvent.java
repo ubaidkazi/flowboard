@@ -1,5 +1,6 @@
 package com.flowboard.app.websocket.events;
 
+import com.flowboard.app.enums.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class CardUpdatedEvent
 {
 
-    private String type;
+    private EventType type;
     private int cardId;
     private long boardId;
     private int columnId;

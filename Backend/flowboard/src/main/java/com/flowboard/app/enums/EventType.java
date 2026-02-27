@@ -1,0 +1,12 @@
+package com.flowboard.app.enums;
+
+public enum EventType
+{
+    //CARD EVENTS
+    CARD_CREATED,
+    CARD_DELETED,
+    CARD_UPDATED,
+    CARD_MOVED
+
+
+}

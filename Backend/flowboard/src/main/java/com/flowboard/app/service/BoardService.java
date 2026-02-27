@@ -1,8 +1,6 @@
 package com.flowboard.app.service;
 
 import com.flowboard.app.dto.request.UpdateBoardRequest;
-import com.flowboard.app.dto.request.UpdateCardRequest;
-import com.flowboard.app.dto.request.UpdateColumnRequest;
 import com.flowboard.app.entity.Board;
 import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.Project;
@@ -11,6 +9,8 @@ import com.flowboard.app.repository.BoardRepo;
 import com.flowboard.app.repository.CardRepo;
 import com.flowboard.app.repository.ProjectRepo;
 import com.flowboard.app.repository.TaskColumnRepo;
+import com.flowboard.app.websocket.BoardEventPublisher;
+import com.flowboard.app.websocket.events.CardMovedEvent;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,10 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
+
+import static com.flowboard.app.enums.EventType.CARD_MOVED;
 
 @Service
 public class BoardService {
+
     @Autowired
     ProjectRepo projectRepo;
     @Autowired
@@ -32,6 +36,12 @@ public class BoardService {
 
     @Autowired
     CardRepo cardRepo;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    BoardEventPublisher boardEventPublisher;
 
     public ResponseEntity<Board> createBoard(Board board, Long projectId) {
         if (board.getColumns() != null) {
@@ -77,8 +87,7 @@ public class BoardService {
     public Board getBoardById(int id) {
         try {
             Board board = boardRepo.findById(id).get();
-            Board sortedBoard = sortBoardData(board);
-            return sortedBoard;
+            return sortBoardData(board);
         } catch (Exception e) {
             return null;
         }
@@ -107,47 +116,211 @@ public class BoardService {
     }
 
 
+    public void sortBoardDataReturnVoid(Board board) {
+
+        // Sort columns IN PLACE
+        board.getColumns()
+                .sort(Comparator.comparingInt(TaskColumn::getPosition));
+
+        for (TaskColumn column : board.getColumns()) {
+
+            // Sort cards IN PLACE
+            column.getCards()
+                    .sort(Comparator.comparingInt(Card::getPosition));
+        }
+    }
+
+
+
+//    @Transactional
+//    public ResponseEntity<String> updateBoardPositions(UpdateBoardRequest request) {
+//        Board oldBoard = boardRepo.findById(request.getBoardId())
+//                .orElseThrow(() -> new RuntimeException("Board not found with id: " + request.getBoardId()));
+//
+//        Map<Long, TaskColumn> columnMap = new HashMap<>();
+//
+//        if (request.getUpdatedColumns() != null) {
+//            List<TaskColumn> updatedColumns = new ArrayList<>();
+//            for (UpdateColumnRequest newColumn : request.getUpdatedColumns()) {
+//                TaskColumn column = columnRepo.findById(newColumn.getId())
+//                        .orElseThrow(() -> new RuntimeException("Column not found: " + newColumn.getId()));
+//                column.setPosition(newColumn.getPosition());
+//                columnMap.put(column.getId(), column);
+//                updatedColumns.add(column);
+//            }
+//            columnRepo.saveAll(updatedColumns);
+//        }
+//
+//        if (request.getUpdatedCards() != null) {
+//            List<Card> updatedCards = new ArrayList<>();
+//            for (UpdateCardRequest newCard : request.getUpdatedCards()) {
+//                Card card = cardRepo.findById(newCard.getId())
+//                        .orElseThrow(() -> new RuntimeException("Card not found: " + newCard.getId()));
+//
+//
+//                Long oldColumnId = card.getColumn().getId();
+//                Integer oldPosition = card.getPosition();
+//
+//
+//                TaskColumn parentColumn = columnMap.get(newCard.getColumnId());
+//                if (parentColumn == null) {
+//                    parentColumn = columnRepo.findById(newCard.getColumnId())
+//                            .orElseThrow(() -> new RuntimeException("Column not found: " + newCard.getColumnId()));
+//                }
+//
+//
+//
+//
+//                card.setColumn(parentColumn);
+//                card.setPosition(newCard.getPosition());
+//                updatedCards.add(card);
+//            }
+//
+//            cardRepo.saveAll(updatedCards);
+//        }
+//        boolean columnChanged = request.getNewColumn() == (request.getOldColumn());
+//        int movedCardId = request.getCardMoved();
+//        Card movedCard = cardRepo.findById(movedCardId).get();
+//        Integer oldPosition = movedCard.getPosition();
+//
+//        boolean positionChanged = oldPosition == request.getNewPosition();
+//
+//        if (columnChanged || positionChanged) {
+//            CardMovedEvent event = new CardMovedEvent(
+//                    "CARD_MOVED",
+//                    movedCard.getId(),
+//                    request.getBoardId(),
+//                    oldPosition,
+//                    movedCard.getPosition(),
+//                    userService.getCurrentUser().getId(),
+//                    Instant.now()
+//            );
+//
+//            boardEventPublisher.publishCardMoved(event);
+//        }
+//
+//
+//        return new ResponseEntity<>("okay", HttpStatus.OK);
+//    }
+
 
     @Transactional
-    public ResponseEntity<String> updateBoardPositions(UpdateBoardRequest board) {
-        Board oldBoard = boardRepo.findById(board.getBoardId())
-                .orElseThrow(() -> new RuntimeException("Board not found with id: " + board.getBoardId()));
+    public ResponseEntity<String> updateBoardPositions(UpdateBoardRequest request)
+    {
+        // Validate board exists (optional, but good practice)
+        Board board = boardRepo.findById(request.getBoardId())
+                .orElseThrow(() ->
+                        new RuntimeException("Board not found with id: " + request.getBoardId()));
 
-        Map<Long, TaskColumn> columnMap = new HashMap<>();
+        // Validate card exists
+        Card movedCard = cardRepo.findById(request.getCardMoved())
+                .orElseThrow(() ->
+                        new RuntimeException("Card not found with id: " + request.getCardMoved()));
 
-        if (board.getUpdatedColumns() != null) {
-            List<TaskColumn> updatedColumns = new ArrayList<>();
-            for (UpdateColumnRequest newColumn : board.getUpdatedColumns()) {
-                TaskColumn column = columnRepo.findById(newColumn.getId())
-                        .orElseThrow(() -> new RuntimeException("Column not found: " + newColumn.getId()));
-                column.setPosition(newColumn.getPosition());
-                columnMap.put(column.getId(), column);
-                updatedColumns.add(column);
-            }
-            columnRepo.saveAll(updatedColumns);
+        Integer oldPosition = movedCard.getPosition();
+        Integer newPosition = request.getNewPosition();
+
+        if (newPosition == null || newPosition < 0) {
+            throw new IllegalArgumentException("Invalid new position");
         }
 
-        if (board.getUpdatedCards() != null) {
-            List<Card> updatedCards = new ArrayList<>();
-            for (UpdateCardRequest newCard : board.getUpdatedCards()) {
-                Card card = cardRepo.findById(newCard.getId())
-                        .orElseThrow(() -> new RuntimeException("Card not found: " + newCard.getId()));
+        TaskColumn oldColumn = movedCard.getColumn();
 
-                TaskColumn parentColumn = columnMap.get(newCard.getColumnId());
-                if (parentColumn == null) {
-                    parentColumn = columnRepo.findById(newCard.getColumnId())
-                            .orElseThrow(() -> new RuntimeException("Column not found: " + newCard.getColumnId()));
+        // Validate new column exists
+        TaskColumn newColumn = columnRepo.findById(request.getNewColumn())
+                .orElseThrow(() ->
+                        new RuntimeException("Column not found with id: " + request.getNewColumn()));
+
+        boolean sameColumn = oldColumn.getId().equals(newColumn.getId());
+
+        if (sameColumn) {
+
+            // MOVING INSIDE SAME COLUMN
+            for (Card card : oldColumn.getCards()) {
+
+                if (card.getId().equals(movedCard.getId())) {
+                    continue;
                 }
 
-                card.setColumn(parentColumn);
-                card.setPosition(newCard.getPosition());
-                updatedCards.add(card);
+                if (newPosition > oldPosition) {
+                    // Moving DOWN
+                    if (card.getPosition() > oldPosition &&
+                            card.getPosition() <= newPosition) {
+
+                        card.setPosition(card.getPosition() - 1);
+                    }
+                } else if (newPosition < oldPosition) {
+                    // Moving UP
+                    if (card.getPosition() >= newPosition &&
+                            card.getPosition() < oldPosition) {
+
+                        card.setPosition(card.getPosition() + 1);
+                    }
+                }
             }
-            cardRepo.saveAll(updatedCards);
+
+        } else {
+
+            // MOVING TO DIFFERENT COLUMN
+
+            //Close gap in old column
+            for (Card card : oldColumn.getCards()) {
+
+                if (!card.getId().equals(movedCard.getId()) &&
+                        card.getPosition() > oldPosition) {
+
+                    card.setPosition(card.getPosition() - 1);
+                }
+            }
+
+            //Create space in new column
+            for (Card card : newColumn.getCards()) {
+
+                if (card.getPosition() >= newPosition) {
+                    card.setPosition(card.getPosition() + 1);
+                }
+            }
+
+            movedCard.setColumn(newColumn);
         }
 
-        return new ResponseEntity<>("okay", HttpStatus.OK);
+        // Set final position
+        movedCard.setPosition(newPosition);
+
+        // Save (other cards auto-persist because of @Transactional)
+        cardRepo.save(movedCard);
+
+
+        //card_moved so create and publish the event
+
+        CardMovedEvent cardMovedEvent = new CardMovedEvent(
+                CARD_MOVED,
+                movedCard.getId(),
+                request.getBoardId(),
+                oldPosition,
+                newPosition,
+                newColumn.getId(),
+                oldColumn.getId(),
+                userService.getCurrentUser().getId(),
+                Instant.now()
+        );
+
+        boardEventPublisher.publishCardMoved(cardMovedEvent);
+
+
+
+
+
+
+
+
+
+
+
+        return ResponseEntity.ok("Card moved successfully");
     }
+
+
 
 
 }

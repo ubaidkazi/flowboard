@@ -2,6 +2,7 @@ package com.flowboard.app.websocket;
 
 import com.flowboard.app.websocket.events.CardCreatedEvent;
 import com.flowboard.app.websocket.events.CardDeletedEvent;
+import com.flowboard.app.websocket.events.CardMovedEvent;
 import com.flowboard.app.websocket.events.CardUpdatedEvent;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,14 @@ public class BoardEventPublisher {
 
 
     public void publishCardUpdated(CardUpdatedEvent event) {
+        messagingTemplate.convertAndSend(
+                "/topic/boards/" + event.getBoardId(),
+                event
+        );
+    }
+
+    public void publishCardMoved(CardMovedEvent event) {
+        System.out.println("Sending event: " + event);
         messagingTemplate.convertAndSend(
                 "/topic/boards/" + event.getBoardId(),
                 event

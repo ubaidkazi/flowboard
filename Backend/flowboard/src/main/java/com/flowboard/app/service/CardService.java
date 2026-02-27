@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import static com.flowboard.app.enums.EventType.*;
+
 @Service
 public class CardService {
 
@@ -51,7 +53,7 @@ public class CardService {
 
         //create new card added event
         CardCreatedEvent event = new CardCreatedEvent(
-                "CARD_CREATED",
+                CARD_CREATED,
                 savedCard.getId(),
                 boardId,
                 columnId,
@@ -80,7 +82,7 @@ public class CardService {
         //normalizeCardPositions(columnId);
 
         CardDeletedEvent event = new CardDeletedEvent(
-                "CARD_DELETED",
+                CARD_DELETED,
                 cardToDelete.getId(),
                 boardId,
                 columnId,
@@ -143,7 +145,7 @@ public class CardService {
         Card updatedCard = cardRepo.save(card);
 
         CardUpdatedEvent event = new CardUpdatedEvent(
-                "CARD_UPDATED",
+                CARD_UPDATED,
                 id,
                 updatedCard.getColumn().getBoard().getId(),
                 updatedCard.getColumn().getId().intValue(),

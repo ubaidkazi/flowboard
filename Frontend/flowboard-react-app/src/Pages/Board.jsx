@@ -52,16 +52,8 @@ const closeModal = ()=>
 }
 
 
-
-
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
+ const fetchBoard = async () => {
   const token = localStorage.getItem("token");
-  let stompClient;
-
-  const fetchData = async () => {
     try {
       const res = await fetch(`http://localhost:8080/board/${boardId}`, {
         headers: {
@@ -78,6 +70,20 @@ const closeModal = ()=>
     }
   };
 
+
+
+
+
+
+
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+  let stompClient;
+
+ 
   const socket = new SockJS("http://localhost:8080/ws");
 
   stompClient = new Client({
@@ -99,7 +105,7 @@ const closeModal = ()=>
   });
 
   stompClient.activate();
-  fetchData();
+  fetchBoard();
 
   return () => {
     stompClient.deactivate();
@@ -155,12 +161,10 @@ const handleBoardEvent = (event) => {
 
     
   break;
+
+
   case "CARD_DELETED":
-
-  
   console.log(`Card deleted event received from the board topic.. by user: ${event.deletedBy} CARD ID: ${event.cardId}  DELETED AT:${event.createdAt} `);
-
-
   setBoardData(prev => {
       if (!prev) return prev;
 
@@ -181,8 +185,6 @@ const handleBoardEvent = (event) => {
   break;
 
   case "CARD_UPDATED":
-
-  
   console.log(`Card updated event received from the board topic.. by user: ${event.updatedBy} CARD ID: ${event.cardId}  Updated AT:${event.updatedAt} `);
   console.log(event);
   const updatedCard = {
@@ -217,8 +219,42 @@ const handleBoardEvent = (event) => {
   };
 });
 
+  break;
 
-  
+  case "CARD_MOVED":
+    console.log("Card moved event received");
+    console.log(event);
+    console.log(`Card moved by user: ${event.movedBy} CARD ID: ${event.cardId}  Updated AT:${event.movedAt} `);
+
+    refreshContent();
+
+
+   
+  // setBoardData(prev => {
+  //   if (!prev) return prev;
+
+  //   const { card, cardId, newColumnId, newPosition } = event;
+
+  //   // 1️⃣ Remove card from every column (safe approach)
+  //   const columnsWithoutCard = prev.columns.map(col => ({
+  //     ...col,
+  //     cards: col.cards.filter(c => c.id !== cardId)
+  //   }));
+
+  //   // 2️⃣ Insert updated card into target column
+  //   return {
+  //     ...prev,
+  //     columns: columnsWithoutCard.map(col => {
+  //       if (col.id === newColumnId) {
+  //         const newCards = [...col.cards];
+  //         newCards.splice(newPosition, 0, card);
+  //         return { ...col, cards: newCards };
+  //       }
+  //       return col;
+  //     })
+  //   };
+  // });
+
   break;
 }
 
@@ -379,7 +415,7 @@ const handleLogout = () => {
 
 
   const refreshContent = ()=>{
-    setRefreshTrigger((prev)=> prev+1);
+    fetchBoard();
   }
 
   
@@ -420,18 +456,29 @@ const handleLogout = () => {
     const [movedCard] = sourceColumn.cards.splice(source.index, 1);
     destColumn.cards.splice(destination.index, 0, movedCard);
 
+
+
+    //new
+    const movedCardId = Number(result.draggableId);
+    const fromColumnId = Number(result.source.droppableId);
+    const toColumnId = Number(result.destination.droppableId);
+    const newPosition = result.destination.index;
+
+
+
+    //now old and new card positions only
     const payload = {
       boardId: boardData.id,
-      updatedColumns: newColumns.map((col, i) => ({ id: col.id, position: i })),
-      updatedCards: newColumns.flatMap(col =>
-        col.cards.map((card, i) => ({
-          id: card.id,
-          columnId: col.id,
-          position: i
-        }))
-      )
+      cardMoved: movedCardId,
+      oldColumn: fromColumnId,
+      newColumn: toColumnId,
+      newPosition: newPosition
     };
 
+    
+
+
+    
     //Update UI once
     setBoardData(prev => ({ ...prev, columns: newColumns }));
 
@@ -442,6 +489,7 @@ const handleLogout = () => {
 
 const sendReorderRequest = async (payload) => {
   const token = localStorage.getItem("token");
+  //console.log(JSON.stringify(payload));
   try {
     const res = await fetch("http://localhost:8080/board/reorder", {
       method: "POST",
@@ -682,6 +730,7 @@ const selectedCard = boardData?.columns
       required
       className={styles["col-name-input"]}
       autoFocus
+      onBlur={()=> { setShowAddColumn(false); setColumnName("");} }
     />
     <div className={styles["col-btn-div"]}>
       <button
