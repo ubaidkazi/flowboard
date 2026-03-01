@@ -222,71 +222,43 @@ const handleBoardEvent = (event) => {
   break;
 
   case "CARD_MOVED":
+
     console.log("Card moved event received");
     console.log(event);
     console.log(`Card moved by user: ${event.movedBy} CARD ID: ${event.cardId}  Updated AT:${event.movedAt} `);
-
     refreshContent();
 
-
-   
-  // setBoardData(prev => {
-  //   if (!prev) return prev;
-
-  //   const { card, cardId, newColumnId, newPosition } = event;
-
-  //   // 1️⃣ Remove card from every column (safe approach)
-  //   const columnsWithoutCard = prev.columns.map(col => ({
-  //     ...col,
-  //     cards: col.cards.filter(c => c.id !== cardId)
-  //   }));
-
-  //   // 2️⃣ Insert updated card into target column
-  //   return {
-  //     ...prev,
-  //     columns: columnsWithoutCard.map(col => {
-  //       if (col.id === newColumnId) {
-  //         const newCards = [...col.cards];
-  //         newCards.splice(newPosition, 0, card);
-  //         return { ...col, cards: newCards };
-  //       }
-  //       return col;
-  //     })
-  //   };
-  // });
-
   break;
+
+  case "COLUMN_CREATED":
+
+   const newColumn = {
+      id: event.columnId,
+      name: event.title,
+      position: event.position,
+      createdAt: event.createdAt,
+      cards: []
+    };
+
+
+    setBoardData(prev => {
+    if (!prev) return prev;
+
+    return {
+      ...prev,
+      columns: [...prev.columns, newColumn]
+    };
+  });
+
+
+    console.log(event);
+
+
+    
+  break;
+
+
 }
-
-
-
-  // if (event.type === "CARD_CREATED") {
-  //   const newCard = {
-  //     id: event.cardId,
-  //     title: event.title,
-  //     position: event.position,
-  //     checked: false,
-  //     description: "",
-  //     dueDate: null,
-  //     priority: null,
-  //     progress: null,
-  //     createdAt: event.createdAt,
-  //     updatedAt: event.createdAt
-  //   };
-
-  //   setBoardData(prev => {
-  //     if (!prev) return prev;
-
-  //     return {
-  //       ...prev,
-  //       columns: prev.columns.map(col =>
-  //         col.id === event.columnId
-  //           ? { ...col, cards: [...col.cards, newCard] }
-  //           : col
-  //       )
-  //     };
-  //   });
-  // }
 
 
 };
@@ -734,16 +706,18 @@ const selectedCard = boardData?.columns
     />
     <div className={styles["col-btn-div"]}>
       <button
-        onClick={async () => {
-          if (columnName.trim() !== "") {
-            await handleAddColumn();
-            setColumnName("");
-            setShowAddColumn(false);
-          }
-          }}  className={styles["col-btn"]}>
-            Add List
-          </button>
-         <button onClick={() => { setColumnName(""); setShowAddColumn(false);}}  className={styles["col-cancel-btn"]}> <X size={20} /> </button>
+        onMouseDown={async (e) => {
+    e.preventDefault(); // prevents focus shift → prevents blur
+    if (columnName.trim() !== "") {
+      await handleAddColumn();
+      setColumnName("");
+      setShowAddColumn(false);
+      }
+    }}
+      className={styles["col-btn"]}>
+          Add List
+      </button>
+      <button onClick={() => { setColumnName(""); setShowAddColumn(false);}}  className={styles["col-cancel-btn"]}> <X size={20} /> </button>
     </div>
   </div>
   )}

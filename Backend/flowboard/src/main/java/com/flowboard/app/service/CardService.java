@@ -1,15 +1,13 @@
 package com.flowboard.app.service;
 
 import com.flowboard.app.entity.Card;
-import com.flowboard.app.entity.Project;
 import com.flowboard.app.entity.TaskColumn;
-import com.flowboard.app.entity.User;
 import com.flowboard.app.repository.CardRepo;
 import com.flowboard.app.repository.TaskColumnRepo;
 import com.flowboard.app.websocket.BoardEventPublisher;
-import com.flowboard.app.websocket.events.CardCreatedEvent;
-import com.flowboard.app.websocket.events.CardDeletedEvent;
-import com.flowboard.app.websocket.events.CardUpdatedEvent;
+import com.flowboard.app.websocket.cardevents.CardCreatedEvent;
+import com.flowboard.app.websocket.cardevents.CardDeletedEvent;
+import com.flowboard.app.websocket.cardevents.CardUpdatedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

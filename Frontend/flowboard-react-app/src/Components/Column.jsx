@@ -127,13 +127,20 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
             autoFocus
           />
           <div className={styles["card-btn-div"]}>
-            <button onClick={handleAddCard} className={styles["card-btn"]}>
+            <button
+            onMouseDown={(e) => {
+              e.preventDefault(); // prevents blur
+              handleAddCard();
+              }}
+            className={styles["card-btn"]}>
               Add Card
             </button>
-            <button onClick={() => {
+            <button 
+              onMouseDown={(e) => {
+              e.preventDefault(); // prevents blur
               setShowAddCard(false);
-              setCardName("");}
-              } className={styles["card-cancel-btn"]}>
+              }}
+              className={styles["card-cancel-btn"]}>
               <X size={20}/>
             </button>
           </div>

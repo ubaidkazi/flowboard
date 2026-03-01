@@ -6,7 +6,11 @@ public enum EventType
     CARD_CREATED,
     CARD_DELETED,
     CARD_UPDATED,
-    CARD_MOVED
+    CARD_MOVED,
+
+
+    //COLUMN EVENTS
+    COLUMN_CREATED
 
 
 }

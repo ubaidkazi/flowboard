@@ -1,4 +1,4 @@
-package com.flowboard.app.websocket.events;
+package com.flowboard.app.websocket.cardevents;
 
 import com.flowboard.app.enums.EventType;
 import lombok.AllArgsConstructor;
@@ -11,16 +11,17 @@ import java.time.Instant;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardCreatedEvent
+public class CardMovedEvent
 {
 
     private EventType type;
     private Long cardId;
     private int boardId;
-    private int columnId;
-    private String title;
-    private int position;
-    private int createdBy;
-    private Instant createdAt;
+    private int oldPosition;
+    private int newPosition;
+    private Long newColumn;
+    private Long oldColumn;
+    private int movedBy;
+    private Instant movedAt;
 
 }

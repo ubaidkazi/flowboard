@@ -10,7 +10,7 @@ import com.flowboard.app.repository.CardRepo;
 import com.flowboard.app.repository.ProjectRepo;
 import com.flowboard.app.repository.TaskColumnRepo;
 import com.flowboard.app.websocket.BoardEventPublisher;
-import com.flowboard.app.websocket.events.CardMovedEvent;
+import com.flowboard.app.websocket.cardevents.CardMovedEvent;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

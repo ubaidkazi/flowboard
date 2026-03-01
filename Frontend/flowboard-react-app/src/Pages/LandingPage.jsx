@@ -26,7 +26,7 @@ function LandingPage()
                 <button className={styles["hero-btn-1"]}> 
                 Try demo board &#8594;
                 </button>
-                <NavLink  to="/newdashboard" className={styles["hero-btn-2"]}> 
+                <NavLink  to="/dashboard" className={styles["hero-btn-2"]}> 
                 View Dashbaord
                 </NavLink>
 

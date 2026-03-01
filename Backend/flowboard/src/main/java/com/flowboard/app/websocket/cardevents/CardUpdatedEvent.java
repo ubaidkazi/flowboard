@@ -1,4 +1,4 @@
-package com.flowboard.app.websocket.events;
+package com.flowboard.app.websocket.cardevents;
 
 import com.flowboard.app.enums.EventType;
 import lombok.AllArgsConstructor;

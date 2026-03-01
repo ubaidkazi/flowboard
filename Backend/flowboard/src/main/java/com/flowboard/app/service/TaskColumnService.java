@@ -5,10 +5,16 @@ import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.TaskColumn;
 import com.flowboard.app.repository.BoardRepo;
 import com.flowboard.app.repository.TaskColumnRepo;
+import com.flowboard.app.websocket.BoardEventPublisher;
+import com.flowboard.app.websocket.columnevents.ColumnCreatedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+
+import static com.flowboard.app.enums.EventType.COLUMN_CREATED;
 
 @Service
 public class TaskColumnService
@@ -18,6 +24,13 @@ public class TaskColumnService
 
     @Autowired
     TaskColumnRepo columnRepo;
+
+    @Autowired
+    UserService userService;
+
+
+    @Autowired
+    BoardEventPublisher eventPublisher;
 
     public ResponseEntity<TaskColumn> createColumn(TaskColumn column, int boardId)
     {
@@ -41,7 +54,21 @@ public class TaskColumnService
         int newPosition = columnRepo.findMaxPositionByBoardId(boardId) + 1;
         column.setPosition(newPosition);
 
-        columnRepo.save(column);
+        TaskColumn newColumn = columnRepo.save(column);
+
+        //create and publish the event
+        ColumnCreatedEvent event = new ColumnCreatedEvent(
+                COLUMN_CREATED,
+                newColumn.getId(),
+                boardId,
+                newColumn.getName(),
+                newColumn.getPosition(),
+                userService.getCurrentUser().getId(),
+                Instant.now()
+
+        );
+
+        eventPublisher.publishColumnCreated(event);
 
         return new ResponseEntity<TaskColumn>(column, HttpStatus.OK);
     }

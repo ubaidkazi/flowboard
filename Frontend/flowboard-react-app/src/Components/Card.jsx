@@ -122,7 +122,7 @@ const formatDueDate = (dueDate) => {
                           : (<p onClick={(e) => {
                             e.stopPropagation();
                              setIsEditingTitle(true);
-                          }}  className={styles.cardName}>{card.title} {card.position}</p>)}
+                          }}  className={styles.cardName}>{card.title}</p>)}
         
 
                   
