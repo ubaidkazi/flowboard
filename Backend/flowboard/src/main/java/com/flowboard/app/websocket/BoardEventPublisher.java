@@ -1,22 +1,29 @@
 package com.flowboard.app.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.flowboard.app.websocket.cardevents.CardCreatedEvent;
 import com.flowboard.app.websocket.cardevents.CardDeletedEvent;
 import com.flowboard.app.websocket.cardevents.CardMovedEvent;
 import com.flowboard.app.websocket.cardevents.CardUpdatedEvent;
 import com.flowboard.app.websocket.columnevents.ColumnCreatedEvent;
-import jakarta.persistence.Column;
+import com.flowboard.app.websocket.columnevents.ColumnDeletedEvent;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component
+
+@Service
+@RequiredArgsConstructor
 public class BoardEventPublisher {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final ObjectMapper objectMapper;
 
-    public BoardEventPublisher(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
+
+//    public BoardEventPublisher(SimpMessagingTemplate messagingTemplate) {
+//        this.messagingTemplate = messagingTemplate;
+//    }
 
 
 
@@ -54,13 +61,31 @@ public class BoardEventPublisher {
     }
 
 
-    //======= COLUMN LEVEL EVENTS ========================
+    //======= COLUMN RELATED EVENTS ========================
     public void publishColumnCreated(ColumnCreatedEvent event){
         messagingTemplate.convertAndSend(
                 "/topic/boards/" + event.getBoardId(),
                 event
         );
     }
+
+    public void publishColumnDeleted(ColumnDeletedEvent event){
+        messagingTemplate.convertAndSend(
+                "/topic/boards/" + event.getBoardId(),
+                event
+        );
+    }
+
+
+    //GENERIC PUBLISH METHOD
+    public void publish(Integer destinatonId , Object event) {
+
+            messagingTemplate.convertAndSend("/topic/boards/" + destinatonId , event);
+            System.out.println("Sent to topic:" + destinatonId + "Payload" +event);
+
+    }
+
+
 
 
 

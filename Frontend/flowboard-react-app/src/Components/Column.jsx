@@ -10,16 +10,32 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
   const [cardName, setCardName] = useState("");
 
   const handleDeleteColumn = async () => {
-    try {
-      await fetch(`http://localhost:8080/board/${boardId}/${column.id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      refresh();
-    } catch (err) {
-      console.error("Error deleting column:", err);
+  const token = localStorage.getItem("token"); //get the JWT token
+
+  if (!token) {
+    console.error("No JWT token found");
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/board/${boardId}/${column.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json" // optional but safe
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Delete column failed:", response.status);
+      return;
     }
-  };
+
+    refresh(); // refresh the board after successful deletion
+  } catch (err) {
+    console.error("Error deleting column:", err);
+  }
+};
 
   const handleAddCard = async () => {
     if (!cardName.trim()) return;

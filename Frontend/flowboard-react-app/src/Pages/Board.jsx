@@ -128,6 +128,7 @@ const closeModal = ()=>
 // }
 
 
+
 const handleBoardEvent = (event) => {
   switch (event.type) {
   case "CARD_CREATED":
@@ -255,6 +256,24 @@ const handleBoardEvent = (event) => {
 
 
     
+  break;
+
+  case "COLUMN_DELETED":
+
+  console.log(`Column deleted event received.. by user: ${event.deletedBy} COLUMN ID: ${event.columnId} DELETED AT: ${event.deletedAt}`);
+  //console.log(event);
+  //console.log(event.type);
+  setBoardData(prev => {
+    if (!prev) return prev;
+
+    return {
+      ...prev,
+      columns: prev.columns.filter(
+        col => col.id !== event.columnId
+      )
+    };
+  });
+
   break;
 
 
