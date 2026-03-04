@@ -1,14 +1,9 @@
 package com.flowboard.app.service;
 
 import com.flowboard.app.dto.request.UpdateBoardRequest;
-import com.flowboard.app.entity.Board;
-import com.flowboard.app.entity.Card;
-import com.flowboard.app.entity.Project;
-import com.flowboard.app.entity.TaskColumn;
-import com.flowboard.app.repository.BoardRepo;
-import com.flowboard.app.repository.CardRepo;
-import com.flowboard.app.repository.ProjectRepo;
-import com.flowboard.app.repository.TaskColumnRepo;
+import com.flowboard.app.entity.*;
+import com.flowboard.app.repository.*;
+import com.flowboard.app.util.JsonUtils;
 import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.cardevents.CardMovedEvent;
 import jakarta.transaction.Transactional;
@@ -41,7 +36,7 @@ public class BoardService {
     UserService userService;
 
     @Autowired
-    BoardEventPublisher boardEventPublisher;
+    OutboxRepository outboxRepository;
 
     public ResponseEntity<Board> createBoard(Board board, Long projectId) {
         if (board.getColumns() != null) {
@@ -305,17 +300,17 @@ public class BoardService {
                 Instant.now()
         );
 
-        boardEventPublisher.publishCardMoved(cardMovedEvent);
+        //Convert over event object into string to store in event outbox table
+        String payload = JsonUtils.toJson(cardMovedEvent);
 
+        OutboxEvent outboxEvent = new OutboxEvent();
+        outboxEvent.setEventType("CARD_MOVED");
+        outboxEvent.setTopic("/topic/boards/");
+        outboxEvent.setDestinatonId(request.getBoardId());
+        outboxEvent.setPayload(payload);
+        outboxEvent.setCreatedAt(Instant.now());
 
-
-
-
-
-
-
-
-
+        outboxRepository.save(outboxEvent);
 
         return ResponseEntity.ok("Card moved successfully");
     }

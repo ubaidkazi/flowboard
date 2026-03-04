@@ -17,6 +17,8 @@ public class OutboxEvent {
 
     private String eventType;
 
+    private String topic;
+
     //save boardId, projectId or destination for routing topics
     private Integer destinatonId;
 

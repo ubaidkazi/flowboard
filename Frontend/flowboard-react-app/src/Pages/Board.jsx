@@ -131,37 +131,51 @@ const closeModal = ()=>
 
 const handleBoardEvent = (event) => {
   switch (event.type) {
+  
+
   case "CARD_CREATED":
 
-   const newCard = {
-      id: event.cardId,
-      title: event.title,
-      position: event.position,
-      checked: false,
-      description: "",
-      dueDate: null,
-      priority: null,
-      progress: null,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt
+  const newCard = {
+    id: event.cardId,
+    title: event.title,
+    position: event.position,
+    checked: false,
+    description: "",
+    dueDate: null,
+    priority: null,
+    progress: null,
+    createdAt: event.createdAt,
+    updatedAt: event.updatedAt
+  };
+
+  setBoardData(prev => {
+    if (!prev) return prev;
+
+    return {
+      ...prev,
+      columns: prev.columns.map(col => {
+        if (col.id !== event.columnId) return col;
+
+        // Remove any temp cards
+        const withoutTemp = col.cards.filter(
+          card => !String(card.id).startsWith("temp-")
+        );
+
+        // Prevent duplicates (idempotency)
+        if (withoutTemp.some(card => card.id === newCard.id)) {
+          return col;
+        }
+
+        return {
+          ...col,
+          cards: [...withoutTemp, newCard]
+        };
+      })
     };
+  });
 
-    setBoardData(prev => {
-      if (!prev) return prev;
+break;
 
-      return {
-        ...prev,
-        columns: prev.columns.map(col =>
-          col.id === event.columnId
-            ? { ...col, 
-              cards: [...col.cards, newCard] }
-            : col
-        )
-      };
-    });  
-
-    
-  break;
 
 
   case "CARD_DELETED":
@@ -233,30 +247,34 @@ const handleBoardEvent = (event) => {
 
   case "COLUMN_CREATED":
 
-   const newColumn = {
-      id: event.columnId,
-      name: event.title,
-      position: event.position,
-      createdAt: event.createdAt,
-      cards: []
-    };
+  const newColumn = {
+    id: event.columnId,
+    name: event.title,
+    position: event.position,
+    createdAt: event.createdAt,
+    cards: []
+  };
 
-
-    setBoardData(prev => {
+  setBoardData(prev => {
     if (!prev) return prev;
+
+    // Remove temp column if exists
+    const withoutTemp = prev.columns.filter(
+      col => !String(col.id).startsWith("temp-")
+    );
+
+    // Prevent duplicates
+    if (withoutTemp.some(col => col.id === newColumn.id)) {
+      return prev;
+    }
 
     return {
       ...prev,
-      columns: [...prev.columns, newColumn]
+      columns: [...withoutTemp, newColumn]
     };
   });
 
-
-    console.log(event);
-
-
-    
-  break;
+break;
 
   case "COLUMN_DELETED":
 
@@ -355,50 +373,116 @@ const handleLogout = () => {
 
 
 
-
-  const handleColumnNameChange = (e) => setColumnName(e.target.value);
-  const handleCardNameChange = (e) => {
-    setCardName(e.target.value);
     
-  }
 
-  const handleAddColumn = async () => {
-    const token = localStorage.getItem("token");
-    const url = `http://localhost:8080/board/column/${boardId}`;
-    const columnData = { name: columnName };
 
-    try {
-      await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(columnData),
-      });
+// ============== how column was being added at first ==================
+// const handleAddColumn = async () => {
+//   const token = localStorage.getItem("token");
+//   const url = `http://localhost:8080/board/column/${boardId}`;
+//   const columnData = { name: columnName };
 
-      refreshContent();
-    } catch (error) {
-      console.error("Error adding column:", error.message);
-    }
+//   try {
+//     await fetch(url, {
+//       method: "POST",
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(columnData),
+//     });
+
+//     //refreshContent();
+//   } catch (error) {
+//     console.error("Error adding column:", error.message);
+//   }
+// };
+
+
+
+const addOptimisticCard = (columnId, cardTitle) => {
+  const tempId = "temp-" + Date.now();
+
+  const optimisticCard = {
+    id: tempId,
+    title: cardTitle,
+    position: 0,
+    checked: false,
+    description: "",
+    dueDate: null,
+    priority: null,
+    progress: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
 
+  setBoardData(prev => {
+    if (!prev) return prev;
 
-  // const handleDeleteCard = async (boardId, columnId, cardId) => {
-  //   const token = localStorage.getItem("token");
-  //   const url = `http://localhost:8080/board/${boardId}/${columnId}/${cardId}`;
+    return {
+      ...prev,
+      columns: prev.columns.map(col =>
+        col.id === columnId
+          ? { ...col, cards: [...col.cards, optimisticCard] }
+          : col
+      )
+    };
+  });
 
-  //   try {
-  //     await fetch(url, {
-  //       method: "DELETE",
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
+  return tempId;
+};
 
-  //     setRefreshTrigger((prev) => prev + 1);
-  //   } catch (error) {
-  //     console.error("Error deleting card:", error.message);
-  //   }
-  // };
+
+
+
+
+// ====== Add Column with Optimistic update ===== 
+const handleAddColumn = async () => {
+  const token = localStorage.getItem("token");
+  const url = `http://localhost:8080/board/column/${boardId}`;
+  const columnData = { name: columnName };
+
+  // Temporary client-side ID
+  const tempId = "temp-" + Date.now();
+
+  const optimisticColumn = {
+    id: tempId,
+    name: columnName,
+    position: boardData.columns.length + 1,
+    createdAt: new Date().toISOString(),
+    cards: []
+  };
+
+  //Immediately update UI
+  setBoardData(prev => ({
+    ...prev,
+    columns: [...prev.columns, optimisticColumn]
+  }));
+
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(columnData),
+    });
+
+  } catch (error) {
+    console.error("Error adding column:", error.message);
+  }
+};
+
+
+
+
+
+
+
+
+
+
 
   const goBack = () => {
     navigate(-1);
@@ -674,6 +758,7 @@ const selectedCard = boardData?.columns
                       onCardClick={handleCardClick}
                       onCardUpdate={handleCardUpdate}
                       onDeleteCard={handleDeleteCard}
+                      addOptimisticCard={addOptimisticCard}
                       // cardName={cardName}
                       // setCardName={setCardName}
                     />

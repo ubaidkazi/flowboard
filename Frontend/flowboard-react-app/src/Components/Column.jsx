@@ -4,7 +4,7 @@ import Card from './Card';
 import styles from '../Styles/Column.module.css';
 import { Plus, X } from 'lucide-react';
 
-function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, onDeleteCard }) {
+function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, onDeleteCard, addOptimisticCard }) {
   const token = localStorage.getItem("token");
   const [showAddCard, setShowAddCard] = useState(false);
   const [cardName, setCardName] = useState("");
@@ -37,20 +37,73 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
   }
 };
 
+
+// ====== Not Optimistic =======
+  // const handleAddCard = async () => {
+  //   if (!cardName.trim()) return;
+  //   try {
+  //     await fetch(`http://localhost:8080/board/card/${boardId}/${column.id}`, {
+  //       method: "POST",
+  //       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+  //       body: JSON.stringify({ title: cardName, description: "" }),
+  //     });
+  //     setCardName("");
+  //     setShowAddCard(false);
+  //   } catch (err) {
+  //     console.error("Error adding card:", err);
+  //   }
+  // };
+
+
+
   const handleAddCard = async () => {
-    if (!cardName.trim()) return;
-    try {
-      await fetch(`http://localhost:8080/board/card/${boardId}/${column.id}`, {
+  if (!cardName.trim()) return;
+
+  //add an optimistic card right away
+  const tempId = addOptimisticCard(column.id, cardName);
+
+  try {
+    await fetch(
+      `http://localhost:8080/board/card/${boardId}/${column.id}`,
+      {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({ title: cardName, description: "" }),
-      });
-      setCardName("");
-      setShowAddCard(false);
-    } catch (err) {
-      console.error("Error adding card:", err);
-    }
-  };
+      }
+    );
+
+    setCardName("");
+    setShowAddCard(false);
+
+  } catch (err) {
+    console.error("Error adding card:", err);
+
+    // Optional rollback
+
+    // Optional: rollback optimistic update on failure
+    setBoardData(prev => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        columns: prev.columns.map(col =>
+          col.id === column.id
+            ? {
+                ...col,
+                cards: col.cards.filter(card => card.id !== tempId)
+              }
+            : col
+        )
+      };
+    });
+
+  }
+};
+
+
 
   return (
     <Draggable draggableId={`col-${column.id}`} index={index}>

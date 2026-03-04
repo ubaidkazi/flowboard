@@ -1,6 +1,5 @@
 package com.flowboard.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.flowboard.app.entity.Board;
 import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.OutboxEvent;
@@ -8,11 +7,10 @@ import com.flowboard.app.entity.TaskColumn;
 import com.flowboard.app.repository.BoardRepo;
 import com.flowboard.app.repository.OutboxRepository;
 import com.flowboard.app.repository.TaskColumnRepo;
+import com.flowboard.app.util.JsonUtils;
 import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.columnevents.ColumnCreatedEvent;
 import com.flowboard.app.websocket.columnevents.ColumnDeletedEvent;
-import jakarta.persistence.Column;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,17 +36,12 @@ public class TaskColumnService
     UserService userService;
 
     @Autowired
-    OutboxRepository outboxRepo;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    OutboxRepository outboxRepository;
 
 
     @Autowired
     BoardEventPublisher eventPublisher;
 
-    @Autowired
-    OutboxPublisherService outboxPublisherService;
 
     public ResponseEntity<TaskColumn> createColumn(TaskColumn column, int boardId)
     {
@@ -86,7 +79,17 @@ public class TaskColumnService
 
         );
 
-        eventPublisher.publishColumnCreated(event);
+        //convert our event object into a json string and store in the DB
+        String payload = JsonUtils.toJson(event);
+
+        OutboxEvent outboxEvent = new OutboxEvent();
+        outboxEvent.setEventType("COLUMN_CREATED");
+        outboxEvent.setTopic("/topic/boards/");
+        outboxEvent.setDestinatonId(boardId);
+        outboxEvent.setPayload(payload);
+        outboxEvent.setCreatedAt(Instant.now());
+
+        outboxRepository.save(outboxEvent);
 
         return new ResponseEntity<TaskColumn>(column, HttpStatus.OK);
     }
@@ -131,20 +134,16 @@ public class TaskColumnService
         );
 
         //convert our event object into a json string and store in the DB
-        String payload;
-        try {
-            payload = objectMapper.writeValueAsString(event);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize ColumnDeletedEvent", e);
-        }
+        String payload = JsonUtils.toJson(event);
 
         OutboxEvent outboxEvent = new OutboxEvent();
         outboxEvent.setEventType("COLUMN_DELETED");
+        outboxEvent.setTopic("/topic/boards/");
         outboxEvent.setDestinatonId(boardId);
         outboxEvent.setPayload(payload);
         outboxEvent.setCreatedAt(Instant.now());
 
-        outboxRepo.save(outboxEvent);
+        outboxRepository.save(outboxEvent);
 
         return ResponseEntity.ok(column);
     }

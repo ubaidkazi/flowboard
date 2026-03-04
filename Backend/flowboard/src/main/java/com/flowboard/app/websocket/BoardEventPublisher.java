@@ -78,10 +78,10 @@ public class BoardEventPublisher {
 
 
     //GENERIC PUBLISH METHOD
-    public void publish(Integer destinatonId , Object event) {
+    public void publish(String address , Object event) {
 
-            messagingTemplate.convertAndSend("/topic/boards/" + destinatonId , event);
-            System.out.println("Sent to topic:" + destinatonId + "Payload" +event);
+            messagingTemplate.convertAndSend(address , event);
+            System.out.println("Sent to topic:  " + address + "Payload:  " +event);
 
     }
 

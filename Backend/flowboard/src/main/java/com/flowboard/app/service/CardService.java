@@ -1,9 +1,14 @@
 package com.flowboard.app.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowboard.app.entity.Card;
+import com.flowboard.app.entity.OutboxEvent;
 import com.flowboard.app.entity.TaskColumn;
 import com.flowboard.app.repository.CardRepo;
+import com.flowboard.app.repository.OutboxRepository;
 import com.flowboard.app.repository.TaskColumnRepo;
+import com.flowboard.app.util.JsonUtils;
 import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.cardevents.CardCreatedEvent;
 import com.flowboard.app.websocket.cardevents.CardDeletedEvent;
@@ -13,12 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.runtime.ObjectMethods;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.flowboard.app.enums.EventType.*;
+
 
 @Service
 public class CardService {
@@ -35,6 +42,12 @@ public class CardService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
+    OutboxRepository outboxRepository;
 
 
 
@@ -61,14 +74,17 @@ public class CardService {
                 Instant.now()
         );
 
+        //convert our event object into a json string and store in the DB
+        String payload = JsonUtils.toJson(event);
 
-        eventPublisher.publishCardCreated(event);
+        OutboxEvent outboxEvent = new OutboxEvent();
+        outboxEvent.setEventType("CARD_CREATED");
+        outboxEvent.setTopic("/topic/boards/");
+        outboxEvent.setDestinatonId(boardId);
+        outboxEvent.setPayload(payload);
+        outboxEvent.setCreatedAt(Instant.now());
 
-
-
-
-
-
+        outboxRepository.save(outboxEvent);
 
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
@@ -87,7 +103,17 @@ public class CardService {
                 userService.getCurrentUser().getId(),
                 Instant.now());
 
-        eventPublisher.publishCardDeleted(event);
+        //convert our event object into a json string and store in the DB
+        String payload = JsonUtils.toJson(event);
+
+        OutboxEvent outboxEvent = new OutboxEvent();
+        outboxEvent.setEventType("CARD_DELETED");
+        outboxEvent.setTopic("/topic/boards/");
+        outboxEvent.setDestinatonId(boardId);
+        outboxEvent.setPayload(payload);
+        outboxEvent.setCreatedAt(Instant.now());
+
+        outboxRepository.save(outboxEvent);
 
         return new ResponseEntity<>(cardToDelete, HttpStatus.OK);
     }
@@ -142,6 +168,8 @@ public class CardService {
         card.setUpdatedAt(LocalDateTime.now());
         Card updatedCard = cardRepo.save(card);
 
+        int boardId = (int) updatedCard.getColumn().getBoard().getId();
+
         CardUpdatedEvent event = new CardUpdatedEvent(
                 CARD_UPDATED,
                 id,
@@ -158,8 +186,17 @@ public class CardService {
 
         );
 
-        eventPublisher.publishCardUpdated(event);
-        //System.out.println(updatedCard);
+        //convert our event object into a json string and store in the DB
+        String payload = JsonUtils.toJson(event);
+
+        OutboxEvent outboxEvent = new OutboxEvent();
+        outboxEvent.setEventType("CARD_UPDATED");
+        outboxEvent.setTopic("/topic/boards/");
+        outboxEvent.setDestinatonId(boardId);
+        outboxEvent.setPayload(payload);
+        outboxEvent.setCreatedAt(Instant.now());
+
+        outboxRepository.save(outboxEvent);
 
 
         return updatedCard;
