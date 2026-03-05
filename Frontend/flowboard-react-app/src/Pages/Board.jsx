@@ -283,7 +283,6 @@ break;
   //console.log(event.type);
   setBoardData(prev => {
     if (!prev) return prev;
-
     return {
       ...prev,
       columns: prev.columns.filter(
@@ -291,8 +290,26 @@ break;
       )
     };
   });
-
   break;
+
+  case "COLUMN_UPDATED":
+  setBoardData(prev => {
+    if (!prev) return prev;
+
+    return {
+      ...prev,
+      columns: prev.columns.map(col =>
+        col.id === event.columnId
+          ? { ...col, name: event.newTitle }
+          : col
+      )
+    };
+  });
+  break;
+
+
+  
+
 
 
 }

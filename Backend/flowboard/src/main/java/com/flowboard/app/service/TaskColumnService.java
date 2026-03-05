@@ -11,6 +11,7 @@ import com.flowboard.app.util.JsonUtils;
 import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.columnevents.ColumnCreatedEvent;
 import com.flowboard.app.websocket.columnevents.ColumnDeletedEvent;
+import com.flowboard.app.websocket.columnevents.ColumnUpdatedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
-import static com.flowboard.app.enums.EventType.COLUMN_CREATED;
-import static com.flowboard.app.enums.EventType.COLUMN_DELETED;
+import static com.flowboard.app.enums.EventType.*;
 
 @Service
 public class TaskColumnService
@@ -155,6 +155,36 @@ public class TaskColumnService
         column.setName(newTitle);
 
         columnRepo.save(column);
+
+        int boardId = (int) column.getBoard().getId();
+
+        ColumnUpdatedEvent event = new ColumnUpdatedEvent(
+                COLUMN_UPDATED,
+                columnId,
+                boardId,
+                newTitle,
+                column.getPosition(),
+                userService.getCurrentUser().getId(),
+                Instant.now()
+        );
+
+        //convert event into a JSON string to store
+        String payload = JsonUtils.toJson(event);
+
+        //create and store event in outbox table
+        OutboxEvent outboxEvent = new OutboxEvent();
+        outboxEvent.setEventType("COLUMN_UPDATED");
+        outboxEvent.setTopic("/topic/boards/");
+        outboxEvent.setDestinatonId(boardId);
+        outboxEvent.setPayload(payload);
+        outboxEvent.setCreatedAt(Instant.now());
+
+        outboxRepository.save(outboxEvent);
+
+
+
+
+
 
         return ResponseEntity.ok(column);
 
