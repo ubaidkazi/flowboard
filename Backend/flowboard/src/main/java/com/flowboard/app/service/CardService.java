@@ -1,6 +1,5 @@
 package com.flowboard.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.OutboxEvent;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.lang.runtime.ObjectMethods;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

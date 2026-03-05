@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import java.time.Instant;
@@ -148,4 +147,17 @@ public class TaskColumnService
         return ResponseEntity.ok(column);
     }
 
+    public ResponseEntity<TaskColumn> updateColumnName(int columnId, String newTitle)
+    {
+        TaskColumn column = columnRepo.findById(columnId)
+                .orElseThrow(() -> new RuntimeException("Column not found"));
+
+        column.setName(newTitle);
+
+        columnRepo.save(column);
+
+        return ResponseEntity.ok(column);
+
+
+    }
 }

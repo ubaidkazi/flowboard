@@ -183,7 +183,7 @@
 }
 
 /* input */
-.card-name-input {
+.card-name-input{
   padding: 10px 12px;
   font-size: 0.95rem;
 
@@ -269,7 +269,18 @@
   }
 }
 
-
+.column-name-input {
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  background: #fff; /* visible background */
+  width: 100%;       /* fill flex container */
+  padding: 4px 2px;
+  margin: 0;          /* remove margin interfering with flex */
+  box-sizing: border-box;
+}
 
 
 

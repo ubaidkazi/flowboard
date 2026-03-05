@@ -11,7 +11,8 @@ public enum EventType
 
     //COLUMN EVENTS
     COLUMN_CREATED,
-    COLUMN_DELETED
+    COLUMN_DELETED,
+    COLUMN_UPDATED
 
 
 }

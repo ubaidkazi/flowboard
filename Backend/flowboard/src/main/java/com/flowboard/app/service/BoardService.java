@@ -4,7 +4,6 @@ import com.flowboard.app.dto.request.UpdateBoardRequest;
 import com.flowboard.app.entity.*;
 import com.flowboard.app.repository.*;
 import com.flowboard.app.util.JsonUtils;
-import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.cardevents.CardMovedEvent;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
