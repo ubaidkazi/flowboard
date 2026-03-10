@@ -13,19 +13,26 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId }) {
     setEditedTitle(card.title);
   }, [card.title]);
 
-  // Helper to update card
+  // // Helper to update card
+  // const updateCard = (updates) => {
+  //   // Sync checked <-> progress for three states
+  //   if (updates.checked !== undefined) {
+  //     updates.progress = updates.checked ? "Completed" : card.progress === "Completed" ? "In Progress" : card.progress;
+  //   }
+
+  //   if (updates.progress !== undefined) {
+  //     updates.checked = updates.progress === "Completed";
+  //   }
+
+  //   onUpdate(card.id, updates);
+  // };
+
+
   const updateCard = (updates) => {
-    // Sync checked <-> progress for three states
-    if (updates.checked !== undefined) {
-      updates.progress = updates.checked ? "Completed" : card.progress === "Completed" ? "In Progress" : card.progress;
-    }
+  onUpdate(card.id, updates);
+};
 
-    if (updates.progress !== undefined) {
-      updates.checked = updates.progress === "Completed";
-    }
 
-    onUpdate(card.id, updates);
-  };
 
   return (
     <>

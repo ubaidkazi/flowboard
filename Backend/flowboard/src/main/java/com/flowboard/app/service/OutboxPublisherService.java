@@ -29,8 +29,6 @@ public class OutboxPublisherService {
 
         for (OutboxEvent event : events) {
            Object payload = JsonUtils.fromJson(event.getPayload());
-
-
            String address = event.getTopic() + event.getDestinatonId();
 
             eventPublisher.publish(

@@ -2,6 +2,7 @@ package com.flowboard.app.controller;
 
 
 
+import com.flowboard.app.dto.request.MoveCardRequest;
 import com.flowboard.app.entity.Card;
 import com.flowboard.app.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,16 @@ public class CardController
 
         return ResponseEntity.ok(updatedCard);
     }
+
+
+    @PostMapping("/card/moveCard")
+    public ResponseEntity<String> moveCard(@RequestBody MoveCardRequest request)
+    {
+        return cardService.moveCard(request);
+
+    }
+
+
 
 
 

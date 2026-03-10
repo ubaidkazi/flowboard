@@ -3,7 +3,7 @@ import { useState, useEffect,useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import Column from "../components/Column.jsx";
-import { Plus, X, CircleArrowLeft, LogOut} from "lucide-react";
+import { Plus, X, CircleArrowLeft, LogOut, User} from "lucide-react";
 import CardOpenModal from "../components/CardOpenModal.jsx";
 
 
@@ -208,7 +208,7 @@ break;
       checked: event.checked,
       description: event.description,
       dueDate: event.dueDate,
-      priority: event.prority,
+      priority: event.priority,
       progress: event.progress,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt
@@ -308,14 +308,35 @@ break;
   break;
 
 
+  case "COLUMN_MOVED":
   
+  //already a Number
+  const userId = localStorage.getItem("userId");
+
+  if(Number(userId) === event.movedBy)
+  {
+    console.log("ignored the event, bc current user");
+    return;
+  }
+  else
+  {
+    refreshContent();
+    console.log(event);
 
 
+    //console.log("stored userid:  " + userId);
+    //console.log("event moved by:  " + event.movedBy);
 
+
+  }
+  
+  break;
 }
 
 
 };
+
+
 
 
 
@@ -455,6 +476,12 @@ const addOptimisticCard = (columnId, cardTitle) => {
 
 // ====== Add Column with Optimistic update ===== 
 const handleAddColumn = async () => {
+
+  if(columnName.trim() === "")
+  {
+    return;
+  }
+
   const token = localStorage.getItem("token");
   const url = `http://localhost:8080/board/column/${boardId}`;
   const columnData = { name: columnName };
@@ -528,16 +555,27 @@ const handleAddColumn = async () => {
     const [movedCol] = newColumns.splice(source.index, 1);
     newColumns.splice(destination.index, 0, movedCol);
 
+    const movedColumnId = Number(result.draggableId);
+    const oldPosition = result.source.index;
+    const newPosition = result.destination.index;
+
+    console.log("Moved column ID:", movedColumnId);
+    console.log("Old position:", oldPosition);
+    console.log("New position:", newPosition);
+
+     //now old and new col positions only
     const payload = {
       boardId: boardData.id,
-      updatedColumns: newColumns.map((col, i) => ({ id: col.id, position: i })),
-      updatedCards: []
+      columnMoved: movedColumnId,
+      oldPosition: oldPosition,
+      newPosition: newPosition
+      
     };
 
     //Update UI once (no flicker)
     setBoardData(prev => ({ ...prev, columns: newColumns }));
 
-    sendReorderRequest(payload); // fire & forget
+    sendMoveColRequest(payload); // fire & forget
     return;
   }
 
@@ -574,16 +612,15 @@ const handleAddColumn = async () => {
     //Update UI once
     setBoardData(prev => ({ ...prev, columns: newColumns }));
 
-    sendReorderRequest(payload); // no second UI update
+    sendMoveCardRequest(payload); // no second UI update
   }
 };
 
-
-const sendReorderRequest = async (payload) => {
+const sendMoveColRequest = async (payload) => {
   const token = localStorage.getItem("token");
   //console.log(JSON.stringify(payload));
   try {
-    const res = await fetch("http://localhost:8080/board/reorder", {
+    const res = await fetch("http://localhost:8080/board/moveColumn", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -594,7 +631,39 @@ const sendReorderRequest = async (payload) => {
 
     if(res.ok)
     {
-      console.log("Board reordered successfully in the backend");
+      console.log("Column moved successfully in the backend");
+      // refreshContent();
+      console.log(res.text());
+      
+    }
+
+    if (!res.ok) throw new Error("Failed to update");
+
+    
+  } catch (error) {
+    console.error("Reorder error:", error);
+  }
+};
+
+
+
+
+const sendMoveCardRequest = async (payload) => {
+  const token = localStorage.getItem("token");
+  //console.log(JSON.stringify(payload));
+  try {
+    const res = await fetch("http://localhost:8080/card/moveCard", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if(res.ok)
+    {
+      console.log("Card Moved successfully in the backend");
       // refreshContent();
       
     }
@@ -689,44 +758,76 @@ const handleDeleteCard = async (cardId, columnId) => {
 ).current;
 
 
+// const handleCardUpdate = (cardId, updates) => {
+//   if (!updates) return;
+
+
+//   const finalUpdates = { ...updates };
+
+//   /// Checkbox → Progress
+//   if (updates.checked !== undefined) {
+//     finalUpdates.progress = updates.checked
+//       ? "Completed"
+//       : "In Progress";
+//   }
+
+//   // Progress → Checkbox
+//   if (updates.progress !== undefined) {
+//     finalUpdates.checked = updates.progress === "Completed";
+//   }
+
+
+//   setBoardData(prev => ({
+//     ...prev,
+//     columns: prev.columns.map(col => ({
+//       ...col,
+//       cards: col.cards.map(card =>
+//         card.id === cardId
+//           ? { ...card, ...updates }
+//           : card
+//       )
+//     }))
+//   }));
+
+//   debouncedSendUpdate(cardId, finalUpdates);
+// };
+
+
 const handleCardUpdate = (cardId, updates) => {
   if (!updates) return;
 
-
   const finalUpdates = { ...updates };
 
-  /// Checkbox → Progress
+  // Checkbox toggle
   if (updates.checked !== undefined) {
     finalUpdates.progress = updates.checked
       ? "Completed"
-      : "In Progress";
+      : "Not started";
   }
 
-  // Progress → Checkbox
+  // Progress dropdown change
   if (updates.progress !== undefined) {
     finalUpdates.checked = updates.progress === "Completed";
   }
 
+  setBoardData(prev => {
+    if (!prev) return prev;
 
-  setBoardData(prev => ({
-    ...prev,
-    columns: prev.columns.map(col => ({
-      ...col,
-      cards: col.cards.map(card =>
-        card.id === cardId
-          ? { ...card, ...updates }
-          : card
-      )
-    }))
-  }));
+    return {
+      ...prev,
+      columns: prev.columns.map(col => ({
+        ...col,
+        cards: col.cards.map(card =>
+          card.id === cardId
+            ? { ...card, ...finalUpdates }
+            : card
+        )
+      }))
+    };
+  });
 
-  debouncedSendUpdate(cardId, updates);
+  debouncedSendUpdate(cardId, finalUpdates);
 };
-
-  
-
-
-  
 
 
 
@@ -807,7 +908,7 @@ const selectedCard = boardData?.columns
         {setColumnName(e.target.value)}
       }
       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
+                        if (e.key === "Enter" && columnName.trim() !== "") {
                         handleAddColumn();
                         setColumnName("");
                         setShowAddColumn(false);

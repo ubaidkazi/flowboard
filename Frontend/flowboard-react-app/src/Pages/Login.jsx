@@ -56,7 +56,7 @@ function Login()
 
             //Save token to localStorage
             localStorage.setItem("token", data.token);
-            localStorage.setItem("userId", data.userId);
+            localStorage.setItem("userId", Number(data.userId));
             localStorage.setItem("userName", data.userName);
             localStorage.setItem("fullName", data.fullName);
             localStorage.setItem("userEmail", data.email);

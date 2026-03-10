@@ -2,11 +2,9 @@ package com.flowboard.app.controller;
 
 
 
-import com.flowboard.app.dto.request.UpdateBoardRequest;
+import com.flowboard.app.dto.request.MoveCardRequest;
 import com.flowboard.app.entity.Board;
-import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.TaskColumn;
-import com.flowboard.app.entity.User;
 import com.flowboard.app.service.BoardService;
 import com.flowboard.app.service.CardService;
 import com.flowboard.app.service.TaskColumnService;
@@ -103,20 +101,12 @@ public class BoardController
     }
 
 
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Board> deleteBoard(@PathVariable int id)
     {
         return boardService.deleteBoard(id);
     }
 
-    @PostMapping("/reorder")
-    public ResponseEntity<String> updateBoardPositions(@RequestBody UpdateBoardRequest board)
-    {
-        return boardService.updateBoardPositions(board);
-
-    }
 
 
 

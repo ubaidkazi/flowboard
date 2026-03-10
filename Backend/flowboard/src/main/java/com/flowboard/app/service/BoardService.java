@@ -1,6 +1,6 @@
 package com.flowboard.app.service;
 
-import com.flowboard.app.dto.request.UpdateBoardRequest;
+import com.flowboard.app.dto.request.MoveCardRequest;
 import com.flowboard.app.entity.*;
 import com.flowboard.app.repository.*;
 import com.flowboard.app.util.JsonUtils;
@@ -198,121 +198,7 @@ public class BoardService {
 //    }
 
 
-    @Transactional
-    public ResponseEntity<String> updateBoardPositions(UpdateBoardRequest request)
-    {
-        // Validate board exists (optional, but good practice)
-        Board board = boardRepo.findById(request.getBoardId())
-                .orElseThrow(() ->
-                        new RuntimeException("Board not found with id: " + request.getBoardId()));
 
-        // Validate card exists
-        Card movedCard = cardRepo.findById(request.getCardMoved())
-                .orElseThrow(() ->
-                        new RuntimeException("Card not found with id: " + request.getCardMoved()));
-
-        Integer oldPosition = movedCard.getPosition();
-        Integer newPosition = request.getNewPosition();
-
-        if (newPosition == null || newPosition < 0) {
-            throw new IllegalArgumentException("Invalid new position");
-        }
-
-        TaskColumn oldColumn = movedCard.getColumn();
-
-        // Validate new column exists
-        TaskColumn newColumn = columnRepo.findById(request.getNewColumn())
-                .orElseThrow(() ->
-                        new RuntimeException("Column not found with id: " + request.getNewColumn()));
-
-        boolean sameColumn = oldColumn.getId().equals(newColumn.getId());
-
-        if (sameColumn) {
-
-            // MOVING INSIDE SAME COLUMN
-            for (Card card : oldColumn.getCards()) {
-
-                if (card.getId().equals(movedCard.getId())) {
-                    continue;
-                }
-
-                if (newPosition > oldPosition) {
-                    // Moving DOWN
-                    if (card.getPosition() > oldPosition &&
-                            card.getPosition() <= newPosition) {
-
-                        card.setPosition(card.getPosition() - 1);
-                    }
-                } else if (newPosition < oldPosition) {
-                    // Moving UP
-                    if (card.getPosition() >= newPosition &&
-                            card.getPosition() < oldPosition) {
-
-                        card.setPosition(card.getPosition() + 1);
-                    }
-                }
-            }
-
-        } else {
-
-            // MOVING TO DIFFERENT COLUMN
-
-            //Close gap in old column
-            for (Card card : oldColumn.getCards()) {
-
-                if (!card.getId().equals(movedCard.getId()) &&
-                        card.getPosition() > oldPosition) {
-
-                    card.setPosition(card.getPosition() - 1);
-                }
-            }
-
-            //Create space in new column
-            for (Card card : newColumn.getCards()) {
-
-                if (card.getPosition() >= newPosition) {
-                    card.setPosition(card.getPosition() + 1);
-                }
-            }
-
-            movedCard.setColumn(newColumn);
-        }
-
-        // Set final position
-        movedCard.setPosition(newPosition);
-
-        // Save (other cards auto-persist because of @Transactional)
-        cardRepo.save(movedCard);
-
-
-        //card_moved so create and publish the event
-
-        CardMovedEvent cardMovedEvent = new CardMovedEvent(
-                CARD_MOVED,
-                movedCard.getId(),
-                request.getBoardId(),
-                oldPosition,
-                newPosition,
-                newColumn.getId(),
-                oldColumn.getId(),
-                userService.getCurrentUser().getId(),
-                Instant.now()
-        );
-
-        //Convert over event object into string to store in event outbox table
-        String payload = JsonUtils.toJson(cardMovedEvent);
-
-        OutboxEvent outboxEvent = new OutboxEvent();
-        outboxEvent.setEventType("CARD_MOVED");
-        outboxEvent.setTopic("/topic/boards/");
-        outboxEvent.setDestinatonId(request.getBoardId());
-        outboxEvent.setPayload(payload);
-        outboxEvent.setCreatedAt(Instant.now());
-
-        outboxRepository.save(outboxEvent);
-
-        return ResponseEntity.ok("Card moved successfully");
-    }
 
 
 

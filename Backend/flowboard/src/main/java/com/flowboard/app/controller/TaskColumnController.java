@@ -1,6 +1,8 @@
 package com.flowboard.app.controller;
 
 
+import com.flowboard.app.dto.request.MoveCardRequest;
+import com.flowboard.app.dto.request.MoveColumnRequest;
 import com.flowboard.app.dto.request.UpdateColumnNameRequest;
 import com.flowboard.app.entity.TaskColumn;
 import com.flowboard.app.service.TaskColumnService;
@@ -42,6 +44,14 @@ public class TaskColumnController
     public  ResponseEntity<TaskColumn> updateColumnName(@PathVariable int columnId, @RequestBody UpdateColumnNameRequest request)
     {
         return taskColumnService.updateColumnName(columnId, request.getNewTitle());
+    }
+
+
+    @PostMapping("/moveColumn")
+    public ResponseEntity<String> moveCard(@RequestBody MoveColumnRequest request)
+    {
+        return taskColumnService.moveColumn(request);
+
     }
 
 

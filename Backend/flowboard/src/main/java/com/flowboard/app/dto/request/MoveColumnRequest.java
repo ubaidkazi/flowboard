@@ -4,20 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateBoardRequest
+public class MoveColumnRequest
 {
     private Integer boardId;
-    private Integer cardMoved;
-    private Integer oldColumn;
-    private Integer newColumn;
+    private Integer columnMoved;
+    private Integer oldPosition;
     private Integer newPosition;
-
-
 
 }

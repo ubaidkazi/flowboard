@@ -1,7 +1,7 @@
 import React, { useState, memo, use } from 'react';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import Card from './Card';
-import styles from '../Styles/Column.module.css';
+import styles from '../styles/Column.module.css';
 import { Plus, X } from 'lucide-react';
 
 function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, onDeleteCard, addOptimisticCard }) {
@@ -176,7 +176,7 @@ const handleColumnNameSave = async () => {
 
 
   return (
-    <Draggable draggableId={`col-${column.id}`} index={index} isDragDisabled={isEditingColName}>
+    <Draggable draggableId={column.id.toString()} index={index} isDragDisabled={isEditingColName}>
   {(provided) => (
     <div
       className={styles.columnOuter}
