@@ -39,7 +39,7 @@ public class SecurityConfig
                 .cors(Customizer.withDefaults()) //Enable CORS support
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/register", "/auth/login", "/ws/**").permitAll()
+                        .requestMatchers("/auth/register", "/auth/login", "/ws/**", "/user/*/profile-picture").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -75,7 +75,7 @@ public class SecurityConfig
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of( "http://localhost:5173"));
+        config.setAllowedOrigins(List.of( "http://localhost:5173", "http://192.168.1.94:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

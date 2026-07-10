@@ -5,6 +5,7 @@ import com.flowboard.app.repository.UserRepo;
 import com.flowboard.app.security.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,4 +86,41 @@ public class UserService
     }
 
 
+
+
+
+
+
+
+
+    public ResponseEntity<String> uploadProfilePicture(Long id, MultipartFile file) throws IOException {
+
+        User user = repo.findById(id.intValue())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setProfilePicture(file.getBytes());
+        user.setProfilePictureType(file.getContentType());
+
+        repo.save(user);
+
+        return ResponseEntity.ok("Profile picture uploaded");
+
+
+
+
+
+    }
+
+
+    public ResponseEntity<byte[]> getProfilePicture(Long id)
+    {
+
+        User user = repo.findById(id.intValue()).orElseThrow();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // or PNG depending on your data
+                .body(user.getProfilePicture());
+
+
+    }
 }

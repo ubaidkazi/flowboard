@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @RestController
-@RequestMapping("/auth")
 public class UserController
 {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -27,7 +29,7 @@ public class UserController
 
 
 
-    @PostMapping("register")
+    @PostMapping("auth/register")
     public User register(@RequestBody User user)
     {
         user.setPasswordHash(encoder.encode(user.getPasswordHash()));
@@ -35,7 +37,7 @@ public class UserController
     }
 
 
-    @PostMapping("login")
+    @PostMapping("auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest user)
     {
         try
@@ -58,5 +60,22 @@ public class UserController
 //    }
 //
 //
+
+
+    @PutMapping("/user/{id}/profile-picture")
+    public ResponseEntity<?> uploadProfilePicture(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) throws IOException {
+
+        return userService.uploadProfilePicture(id, file);
+    }
+
+
+    @GetMapping("/user/{id}/profile-picture")
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable Long id) {
+
+        return userService.getProfilePicture(id);
+    }
+
 
 }
