@@ -1,7 +1,7 @@
 import styles from '../styles/Signup.module.css';
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Kanban, User, Lock, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff } from 'lucide-react';
+import { Kanban, User, Lock, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers } from 'lucide-react';
 
 function Signup() {
 
@@ -73,15 +73,21 @@ function Signup() {
       <div className={styles["left-side"]}>
 
         <div className={styles["left-side-section"]}>
-
-          <div className={styles["heading-logo"]}>
-            <Kanban size={88} className={styles["logo"]}> </Kanban>
-            <NavLink to="/" className={styles["heading"]}>Flow<span className={styles["heading-second-half"]} >Board </span></NavLink>
-          </div>
-          <div className={styles["left-section-text"]}>
-            <p> FlowBoard is your team's digital workspace — manage projects, track tasks, and collaborate in real time with powerful, visual Kanban boards.</p>
-          </div>
-        </div>
+        
+                  <div className={styles["heading-logo"]}>
+                    <Layers size={88} className={styles["logo"]}> </Layers>
+                  </div>
+        
+                  <div >
+                    <h1  className={styles["heading"]} onClick={()=>navigate("/")}>FlowBoard  </h1>
+        
+                  <div className={styles["left-section-text"]}>
+                    <p> Let's get started!</p>
+                  </div>
+        
+                  </div>
+                  
+                </div>
       </div>
 
       <div className={styles["right-section"]}>
@@ -104,7 +110,7 @@ function Signup() {
         </div>
           <div  className={styles["input-wrapper"]}>
           <User size={28} className={styles["input-icon"]}> </User>
-          <input name="username" value={formData.username} onChange={handleChange} placeholder='Make your username' required  className={styles["input"]}/>
+          <input name="username" value={formData.username} onChange={handleChange} placeholder='Create your username' required  className={styles["input"]}/>
         </div>
         <div className={styles["input-wrapper"]}> 
           

@@ -155,11 +155,11 @@ button:hover
 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100dvw;
   height: 100dvh;
   /* background-color: rgb(9, 146, 232); */
-  overflow-y: hidden;
+  overflow-y: auto;
   
 }
 .left-side
@@ -176,11 +176,14 @@ button:hover
 .left-side-section
 {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
-  /* background-color: wheat;  */
+  align-items: center;
   width: 80%;
   height: 80%;
+  gap:1rem;
+
+  /* background-color: bisque; */
 }
 .heading-logo
 {
@@ -189,6 +192,7 @@ button:hover
   justify-content: center;
   align-items: center;
   /* background-color: cadetblue; */
+  gap: 1rem;
 
 }
 .heading
@@ -199,17 +203,28 @@ button:hover
   text-align: center;
   color: #ffffff;
   transition: transform 0.3s ease;
+  margin-bottom: 0;
+  white-space: nowrap;
   
   
 }
 .heading-second-half
 {
   color:  #ffffff;
+
+  background-color: #1462df;
 }
+
+.heading:hover
+{
+  cursor: pointer;
+}
+
 .logo
 {
   /* color: #1462df; */
   color: rgb(255, 255, 255);
+
 
 }
 .left-section-text p
@@ -220,13 +235,13 @@ button:hover
   font-size: 1.6rem;
   font-weight: lighter;
   transition: transform 2s ease-in;
+  white-space: nowrap;
+
+  /* background-color: red; */
+
 }
 
 
-.left-section-text:hover , .heading-logo:hover
-{  
-  transform: translateY(-3px);
-}
 
 .right-section
 {
@@ -245,6 +260,7 @@ button:hover
 .form
 {
   display: flex;
+
   flex-direction: column;
   /* background-color: rgba(161, 144, 144, 0.725); */
   /* box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.242), 
@@ -252,12 +268,12 @@ button:hover
   /* border: 0.5px solid lightgray;  */
   justify-content: center;
   /* background-color: cadetblue; */
-  width: 50%;
+  
   align-content: center;
-  margin: 10px 20px;
-  padding: 40px 80px;
+  padding: 1rem 3rem;
   color: black;
   border-radius: 10px;
+  /* background-color: red; */
 }
 /* .form:hover
 {
@@ -270,7 +286,7 @@ button:hover
 .label-div
 {
   margin: 10px 5px;
-  padding: 25px 5px;
+  padding: 1rem 2rem;
   display: flex;
   flex-direction: column;
  
@@ -282,10 +298,13 @@ button:hover
   /* color: white; */
   color: #1462df;
   text-align: center;
-  padding: 5px 2px;
+  padding: 1rem;
   margin: 0;
   font-size: 3rem;
   font-weight: bolder;
+  white-space: nowrap;
+  
+
 }
 .form-label-2
 {
@@ -295,10 +314,12 @@ button:hover
   text-align: center;
   padding: 0;
   margin: 0;
+    white-space: nowrap;
+
 }
 .navlink-div
 {
-  width: 100%;
+  max-width: 100%;
   padding: 10px 4px;
   display: flex;
   flex-direction: column;
@@ -311,10 +332,16 @@ button:hover
   margin-top: 0;
   padding: 0;
   font-size: 0.9rem;
-  color: red;
+  color: rgb(255, 3, 3);
   text-align: center;
   font-weight: lighter;
   animation: fadeIn 0.8s ease-in-out;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:1rem;
+  padding: 1rem;
 }
 
 @keyframes fadeIn {
@@ -330,13 +357,22 @@ button:hover
 
 .reg-success
 {
+  
+  color: rgba(10, 193, 47, 0.989);
   margin-top: 0;
   padding: 0;
   font-size: 0.9rem;
-  color: rgba(10, 193, 47, 0.989);
   text-align: center;
   font-weight: lighter;
-   animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.8s ease-in-out;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0rem 1rem;
+
+  /* background-color: blue; */
 }
 
 .nav-link
@@ -388,7 +424,7 @@ button:hover
 }
 
 .input {
-  padding: 10px 58px;
+  padding: 1.4rem 3rem;
   height: 36px;
   width: 100%;
   font-size: 1rem;
@@ -429,3 +465,55 @@ button:hover
 .password-toggle-icon:hover {
   color: #000;
 }
+
+
+.mobile-heading-logo
+{
+  display: none;
+  
+  
+}
+.mobile-logo
+{
+  color: var(--primary);
+}
+.mobile-heading
+{
+  color: var(--primary);
+  font-size: 0.8rem;
+
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  /* Mobile styles here */
+  
+  .left-side
+  {
+    display: none;
+  }
+
+
+  .mobile-heading-logo
+  {
+   
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap:0.5rem;
+  padding: 2rem 1rem;
+  /* background-color: red; */
+
+
+  padding-top: 8rem;
+
+
+  display: none;
+  }
+
+
+
+
+}
+

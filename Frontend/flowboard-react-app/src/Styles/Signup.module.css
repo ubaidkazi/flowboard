@@ -1,9 +1,161 @@
+/* Login.module.css
+
+:root {
+  --primary-color: rgba(84, 174, 234, 0.854);
+  --input-bg: #f9fafb;
+  --border-color: #d1d5db;
+  --radius: 8px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --font-color: #1f2937;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  font-family: system-ui, sans-serif;
+}
+
+form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 600px;
+}
+
+h1 {
+  text-align: center;
+  /* margin-bottom: 1.5rem;
+  color: var(--font-color);
+}
+
+p
+{
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--font-color);
+}
+
+div {
+  margin-bottom: 1rem;
+}
+
+label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--font-color);
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background-color: var(--input-bg);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(44, 43, 67, 0.2);
+}
+
+button {
+  width: 50%;
+  padding: 0.75rem;
+  background-color: var(--primary-color); 
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+
+button:hover {
+  background-color: #3ce1edb3;
+}
+ */
+
+/* .form-container
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+
+}
+
+
+.form
+{
+  color: white;
+  font-size: 2rem;
+  text-align: center;
+  border-radius: 10px;
+}
+.form input
+{
+  border-radius: 5px;
+  font-size: 1.2rem;
+  height: 2rem;
+  width: 15rem;
+  padding: 0 12px;
+}
+.form a
+{
+  text-decoration: none;
+}
+.form button
+{
+  width: 50%;
+  padding: 0.75rem;
+  background-color: rgb(255, 255, 255); 
+  color: rgb(1, 0, 0);
+  border: none;
+  border-radius: 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 1.3rem;
+  
+}
+
+button:hover
+ {
+  background-color: #ebededb3;
+} */
+
+
+
+
+
+
+/* New */
+
+
 
 .wrapper
 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100dvw;
   height: 100dvh;
   /* background-color: rgb(9, 146, 232); */
@@ -24,9 +176,10 @@
 .left-side-section
 {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
-  /* background-color: wheat;  */
+  align-items: center;
+  gap: 1rem;
   width: 80%;
   height: 80%;
 }
@@ -37,6 +190,7 @@
   justify-content: center;
   align-items: center;
   /* background-color: cadetblue; */
+  
 
 }
 .heading
@@ -47,10 +201,20 @@
   text-align: center;
   color: #ffffff;
   transition: transform 0.3s ease;
+  margin-bottom: 0;
+  white-space: wrap;
+  
+  
+  
 }
 .heading-second-half
 {
   color:  #ffffff;
+}
+
+.heading:hover
+{
+  cursor: pointer;
 }
 .logo
 {
@@ -65,14 +229,12 @@
   color: white;
   font-size: 1.6rem;
   font-weight: lighter;
-  transition: transform 0.1s ease;
+  transition: transform 2s ease-in;
+  white-space: wrap;
+
 }
 
 
-.left-section-text:hover , .heading-logo:hover
-{  
-  transform: translateY(-3px);
-}
 
 .right-section
 {
@@ -91,6 +253,7 @@
 .form
 {
   display: flex;
+
   flex-direction: column;
   /* background-color: rgba(161, 144, 144, 0.725); */
   /* box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.242), 
@@ -98,12 +261,12 @@
   /* border: 0.5px solid lightgray;  */
   justify-content: center;
   /* background-color: cadetblue; */
-  width: 50%;
+  
   align-content: center;
-  margin: 10px 20px;
-  padding: 40px 80px;
+  padding: 1rem 3rem;
   color: black;
   border-radius: 10px;
+  /* background-color: red; */
 }
 /* .form:hover
 {
@@ -116,7 +279,7 @@
 .label-div
 {
   margin: 10px 5px;
-  padding: 25px 5px;
+  padding: 1rem 2rem;
   display: flex;
   flex-direction: column;
  
@@ -127,11 +290,15 @@
   
   /* color: white; */
   color: #1462df;
+  color: var(--primary);
   text-align: center;
-  padding: 5px 2px;
+  padding: 1rem;
   margin: 0;
   font-size: 3rem;
   font-weight: bolder;
+    white-space: nowrap;
+  
+
 }
 .form-label-2
 {
@@ -141,10 +308,12 @@
   text-align: center;
   padding: 0;
   margin: 0;
+    white-space: nowrap;
+
 }
 .navlink-div
 {
-  width: 100%;
+  max-width: 100%;
   padding: 10px 4px;
   display: flex;
   flex-direction: column;
@@ -157,10 +326,16 @@
   margin-top: 0;
   padding: 0;
   font-size: 0.9rem;
-  color: red;
+  color: rgb(255, 3, 3);
   text-align: center;
   font-weight: lighter;
   animation: fadeIn 0.8s ease-in-out;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:1rem;
+  padding: 1rem;
 }
 
 @keyframes fadeIn {
@@ -182,8 +357,15 @@
   color: rgba(10, 193, 47, 0.989);
   text-align: center;
   font-weight: lighter;
-   animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.8s ease-in-out;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:1rem;
+  padding: 0rem 1rem;
 }
+
 .nav-link
 {
   text-decoration: none;
@@ -233,7 +415,7 @@
 }
 
 .input {
-  padding: 10px 58px;
+  padding: 1.4rem 3rem;
   height: 36px;
   width: 100%;
   font-size: 1rem;
@@ -260,6 +442,7 @@
   cursor: pointer;
 }
 
+
 .password-toggle-icon {
   position: absolute;
   right: 20px;
@@ -272,4 +455,14 @@
 
 .password-toggle-icon:hover {
   color: #000;
+}
+
+
+@media (max-width: 768px) {
+  /* Mobile styles here */
+  
+  .left-side
+  {
+    display: none;
+  }
 }

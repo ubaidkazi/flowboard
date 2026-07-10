@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css";
 import { Link, NavLink } from "react-router-dom";
-import { Kanban, User, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff } from "lucide-react";
+import { Kanban, User, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers } from "lucide-react";
 
 function Login()
 {
@@ -44,7 +44,7 @@ function Login()
         e.preventDefault();
     
         try {
-          const response = await fetch("http://localhost:8080/auth/login", {
+          const response = await fetch("http://192.168.1.94:8080/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
@@ -94,22 +94,41 @@ function Login()
 
       <div className={styles["left-side"]}>
 
+
+
         <div className={styles["left-side-section"]}>
 
           <div className={styles["heading-logo"]}>
-            <Kanban size={88} className={styles["logo"]}> </Kanban>
-            <NavLink to="/" className={styles["heading"]}>Flow<span className={styles["heading-second-half"]} >Board </span></NavLink>
+            <Layers size={88} className={styles["logo"]}> </Layers>
           </div>
+
+          <div>
+            <h1  className={styles["heading"]} onClick={()=>navigate("/")}>FlowBoard  </h1>
+
           <div className={styles["left-section-text"]}>
             <p> Welcome back!</p>
           </div>
+
+          </div>
+          
         </div>
       </div>
 
       <div className={styles["right-section"]}>
+      
+      
       <div className={styles["form"]}>
+        
+       
+
+          
+
+
+
+
       <form onSubmit={handleSubmit}>
         <div className={styles["label-div"]}>
+          
           <div> 
             <h1 className={styles["form-label"]}> Login </h1>
 
@@ -150,6 +169,21 @@ function Login()
          <NavLink to="/signup" className={styles["nav-link"]}>Don't have an account?</NavLink>
         </div>
       </form>
+
+
+
+      <div className={styles["mobile-heading-logo"]}>
+
+            <div>
+              <Layers size={28} className={styles["mobile-logo"]}> </Layers>
+
+            </div>
+            
+            <h3  className={styles["mobile-heading"]} onClick={()=>navigate("/")}>FlowBoard  </h3>
+      </div>
+
+
+
       </div>
 
     </div>
