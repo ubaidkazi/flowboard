@@ -1,0 +1,44 @@
+.project-type-tab {
+  display: flex;
+  gap: 1rem 1rem;
+  border: 2px solid #eeeeee;
+  border-radius: 10px;
+  align-self: center;
+  /* height: 100%; */
+
+  /* border: 2px solid red; */
+  
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.1rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #666;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: #333;
+}
+
+.tab-active 
+{
+    color: #000;
+    font-weight: 600;
+    border-color: lightgray;
+    border-radius: 8px;
+    background-color: var(--foreground-muted);
+}
+
+.icon-label
+{
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  white-space: nowrap;
+}

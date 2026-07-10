@@ -1,0 +1,133 @@
+.card {
+    width: 100%;
+    background: white;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    overflow: visible;
+
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.card:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 0 5px var(--ring);
+    cursor: pointer;
+    /* border-color: var(--primary); */
+}
+
+.card:hover .title
+{
+    color: var(--ring);
+    /* color: red; */
+
+}
+
+
+.cover {
+    height: 110px;
+
+    
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-4) 20%, transparent),
+    color-mix(in oklch, var(--primary) 20%, transparent)
+  );
+
+
+    border-top-left-radius: 15px;
+     border-top-right-radius: 15px;
+
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1rem;
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    /* background-color: red; */
+    align-items: flex-start;
+    /* justify-content: flex-start;     */
+    min-width: 0;
+    max-width: 60%;
+}
+
+.title {
+    margin: 0;
+
+    font-size: 1.35rem;
+    font-weight: 700;
+
+    color: #111827;
+
+
+    transition: color .3s ease;
+     white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+
+    
+}
+
+.avatarGroup {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 50%;
+    object-fit: cover;
+
+    border: 2px solid white;
+
+    margin-left: -10px;
+}
+
+.avatar:first-child {
+    margin-left: 0;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+
+    color: #6b7280;
+    font-size: .9rem;
+    font-weight: 500;
+    padding: 1rem 0;
+
+    
+}
+
+.del-icon-div
+{
+    padding: 1rem 1rem;
+    
+}
+
+
+
+.del-icon:hover
+{
+    color: red;
+}
+

@@ -1,9 +1,9 @@
 import Sidebar from '../components/Sidebar';
 import styles from '../styles/ProjectView.module.css';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import DashboardCard from '../components/DashboardCard';
 import ProjectCard from '../components/ProjectCard';
-import { Kanban, CircleCheckBig, Users, Clock4Icon, ChartColumn, Plus, Search, Funnel, Grid3X3, List, FolderPen, NotepadText, Clock, User, CircleAlertIcon, Table} from 'lucide-react';
+import { Kanban, CircleCheckBig, Users, Clock4Icon, ChartColumn, Plus, Search, Funnel, Grid3X3, List, FolderPen, NotepadText, Clock, User, CircleAlertIcon, Table, ArrowLeft, LayoutGrid, UserRoundPlus, Trash2} from 'lucide-react';
 import QuickActionButton from '../components/QuickActionBtn';
 import QuickActionButtonBlack from '../components/QuickActionBtnBlack';
 import RecentActivityCard from '../components/RecentActivityCard';
@@ -11,9 +11,16 @@ import ProjectListCard from '../components/ProjectListCard';
 import BoardListCard from '../components/BoardListCard';
 import { useState, useEffect, act} from 'react';
 import NewBoardModal from '../components/NewBoardModal';
-import { useParams } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 import NewMemberModal from '../components/NewMemberModal'
+import TabSwitchComponent from '../components/ui/tab-switch-component';
+import SprintCard from '../components/SprintCard';
+
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+import BoardCard from '../components/BoardCard';
+import MemberCard from '../components/MemberCard';
+import NewRecentActivityCard from '../components/NewRecentActivityCard';
+import CreateBoardCard from '../components/CreateBoardCard';
 
 function ProjectView()
 {
@@ -44,14 +51,144 @@ function ProjectView()
 
 
 
-    const TABS = {
-      BOARDS: 'boards',
-      PEOPLE: "people",
+
+
+    const memberMock = 
+    {
+      id: 1,
+      name: "Ahmed Abbasi",
+      contact: "ahmed@flowboard.io",
+      avatarUrl: 'https://media.licdn.com/dms/image/v2/D5603AQHY1wnl6oalew/profile-displayphoto-scale_200_200/B56ZwIM876K4AY-/0/1769664141187?e=2147483647&v=beta&t=InVaKpyxNXmVeKj-2F5w8dbLC8zSnNKTkIzKAe6mutc',
+      role: "Owner"
+    }
+    const memberMock2 = 
+    {
+      id: 1,
+      name: "Alex Johnson",
+      contact: "alex@flowboard.io",
+      avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+      role: "Admin"
+    }
+    
+    const memberMock3 = 
+    {
+      id: 1,
+      name: "Alex Johnson",
+      contact: "alex@flowboard.io",
+      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
+      role: "Member"
+    }
+    const memberMock4 = 
+    {
+      id: 1,
+      name: "Alex Johnson",
+      contact: "alex@flowboard.io",
+      avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
+      role: "Member"
     }
 
+
+
+
+
+
+
+   const TABS = [
+        { label: "Boards", value: "boards"},
+        { label: "Members", value: "members" },
+        { label: "Activity", value: "activity" }
+     ];
+
+
+
+    const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const initialTab = searchParams.get("tab") || TABS.BOARDS;
+    const initialTab = searchParams.get("tab") || "boards";
     const [activeTab, setActiveTab] = useState(initialTab);
+
+
+    // const [activeTab, setActiveTab] = useState(TABS[0].value);
+
+
+    const [modalVariant, setModalVariant] = useState("default");
+
+
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      let stompClient;
+    
+     
+      const socket = new SockJS("http://localhost:8080/ws");
+    
+      stompClient = new Client({
+        webSocketFactory: () => socket,
+        connectHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+        onConnect: () => {
+          console.log("STOMP connected");
+    
+          stompClient.subscribe(
+            `/topic/projects/${projectId}`,
+            (message) => {
+              const event = JSON.parse(message.body);
+              handleProjectEvent(event);
+            }
+          );
+        },
+      });
+    
+      stompClient.activate();
+      //fetchBoard();
+    
+      return () => {
+        stompClient.deactivate();
+      };
+    }, [projectId]);
+
+
+
+    const handleProjectEvent = (event) => {
+  switch (event.type) {
+  
+
+  case "BOARD_CREATED":
+
+
+  const newBoard = {
+        name  : event.title,
+        description: event.desc,
+        user: {
+          id: event.createdBy
+        }
+      }
+
+  
+
+   setBoardsData((prev) => {
+        if (!prev) return [newBoard];
+
+        return [...prev, newBoard];
+      });
+
+
+  
+
+
+  console.log("Board Added!");
+  console.log(event);
+  
+
+  break;
+
+ 
+
+  }
+}
+
+
+
     
 
 
@@ -70,7 +207,7 @@ function ProjectView()
   const getProjectDescription = async (projectId) => {
       const token = localStorage.getItem("token");
       // const currentUser = localStorage.getItem("userId");
-      console.log(token);
+      //console.log(token);
 
      
       try {
@@ -88,7 +225,7 @@ function ProjectView()
           // setMessage(text);
           // const data = await response.json();
           setProjectDescription(desc);
-          console.log("Got Desc:", response);
+          //console.log("Got Desc:", response);
         } else {
           setMessage("Failed to get description of the project");
         }
@@ -104,7 +241,7 @@ function ProjectView()
     
     const refreshContent = () => {
     setRefreshTrigger(prev => prev +1);
-    console.log("Refresh Content" + refreshTrigger);
+    //console.log("Refresh Content" + refreshTrigger);
     }
 
     const closeModal = () => {
@@ -117,18 +254,23 @@ function ProjectView()
       setIsMMOpen(false);
     }
 
+    const openModal = (variant) =>
+    {
+      setIsMMOpen(true);
+      setModalVariant(variant);
 
-    const handleDeleteProject = (id)=> {
-        console.log("project deleted!!!");
-        
-        if (window.confirm("Are you sure you want to delete this project?")) {
-                    deleteProject(id);
-                    console.log(id);
-            }
-
-        
     }
 
+      const handleDeleteProject = async (id) => {
+          if (!window.confirm("Delete?")) return;
+
+          try {
+              await deleteProject(id);
+              navigate(-1);
+          } catch (err) {
+              console.error(err);
+          }
+      };
 
     const deleteProject = async (projectId) => {
       const token = localStorage.getItem("token");
@@ -150,16 +292,18 @@ function ProjectView()
           // const text = await response.text();
           // setMessage(text);
           // const data = await response.json();
-          console.log("Board Deleted:", response);
+          //console.log("Board Deleted:", response);
         } else {
-          setMessage("Failed to delete project");
+          const text = await response.text();
+          console.log(text);
+          //setMessage("Failed to delete project");
         }
       } catch (err) {
         console.error("Error delete project:", err);
         
       }
 
-      refreshContent();
+     
     };
 
 
@@ -174,7 +318,7 @@ function ProjectView()
   useEffect(() => {
     const fetchBoards = async () => {
       const token = localStorage.getItem("token");
-      console.log(token);
+      //console.log(token);
 
       try {
         const response = await fetch(`http://localhost:8080/board/project/${projectId}`, {
@@ -188,7 +332,7 @@ function ProjectView()
           // const text = await response.text();
           // setMessage(text);
           const data = await response.json();
-          console.log("Fetched boards:", data);
+          //console.log("Fetched boards:", data);
           setBoardsData(data);
         } else {
           setMessage("Failed to load dashboard data");
@@ -210,10 +354,10 @@ function ProjectView()
   useEffect(() => {
     const fetchMembers = async () => {
       const token = localStorage.getItem("token");
-      console.log(token);
+      //console.log(token);
 
       try {
-        const response = await fetch(`http://localhost:8080/project/${projectId}/members`, {
+        const response = await fetch(`http://localhost:8080/project/member/all?projectId=${projectId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -227,11 +371,11 @@ function ProjectView()
           console.log("Fetched Members:", data);
           setProjectMembersData(data);
         } else {
-          setMessage("Failed to load Members data");
+          //setMessage("Failed to load Members data");
         }
       } catch (err) {
         console.error("Error fetching Members:", err);
-        setMessage("Server error");
+        //setMessage("Server error");
       }
     };
 
@@ -243,11 +387,13 @@ function ProjectView()
 
 
   const handleDeleteBoard = (boardId) => {
-    if (window.confirm("Are you sure you want to delete this board?")) {
-                    console.log("Delete Board presses" + boardId);
-                    deleteBoard(boardId);
-                    // console.log(id);
-            }
+    // if (window.confirm("Are you sure you want to delete this board?")) {
+    //                 //console.log("Delete Board pressed" + boardId);
+                   
+    //                 // console.log(id);
+    //         }
+
+             deleteBoard(boardId);
     }
 
     const deleteBoard = async (boardId) => {
@@ -270,7 +416,7 @@ function ProjectView()
           // const text = await response.text();
           // setMessage(text);
           // const data = await response.json();
-          console.log("Board Deleted:", response);
+          //console.log("Board Deleted:", response);
         } else {
           setMessage("Failed to delete board");
         }
@@ -283,7 +429,7 @@ function ProjectView()
     };
 
 
-    const deleteMember = async (projectId, userId) => {
+    const deleteMember = async (userId) => {
       const token = localStorage.getItem("token");
       // const currentUser = localStorage.getItem("userId");
       console.log(token);
@@ -299,26 +445,40 @@ function ProjectView()
           
         });
 
-        if (response.ok) {
-          // const text = await response.text();
-          // setMessage(text);
-          // const data = await response.json();
-          console.log("Board Member:", response);
+              if (response.ok) {
+          alert("Member removed successfully.");
         } else {
-          console.log("Failed to delete member");
+          const message = await response.text();
+
+          switch (response.status) {
+            case 403:
+              alert(message); // "Only the project owner can remove members."
+              break;
+
+            case 400:
+              alert(message); // "The project owner cannot be removed."
+              break;
+
+            case 404:
+              alert(message); // "Member not found."
+              break;
+
+            default:
+              alert(message || "Failed to delete member.");
+          }
         }
       } catch (err) {
-        console.error("Error delete member:", err);
-        
+        console.error("Error deleting member:", err);
+        alert("Something went wrong. Please try again.");
       }
 
       refreshContent();
     };
 
 
-    const handleDeleteMember = (projectId, userId) =>
+    const handleDeleteMember = (userId) =>
     {
-      deleteMember(projectId, userId);
+      deleteMember(userId);
       console.log("delete member called");
     }
 
@@ -358,22 +518,22 @@ function ProjectView()
 
 
 
-    const addBoard = async() => {
+    const addBoard = async(boardData) => {
 
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
-        console.log(token);
+        //console.log(token);
+        console.log(`Project ID: ${projectId}`)
 
         const newBoard = {
-        name  : newBoardData.boardName,
-        description: newBoardData.boardDesc,
+        name  : boardData,
         user: {
           id: userId
         }
       }
 
       try {
-        const response = await fetch("http://localhost:8080/board/18", {
+        const response = await fetch(`http://localhost:8080/board/${projectId}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -397,6 +557,7 @@ function ProjectView()
     };
 
     const handleOpenBoard = (id) => {
+        refreshContent();
         openBoard(id);
     }
 
@@ -468,7 +629,7 @@ function ProjectView()
 
       if (response.ok) {
         const data = await response.text(); //await here
-      console.log("Project name retrieved:", data);
+      //console.log("Project name retrieved:", data);
       setProjectName(data);
       } else {
         console.error("Failed to get project name");
@@ -516,6 +677,74 @@ function ProjectView()
 
 
 
+const handleOpenBoardModal = ()=>
+{
+  console.log("handleOpenBoardModal");
+  openModal("board");
+}
+
+
+
+const handleAddBoard = (newBoardData)=> {
+        addBoard(newBoardData);
+        console.log("Add Board called");
+        setIsMMOpen(false);
+        refreshContent();
+      
+    }
+
+
+
+const addProjectMember = async (identifier, role) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const body = { identifier, role };
+
+    console.log("Sending request body:", body);
+
+    const response = await fetch(
+      `http://localhost:8080/project/member/add?projectId=${projectId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const text = await response.text();
+    console.log("Response:", text);
+    if(response.status === 409)
+    {
+      alert(text);
+    }
+    else if (!response.ok) {
+      console.error("Request failed:", response.status, text);
+    }
+    
+  } catch (err) {
+    console.error("Error:", err);
+  }
+};
+
+
+
+
+const handleAddMember = async (identifier, role)=>
+{
+   await addProjectMember(identifier, "MEMBER");
+   console.log("add member function called")
+   setIsMMOpen(false);
+   refreshContent();
+
+}
+
+
+
+
 
 
 
@@ -533,20 +762,48 @@ function ProjectView()
     return(
 
         <>
-        <NewBoardModal  open={isOpen} close={closeModal} projectId={projectId}/>
-        <NewMemberModal  open={isMMOpen} close={closeMemberModal} projectId={projectId} addMember={addMember} currentUsers={projectMembersData}/>
+        {/* <NewBoardModal  open={isOpen} close={closeModal} projectId={projectId}/> */}
+        <NewMemberModal  open={isMMOpen} close={closeMemberModal} projectId={projectId} addMember={addMember} currentUsers={projectMembersData} variant={modalVariant}  onSubmit={ modalVariant=="board" ? handleAddBoard : handleAddMember }/>
 
         <div className={styles["main-div"]}>
-            <Sidebar> </Sidebar>
+            
 
             <div className={styles["projects-content"]}>
 
 
+
+              <div className={styles["back-navlink"]}>
+
+                <Link to="/dashboard/projects" className={styles["link"]}>      <ArrowLeft size={18} />             Back to projects </Link>
+
+              </div>
+
+
                 <div className={styles["top-div"]}>
-                    <div>
-                         <h3 className={styles["project-name-heading"]}> Project Name </h3>
+
+
+
+                  <div className={styles["icon-name-desc"]}>
+
+                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+                          <LayoutGrid className="h-7 w-7 text-primary" />
+                      </div>
+
+                 
+
+
+
+
+
+
+
+                    <div className={styles["name-desc"]}>
                          {/* Project Name Element */}
-                         {isEditingName ? (
+                         
+                         
+                         <div className={styles["project-title-div"]}>
+
+                          {isEditingName ? (
                                 <input
                                   type="text"
                                   value={editedProjectName}
@@ -565,7 +822,7 @@ function ProjectView()
                                />
                               ) : (
                                 <h1
-                                  className={styles["project-heading"]}
+                                  className={styles["project-title"]}
                                  onClick={() => setIsEditingName(true)}
                                                               style={{ cursor: "text" }}
                                        title="Click to edit"
@@ -574,14 +831,45 @@ function ProjectView()
                               </h1>
                               )}
 
+
+                         </div>
+
+
+                         <div className={styles["desc-div"]}>
+
+                          <h1
+                                  className={styles["project-desc"]}
+                                //  onClick={() => setIsEditingName(true)}
+                                //                               style={{ cursor: "text" }}
+                                      //  title="Click to edit"
+                                >
+                                 {projectDescription}
+                              </h1>
+
+                         </div>
+                         
+
+                            
+
+
                          {/* <h1 className={styles["project-heading"]}>{projectName}  </h1> */}
                         {/* <h3 className={styles["project-text"]}> {projectDescription} </h3> */}
                         {/* <h3 className={styles["project-text"]}> All the details like people, boards, tasks are below </h3> */}
                     </div>
-                    <div>
-                         <h3 className={styles["project-name-heading"]}> Description </h3>
-                         {/* <h1 className={styles["project-heading"]}>{projectName}  </h1> */}
 
+
+
+
+
+                  </div>
+
+
+                    
+
+
+                    <div>
+                         {/* <h1 className={styles["project-heading"]}>{projectName}  </h1> */}
+{/* 
                          {isEditingDesc ? (
                                 <input
                                   type="text"
@@ -613,26 +901,20 @@ function ProjectView()
                                 >
                                  {projectDescription}
                               </h1>
-                              )}
+                              )} */}
 
                         {/* <h1 className={styles["project-heading"]}> {projectDescription} </h1> */}
                         {/* <h3 className={styles["project-text"]}> All the details like people, boards, tasks are below </h3> */}
                     </div>
                     <div className={styles["project-btn-div"]}   >
-                        {/* <div className={styles["project-btn"]}> 
-                            <Plus  color="white" size={20} strokeWidth={2.2} className={styles["icon"]}   />
-                            <button    className={styles["nav-link"]}> <h2 className={styles["btn-name"]}> New Project </h2> </button>
-                        </div> */}
-                        { activeTab === TABS.BOARDS && 
-                        (
-                          <button className={styles["project-btn"]}> <h2 className={styles["btn-name"]} onClick={() => setIsOpen(true)} title='Add a new project'> <Plus  color="white" size={20} strokeWidth={2.4} className={styles["project-icon"]}   /> Board </h2> </button>
-                        )
-                        }
-                        { activeTab === TABS.PEOPLE && 
-                        (
-                          <button className={styles["project-btn"]}> <h2 className={styles["btn-name"]} onClick={() => setIsMMOpen(true)}> <Plus  color="white" size={20} strokeWidth={2.4} className={styles["project-icon"]}  /> Invite </h2> </button>
-                        )
-                        }
+                        
+                          {/* <button    className={styles["project-btn"]} onClick={() => setIsOpen(true)}> New Project  </button> */}
+                                  
+                          <button className={styles["project-btn"]} onClick={() => openModal("member")}>  <UserRoundPlus size={16} strokeWidth={2.4} className={styles["project-icon"]}  /> Invite  </button>
+                          <button className={styles["project-btn"]} onClick={() => openModal("board")}>  <Kanban size={16} strokeWidth={2.4} className={styles["project-icon"]}  /> Create Board  </button>
+                          <button className={styles["project-btn"]} onClick={() => handleDeleteProject(projectId)}>  <Trash2 size={16} strokeWidth={2.4} className={styles["project-icon"]}  /> Delete Project  </button>
+                        
+                        
                         
                         
                     </div>
@@ -640,169 +922,167 @@ function ProjectView()
                 </div>
 
 
-                <div className={styles["tab-bar"]}>
 
-                      <button onClick={() => handleTabChange(TABS.BOARDS)} className={`${styles["tab-btn"]} ${activeTab === TABS.BOARDS ? styles["tab-active"] : ""}`}>
-                        Boards
-
-                      </button>
-                      <button className={ `${styles["tab-btn"]}   ${activeTab == TABS.PEOPLE ? styles["tab-active"] : "" } ` } onClick={() => handleTabChange(TABS.PEOPLE)}>
-                        People
-                      </button>
+                <div className={styles["profile-tabs"]}>
+                                
+                  <TabSwitchComponent options={TABS} activeTab={activeTab} onTabChange={handleTabChange} ></TabSwitchComponent>
+                
+                
                 </div>
 
-                
-                
-                <div className={styles["content-wrapper"]}>
 
 
-                
-                
-                
-                
+                    
+                <div className={styles["project-grid-div"]}>
+
+
+
+                { activeTab === "boards" && 
+                      (<>
+
+                      { boardsData.map( (board, index) =>(
+                                    
+                    
+                                      <SprintCard
+                                            key={index}
+                                            title={board.name}
+                                            listsNumber={board.columnCount}
+                                            members={board.members}
+                                            onClick={ ()=>{ handleOpenBoard(board.id) }    }
+                                            onDelete={()=> {handleDeleteBoard(board.id)}}
+                                            // coverGradient="linear-gradient(135deg,#d8b4fe,#818cf8)"
+                                            // coverImage={"https://i.pravatar.cc/150?img=2"}
+                                            />                                 
+                                             ))}
+
+
+
+                                             {/* <SprintCard
+                                            title={"UBAID"}
+                                            users={[
+                                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+                                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+                                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+                                            ]}
+                                            onClick={ ()=>{ handleOpenBoard(1) }    }
+                                            // coverGradient="linear-gradient(135deg,#d8b4fe,#818cf8)"
+                                            // coverImage={"https://i.pravatar.cc/150?img=2"}
+                                            />                                  */}
+
+
+
+                                            <CreateBoardCard onClick={handleOpenBoardModal}> </CreateBoardCard>
+
+                    </>)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    { activeTab === "members" && 
+                      (<>
+                      <div className={styles["cards-container"]}>
+                        <div className={styles["cards-container-heading"]}> Team Members </div>
+                          <div className={styles["mc-container"]}>
+
+
+
+                            {projectMembersData.map( (member, index) =>(
+                                    
+                    
+                                      <MemberCard member={member} key={index} onDelete={handleDeleteMember}/>                           
+                                          ))}
+
+
+
+
+
+
+
+
+
+
+                          </div>
+                      </div>
+                    </>)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+                    { activeTab === "activity" && 
+                      (<>
+                      <div className={styles["cards-container"]}>
+                        <div className={styles["cards-container-heading"]}> Recent Activity </div>
+                          <div className={styles["rac-container"]}>
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"Design system update"} timeStamp={'5 minutes ago'} avatarVariant={'large'}  />
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
+
+                            
+
+                          </div>
+                      </div>
+                    </>)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     
 
 
 
-                    <div className={styles["boards-people-div"]}>
 
 
-                    
-
-                    
-                  
-                    <div className={styles["boards-diva"]}>
-                      { activeTab === TABS.BOARDS && (
-                        <>
-                        {/* <BoardListCard title= "BOARDS"  description= "board's description" onDelete={() => handleDeleteProject(2)}/> */}
-
-                        <div className={styles["tab-title-icons"]}>
-                  
-
-                  <h1 className={styles["tab-title"]}> Project Boards</h1>
-
-                  
-
-                <div className={styles["search-container"]}>
-                    <div className={styles["search"]}>
-                        <div className={styles["input-wrapper"]}>
-                            <Search size={18} style={styles.icon} className={styles["input-icon"]} />
-                            <input  type="text" placeholder="Search a board..."  className={styles["input"]}/>
-                        </div>
-                    </div>
-                    <div className={styles["filters"]}>
-                        <button className={styles["filter-btn"]}> <Funnel  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/>   Filters </button>
-                    </div>
-                    <div className={styles["view-container"]}>
-                        <div className={styles["view-btns"]}>
-                            <button className={styles["view-btn"]}> <Grid3X3  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/> </button>
-                            <button className={styles["view-btn"]}> <List  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/> </button>
-                        </div>
-                    </div>
-
-                </div>
-
-                </div>
 
 
-                            <table className={styles["board-table"]}> 
-                                <thead>
-                                  <tr>
-                                    <th> <FolderPen  size={17} /> Name </th>
-                                    <th> <NotepadText size={17}/> Description </th>
-                                    <th> <Clock  size={17}/> Updated Time </th>
-                                    <th> <User size={17}/> Owner </th>
-                                    <th> <CircleAlertIcon size={17}/> Priority </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  { boardsData.map( board=>(
-                                    <tr key={board.id}>
-                                      <td onClick={ () => {handleOpenBoard(board.id)}}> {board.name}</td>
-                                      <td> {board.description}</td>
-                                      <td> {board.timeUpdated}</td>
-                                      <td> Owner </td>
-                                      <td onClick={ ()=>{handleDeleteBoard(board.id)}}> Prority </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                        </table>
-                        </>
-                  
-                      )
+
+
+
+
+
+
+                      </div>
+
                       
-                      
-                      }
-                    </div>
-
-                    <div className={styles["peoplea-div"]}>
-                      { activeTab === TABS.PEOPLE && 
-                      
-                      (
-                      <>
-
-                        <div className={styles["tab-title-icons"]}>
-                  
-
-                  <h1 className={styles["tab-title"]}> Project Members</h1>
-
-                  
-
-                <div className={styles["search-container"]}>
-                    <div className={styles["search"]}>
-                        <div className={styles["input-wrapper"]}>
-                            <Search size={18} style={styles.icon} className={styles["input-icon"]} />
-                            <input  type="text" placeholder="Search a project member..."  className={styles["input"]}/>
-                        </div>
-                    </div>
-                    <div className={styles["filters"]}>
-                        <button className={styles["filter-btn"]}> <Funnel  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/>   Filters </button>
-                    </div>
-                    <div className={styles["view-container"]}>
-                        <div className={styles["view-btns"]}>
-                            <button className={styles["view-btn"]}> <Grid3X3  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/> </button>
-                            <button className={styles["view-btn"]}> <List  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/> </button>
-                        </div>
-                    </div>
-
-                </div>
-
-                </div>
-
-                        
-                        {/* // <BoardListCard title= "PEOPLES"  description= "board's description" onDelete={() => handleDeleteProject(2)}/> */}
-                        <table className={styles["board-table"]}> 
-                                <thead>
-                                  <tr>
-                                    <th> <FolderPen  size={17} /> Name </th>
-                                    {/* <th> <NotepadText size={17}/> Description </th> */}
-                                    <th> <Clock  size={17}/> Team </th>
-                                    <th> <User size={17}/> Owner </th>
-                                    <th> <CircleAlertIcon size={17}/> Priority </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  { projectMembersData.map( member=>(
-                                    <tr key={member.id}>
-                                      <td> {member.user.username}</td>
-                                      {/* <td> {board.description}</td> */}
-                                      <td> Default </td>
-                                      <td> Owner </td>
-                                      <td onClick={ ()=>{handleDeleteMember(projectId, member.user.id)}}> Priorty </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                        </table>
-
-                        </>
-                      )
-                      }
-
-                    </div>
-
-
-                    </div>
-                  </div>
 
 
             </div>
