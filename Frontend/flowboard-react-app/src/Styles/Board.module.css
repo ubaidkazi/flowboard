@@ -1,83 +1,164 @@
+/* 1. Blue Gradient */
+/* .bg-gradient-blue {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--primary) 20%, transparent),
+    color-mix(in oklch, var(--accent) 20%, transparent)
+  );
+} */
+
+/* 2. Green Gradient */
+/* .bg-gradient-green {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-2) 20%, transparent),
+    color-mix(in oklch, var(--chart-3) 20%, transparent)
+  );
+} */
+
+/* 3. Purple Gradient */
+/* .bg-gradient-purple {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-4) 20%, transparent),
+    color-mix(in oklch, var(--primary) 20%, transparent)
+  );
+} */
+
+/* 4. Orange Gradient */
+/* .bg-gradient-orange {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--warning) 20%, transparent),
+    color-mix(in oklch, var(--destructive) 20%, transparent)
+  );
+} */
+
+/* 5. Neutral */
+/* .bg-neutral {
+  background-color: color-mix(in oklch, var(--secondary) 50%, transparent);
+} */
+
+
+/* 1. Blue Gradient */
+.bgGradientBlue {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--primary) 20%, transparent),
+    color-mix(in oklch, var(--accent) 20%, transparent)
+  );
+}
+
+/* 2. Green Gradient */
+.bgGradientGreen {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-2) 20%, transparent),
+    color-mix(in oklch, var(--chart-3) 20%, transparent)
+  );
+}
+
+/* 3. Purple Gradient */
+.bgGradientPurple {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-4) 20%, transparent),
+    color-mix(in oklch, var(--primary) 20%, transparent)
+  );
+}
+
+/* 4. Orange Gradient */
+.bgGradientOrange {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--warning) 20%, transparent),
+    color-mix(in oklch, var(--destructive) 20%, transparent)
+  );
+}
+
+/* 5. Neutral */
+.bgNeutral {
+  background: color-mix(in oklch, var(--secondary) 50%, transparent);
+}
+
+
 
 
 .board-wrapper 
 {
     display: flex;
     flex-direction: column;
-    background-color: rgb(199, 187, 187);
-    height: 100vh;
+   /* background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--warning) 20%, transparent),
+    color-mix(in oklch, var(--destructive) 20%, transparent)
+  ); */
+    /* height: 94vh; */
     width: 100vw;
-    overflow-x: hidden;
-    flex: 0 0 auto;
+    height: 100vh;
+
+    overflow-y: hidden;
+
+
+
+
+
+
+
+
+
+    user-select: none;
+    /* overflow-x: auto; */
+
+
+    transition: background 0.3s ease;
+    
+
+
+   
 }
 
 
-.nav-bar
-{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 20px;
-    align-items: center;
-    height: 5%;
-    width: 100%;
-    background-color: rgb(0, 0, 0);
-    padding: 10px 10px;
-    /* position: sticky; */
 
-    position: sticky;
-    top: 0;
-    overflow-y: auto;
-
-}
-
-.nav-bar h3
-{
-    color: #f1f1f1;
-    font-family: inherit;
-    font-weight: lighter;
-}
-
-
-.nav-bar button
-{
-    border: none;
-    padding: 4px 13px;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: grey;
-}
-.nav-bar button:hover
-{
-    cursor: pointer;
-}
-
-
-.nav-link
-{
-    padding: 10px 10px;
-    text-decoration: none;
-    font-size: 1.5rem;
-    color: rgb(4, 1, 1);
-    background-color: blanchedalmond;
-    border-radius: 10px;
-}
 .board-content
 {
     display: flex;
-    height: 94%;
-    background-color: rgba(12, 11, 10, 0.712);
+    /* height: 100%; */
+    /* background-color: rgba(12, 11, 10, 0.712); */
     width: 100%;
 
-    /* background-image: url('../assets/chamfjord-3vgB52Ts6ao-unsplash.jpg'); */
+    /* background-image: url('../assets/board-background.jpg'); */
     background-size: cover;       /* makes image cover the whole element */
     background-position: center;  /* centers the image */
     background-repeat: no-repeat;
     /* background-color: red;   */
+    overflow: hidden;
+
+
+
+    
+
     
 
    
 }
+
+.nav-bar
+{
+  z-index: 1002;
+}
+
+.column-scroll-wrapper {
+    width:100%;
+    height:100%;
+
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    background-color: red;
+}
+
+
 
 .column-container {
     color: rgb(14, 13, 13);
@@ -86,23 +167,53 @@
     flex-wrap: nowrap;    /* critical for horizontal growth */
     gap: 5px;
 
-    height: 100%;
+    /* min-height: 100%; */
+    width: 100%;
     flex-direction: row;
     /* align-items: safe; */
-    /* background-color: rgb(199, 187, 187); */
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    flex: 0 0 auto;
-    padding: 0px 20px;
-    box-sizing: border-box;
-
-    /* border: 2px dashed blue; */
+    /* background-color: rgb(138, 52, 52); */
+;
     
+    overflow: auto;
+
+
+    padding: 0px 20px;
+    /* box-sizing: border-box; */
+  
+
+
+   
+    overflow-anchor: none;
+  
+
+
+   /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--foregroud) transparent;
+
+  /* background-color: black; */
+  padding-right: 18rem;
 }
 
+/* Chrome, Edge, Safari */
+.cards::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cards::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cards::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.cards::-webkit-scrollbar-thumb:hover {
+  background: #001308;
+}
+  
 
 .column-container:active {
   cursor: grabbing;
@@ -118,7 +229,7 @@
 
 
 .add-column-button {
-  background-color: rgba(255, 255, 255, 0.272);
+  background-color: rgba(255, 255, 255, 0.644);
   border: 0.5px solid rgba(211, 211, 211, 0.198);
   padding: 0 15px;
   border-radius: 10px;
@@ -128,43 +239,52 @@
   color: #ffffff;
   margin: 20px 5px;
   padding: 20px 15px;
-  min-width:16%;
+  min-width:12%;
   text-align: left;
   height: fit-content;
   max-height: 2%;
-  color: white;
-  width: 18%;
+  color: black;
+  width: 2%;
   display: flex;
   align-items: center;
   gap: 5px;
+  transition: all 0.2s ease;
+  margin-right: 20px;
+  border: 1px solid var(--border);
+  min-width: 200px;
 }
 
 .add-column-button:hover {
-  background-color: rgba(200, 200, 200, 0.2);
+  background-color: var(--primary);
+  color: white;
 }
 
 .add-column {
   display: flex; 
   flex-direction: column;
   gap: 8px;
-  margin: 20px 5px;
-  padding: 5px 2px;
+  margin-top: 20px;
+  /* margin-right: 20px; */
+  /* padding: 5px 2px; */
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   align-items: center;
   justify-content: center;
-  width: 18%;
-  min-width:16%;
   height: fit-content;
+  padding: 1rem 1rem;
+  min-width: 20%;
+  min-width: 250px;
+  /* background-color: red; */
+  border: 2px dotted var(--border);
 }
 .col-name-input
 {
     width: 100%;
-    padding: 10px 10px;
-    box-sizing: border-box;
+    padding: 0.4rem 0.6rem;
     margin: 0;
-    border-radius: 7px;
-    border: 0.5px solid lightgray;
+    border-radius: var(--radius);
+    box-shadow: 0px 0px 0px 5px var(--ring);
+    border: 0.5px solid var(--border);
 }
 .col-btn-div
 {
@@ -172,33 +292,61 @@
     display: flex;
     align-items: center;
     margin: 0;
+    gap: 0.2rem;
+    /* background-color: red; */
 
 }
 .col-btn
 {
-    padding: 8px 10px;
-    border: 0.5px solid lightgray;
-    width: 30%;
-    margin: 5px 5px;
-    font-weight: bold;
+    flex: 1;
+  padding: 8px 12px;
+
+  border-radius: 6px;
+  border: none;
+
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
 
 
+
+}
+
+.col-btn:active
+{
+  transform: scale(0.97);
 }
 .col-cancel-btn
 {
-    padding: 7px 1px;
-    border: none;
-    width: 15%;
-    background-color: rgba(255, 255, 255, 0);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: fit-content;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px;
+  border-radius: 6px;
+
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.col-cancel-btn:hover, .col-btn:hover
+
+
+.col-cancel-btn:hover
 {
-    background-color: rgba(128, 128, 128, 0.587);
-    cursor: pointer;
+    background-color: var(--primary);
+    color: #ffffff;
+    
+}
+.col-btn:hover
+{
+  background-color: var(--primary-muted);
 }
 

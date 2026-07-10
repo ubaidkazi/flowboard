@@ -234,7 +234,13 @@ const handleColumnNameSave = async () => {
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            <div className={styles.cards}>
+            <div className={styles.cards}
+            
+            
+            
+            
+            
+            >
               {column.cards?.map((card, index) => (
                 <Card
                   key={card.id}
@@ -256,7 +262,10 @@ const handleColumnNameSave = async () => {
           className={styles["add-card-button"]}
           onClick={() => setShowAddCard(true)}
         >
-          <Plus size={16} strokeWidth={3}/> Add Card
+         
+             <Plus size={16} strokeWidth={3}/> Add Card  
+
+          
         </button>
       ) : (
         <div className={styles["add-card"]}>

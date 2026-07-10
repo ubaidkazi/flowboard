@@ -2,7 +2,7 @@ import styles from '../styles/ProjectCard.module.css';
 import { NavLink } from 'react-router-dom';
 import { Users, Calendar } from 'lucide-react';
 
-function ProjectCard()
+function ProjectCard({title, description})
 {
 
 
@@ -12,8 +12,8 @@ function ProjectCard()
         <>
         <div className={styles["project-card"]}>
 
-            <h1  className={styles["title"]}>Website Redesign</h1>
-            <h3  className={styles["description"]}>Complete redesign of company website with modern UI/UX</h3>
+            <h1  className={styles["title"]}>{title}</h1>
+            <h3  className={styles["description"]}>{description}</h3>
             <div className = {styles["progress-container"]}>
                     <div className = {styles["progress-label"]}>
                         <span>Progress</span>

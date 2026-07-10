@@ -1,41 +1,72 @@
 import styles from "../styles/Board.module.css";
 import { useState, useEffect,useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link} from "react-router-dom";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import Column from "../components/Column.jsx";
-import { Plus, X, CircleArrowLeft, LogOut, User} from "lucide-react";
+import { Plus, X, CircleArrowLeft, LogOut, User, ArrowLeft, Palette, UserPlus, Sun, Moon, Settings, Trash2, Layers} from "lucide-react";
 import CardOpenModal from "../components/CardOpenModal.jsx";
-import BoardNavbar from "../components/BoardNavBar.jsx";
+import AvatarGroup from "../components/AvatarGroup.jsx";
+import Avatar from "../components/ui/avatar-new.jsx";
 
 
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
+import BoardNavbar from "../components/BoardNavBar.jsx";
 
 
 
 
 
-function Board() {
+function BoardCopy() {
+
+
+  //new funcs
+  const {boardId } = useParams();
+  console.log({boardId})
+  //const { theme, setTheme } = useTheme()
+  
+  //const board = boards.find(b => b.id === boardId) || boards[0]
+  //const project = projects.find(p => p.id === id) || projects[0]
+
+  const backgroundOptions = [
+  { id: "1", name: "Blue Gradient", class: "bg-gradient-to-br from-primary/20 to-accent/20" },
+  { id: "2", name: "Green Gradient", class: "bg-gradient-to-br from-chart-2/20 to-chart-3/20" },
+  { id: "3", name: "Purple Gradient", class: "bg-gradient-to-br from-chart-4/20 to-primary/20" },
+  { id: "4", name: "Orange Gradient", class: "bg-gradient-to-br from-warning/20 to-destructive/20" },
+  { id: "5", name: "Neutral", class: "bg-secondary/50" },
+]
+
+
+  
+  //const [boardName, setBoardName] = useState(board.name)
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
+  const [selectedBackground, setSelectedBackground] = useState(backgroundOptions[1])
+  const [inviteEmail, setInviteEmail] = useState("")
+
+  const handleNameChange = () => {
+    // In a real app, this would save the name
+    setIsEditingName(false)
+  }
+
+  const handleInvite = () => {
+    // In a real app, this would send an invite
+    setIsInviteDialogOpen(false)
+    setInviteEmail("")
+  }
+  //new funcs end
+
+
+  
 
 
 
-  const { boardId } = useParams();
+  //const { boardId } = useParams();
   const [boardData, setBoardData] = useState(null);
   const [columnName, setColumnName] = useState("");
   const [cardName, setCardName] = useState("");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const isDraggingRef = useRef(false);
   const scrollRef = useRef(null);
-  const isDownRef = useRef(false);
-  const mousePosition = useRef({ x: 0, y: 0 });
-  const autoScrollTimer = useRef(null);
-  const [boardBackground, setBoardBackground] = useState(styles.bgGradientBlue);
-  const [projectMembersData, setProjectMembersData] = useState([]);
-
-
-
-
 
 
 
@@ -50,97 +81,9 @@ const [showModal, setShowModal] = useState(false);
 const boardDataRef = useRef(null);
 
 
-const projectId = boardData?.projectId;
-
-
-const backgrounds = [
-  {
-    label: "Blue Gradient",
-    previewClass: styles.bgGradientBlue,
-    className: styles.bgGradientBlue,
-  },
-  {
-    label: "Green Gradient",
-    previewClass: styles.bgGradientGreen,
-    className: styles.bgGradientGreen,
-  },
-  {
-    label: "Purple Gradient",
-    previewClass: styles.bgGradientPurple,
-    className: styles.bgGradientPurple,
-  },
-  {
-    label: "Orange Gradient",
-    previewClass: styles.bgGradientOrange,
-    className: styles.bgGradientOrange,
-  },
-  {
-    label: "Neutral",
-    previewClass: styles.bgNeutral,
-    className: styles.bgNeutral,
-  },
-];
-
-
 useEffect(() => {
   boardDataRef.current = boardData;
-}, [boardData, isDragging]);
-
-
-useEffect(() => {
-  const trackMouse = (e) => {
-  if (!isDraggingRef.current) return;
-
-  mousePosition.current.x = e.clientX;
-  mousePosition.current.y = e.clientY;
-  };
-
-  window.addEventListener("mousemove", trackMouse);
-
-  return () => {
-    window.removeEventListener("mousemove", trackMouse);
-  };
-}, []);
-
-
-
-
- // GET ALL THE Members
-  useEffect(() => {
-
-    if (!projectId) return;
-
-    const fetchMembers = async () => {
-      const token = localStorage.getItem("token");
-      //console.log(token);
-
-      try {
-        const response = await fetch(`http://localhost:8080/project/member/all?projectId=${projectId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          // const text = await response.text();
-          // setMessage(text);
-          const data = await response.json();
-          console.log("Fetched Members:", data);
-          setProjectMembersData(data);
-        } else {
-          //setMessage("Failed to load Members data");
-        }
-      } catch (err) {
-        console.error("Error fetching Members:", err);
-        //setMessage("Server error");
-      }
-    };
-
-    fetchMembers();
-  }, [projectId]);
-
-
+}, [boardData]);
 
 
 
@@ -164,7 +107,8 @@ const closeModal = ()=>
 
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setBoardData(data);
+      console.log("Fetched:", data);
+      await setBoardData(data);
     } catch (err) {
       console.error(err);
     }
@@ -452,50 +396,35 @@ break;
 
   // Detect if mousedown was on a drag handle
   const isDraggingHandle = (target) => {
-  return target.closest('[data-rbd-drag-handle-draggable-id]');
-};
+  // Hello-pangea-dnd adds this attribute to drag handles
+  return target.closest('[data-rbd-drag-handle-context-id]');
+  };
 
   const handleMouseDown = (e) => {
+    if (isDraggingHandle(e.target)) return; // skip grab scroll
+    isDown = true;
+    el.classList.add(styles.grabbing); // apply grabbing class
+    startX = e.pageX - el.offsetLeft;
+    scrollLeft = el.scrollLeft;
+  };
 
-  if (isDraggingHandle(e.target)) {
-    return;
-  }
+  const handleMouseLeave = () => {
+    isDown = false;
+    el.classList.remove(styles.grabbing);
+  };
 
-  if (isDraggingRef.current) return;
-
-  isDownRef.current = true;
-
-  el.classList.add(styles.grabbing);
-  startX = e.pageX - el.offsetLeft;
-  scrollLeft = el.scrollLeft;
-};
-
-
-const stopScrolling = () => {
-  isDownRef.current = false;
-  el.classList.remove(styles.grabbing);
-};
-
-
-const handleMouseLeave = stopScrolling;
-
-const handleMouseUp = () => {
-  isDownRef.current = false;
-  el.classList.remove(styles.grabbing);
-};
+  const handleMouseUp = () => {
+    isDown = false;
+    el.classList.remove(styles.grabbing);
+  };
 
   const handleMouseMove = (e) => {
-  // if (isDragging) return;
-  if (isDraggingRef.current) return;
-  // if (!isDown) return;
-  if (!isDownRef.current) return;
-
-  e.preventDefault();
-
-  const x = e.pageX - el.offsetLeft;
-  const walk = (x - startX) * 1.2; //scroll speed
-  el.scrollLeft = scrollLeft - walk;
-};
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - startX) * 1.2; // adjust scroll speed here
+    el.scrollLeft = scrollLeft - walk;
+  };
 
   el.addEventListener("mousedown", handleMouseDown);
   el.addEventListener("mouseleave", handleMouseLeave);
@@ -584,77 +513,6 @@ const addOptimisticCard = (columnId, cardTitle) => {
 
   return tempId;
 };
-
-
-
-
-
-
-const updateMember = async (userId, method) => {
-  const token = localStorage.getItem("token");
-
-  try {
-    const response = await fetch(
-      `http://localhost:8080/card/${selectedCardId}/${userId}`,
-      {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (response.ok) {
-      const updatedCard = await response.json();
-
-      setBoardData(prevBoard => ({
-    ...prevBoard,
-    columns: prevBoard.columns.map(column => ({
-      ...column,
-      cards: column.cards.map(card =>
-        card.id === updatedCard.id ? updatedCard : card
-      )
-    }))
-              }));
-    }
-
-  } catch(err) {
-    console.error(err);
-  }
-};
-
-
-
-const addMemberToCard = (userId) => {
-  return updateMember(userId, "POST");
-};
-
-
-const removeMemberFromCard = (userId) => {
-  return updateMember(userId, "DELETE");
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1016,11 +874,6 @@ const handleCardUpdate = (cardId, updates) => {
 };
 
 
-  
-
-
-
-
 
 
 const selectedCard = boardData?.columns
@@ -1035,64 +888,38 @@ const selectedCard = boardData?.columns
     <>
       
 
-      <div className={`${styles["board-wrapper"]} ${boardBackground}`} >
-        {/* <div className={styles["nav-bar"]}> */}
-          {/* <h3>Board ID: {boardId} </h3> */}
-          {/* <h3>Name: {boardData?.name || "Loading..."} </h3>
+      <div className={styles["board-wrapper"]}>
+        
+        {/* <div className={styles["nav-bar"]}>
+          <h3>Name: {boardData?.name || "Loading..."} </h3>
           <button onClick={goBack}> <CircleArrowLeft></CircleArrowLeft>  </button>
-          <button onClick={handleLogout}><LogOut></LogOut></button>
-          
+          <button onClick={handleLogout}><LogOut></LogOut></button>=          
         </div> */}
+
 
         {/* Board Navbar */}
         <div className={styles["nav-bar"]}>
-                  <BoardNavbar boardData={boardData} boardBackground={backgrounds}
-        setBoardBackground={setBoardBackground}></BoardNavbar>
+                  <BoardNavbar boardData={boardData}></BoardNavbar>
 
 
         </div>
+
+
+      
         
         <div className={styles["board-content"]}>
           {boardData && (
-          <DragDropContext 
-          
-            
-            onDragStart={()=>{
-  isDraggingRef.current=true;
-}}
-
-onDragUpdate={(update)=>{
-
-
-  console.log(update.destination);
-
-
-}}
-
-onDragEnd={(result)=>{
-
-  isDraggingRef.current=false;
-
-  handleDragEnd(result);
-
-}}
-
-            >
-
+          <DragDropContext onDragEnd={handleDragEnd} onDragUpdate={handleDragUpdate}>
             <Droppable droppableId="columns" direction="horizontal" type="COLUMN">
-  
-                  {(provided) => (
-
-                    <div
-                      className={styles["column-container"]}
-                      ref={(node)=>{
-                          scrollRef.current = node;
-                          provided.innerRef(node);
-                        }}
-                      {...provided.droppableProps}
-                      
-                     
-                    >
+              {(provided) => (
+                <div
+                  className={styles["column-container"]}
+                ref={(node) => {
+                scrollRef.current = node;
+                provided.innerRef(node);
+              }}
+                  {...provided.droppableProps}
+                >
                   {boardData.columns.map((col, index) => (
                     <Column
                       key={col.id}
@@ -1171,9 +998,7 @@ onDragEnd={(result)=>{
   </div>
   )}
   </div>
-
   )}
-  
   </Droppable>
   </DragDropContext>
   )}
@@ -1185,17 +1010,13 @@ onDragEnd={(result)=>{
   <CardOpenModal
     CurrentCard={selectedCard}
     columnId={selectedColumnId}
-    projectMembers={projectMembersData}
     onClose={closeModal}
     onUpdate={handleCardUpdate}
     onDelete={handleDeleteCard}
-    projectMembers={projectMembersData}
-    onAddMember={addMemberToCard}
-    onRemoveMember={removeMemberFromCard}
   />
   )}
   </>
   );
 }
 
-export default Board;
+export default BoardCopy;

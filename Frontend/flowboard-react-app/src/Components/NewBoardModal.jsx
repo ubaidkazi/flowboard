@@ -21,7 +21,7 @@ function NewBoardModal({open, close, projectId})
             [e.target.name]: e.target.value
         }));
 
-        console.log(e.target.value);
+        //console.log(e.target.value);
     }
 
     const handleAddBoard = (projecId)=> {
@@ -34,7 +34,7 @@ function NewBoardModal({open, close, projectId})
 
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
-        console.log(token);
+        //console.log(token);
 
         const newBoard = {
         name  : newBoardData.boardName,
@@ -80,7 +80,7 @@ function NewBoardModal({open, close, projectId})
 
         <div className={styles["overlay"]} onClick={close}>
 
-            <div className={styles["modal"]} onClick={ (e) => {e.stopPropagation()}}>
+           
                 
                 
                
@@ -106,7 +106,7 @@ function NewBoardModal({open, close, projectId})
                         <input type='text' name='boardDesc'  value={newBoardData.projectDesc} onChange={handleInputChange}  placeholder='how would you describe it?' className={styles["input"]}/>
                     </div>
                     <div  className={styles["create-btn-div"]}>
-                        <button type="submit" onClick={()=> handleAddBoard(projectId)} className={styles["create-btn"]}><CirclePlus size={15}/> Create Board </button>
+                        <button type="submit" onClick={()=> handleAddBoard(projectId)} className={styles["create-btn"]}><CirclePlus size={30} className={styles["add-icon"]}/> Create Board </button>
                     </div>
                      
 
@@ -129,9 +129,6 @@ function NewBoardModal({open, close, projectId})
 
 
                 </div>
-
-            </div>
-
 
 
         </div>
