@@ -9,7 +9,7 @@ function ProjectListCard({title, description, onDelete, openProject})
 
         <>
 
-        <div className={styles["card"]}>
+        <div className={styles["card"]} >
 
             <div className={styles["icon-div"]}>
                 <FolderOpen size={26} color='#000000ff' strokeWidth={1.5} />

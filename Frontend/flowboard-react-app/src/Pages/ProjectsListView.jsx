@@ -1,10 +1,12 @@
-import Sidebar from '../components/Sidebar';
 import styles from '../styles/ProjectsListView.module.css';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Funnel, Grid3X3, List} from 'lucide-react';
+import { Plus, Search, Funnel, LayoutGrid, List} from 'lucide-react';
 import ProjectListCard from '../components/ProjectListCard';
 import { useState, useEffect} from 'react';
 import NewProjectModal from '../components/NewProjectModal';
+import ProjectCardNew from '../components/ProjectCardNew';
+import TabSwitchComponent from '../components/ui/tab-switch-component';
+import NewMemberModal from '../components/NewMemberModal';
 
 
 function ProjectsListView()
@@ -12,11 +14,47 @@ function ProjectsListView()
 
     const [projectsData, setProjectsData] = useState([]);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isProjectModalOpen, setProjectModalOpen] = useState(false);
 
 
 
      const navigate = useNavigate();
+
+
+    //I could also only use labels and compare the labels, but having value will let let me change the lables without changing any logic.
+    const tabs = [
+    { label: "All Projects", value: "all projects" },
+    { label: "Owned", value: "owned projects" },
+    { label: "Shared", value: "shared projects" }, ];
+
+    const [activeTab, setActiveTab] = useState(tabs[0].value);
+
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+
+        // Whatever should happen when the tab changes
+        console.log(tab);
+    };
+
+
+    const views = {
+      Grid: "grid",
+      List: "list",
+    }
+        
+
+
+
+    const[activeView, setActiveView] = useState(views.Grid);
+
+    const handleViewChange = (view) => {
+     if (view !== activeView) {
+      setActiveView(view);
+    }
+    };
+
+
+
 
     
     
@@ -63,16 +101,16 @@ function ProjectsListView()
     }
 
     const closeModal = () => {
-        setIsOpen(false);
+        setProjectModalOpen(false);
         refreshContent();
     }
 
 
-    const handleDeleteProject = (id)=> {
+    const handleDeleteProject =  async(id)=> {
         console.log("project deleted!!!");
         
         if (window.confirm("Are you sure you want to delete this project?")) {
-                    deleteProject(id);
+                    await deleteProject(id);
                     console.log(id);
             }
 
@@ -121,6 +159,61 @@ function ProjectsListView()
     });
 };
 
+
+
+
+
+const addProject = async(newProjectData) => {
+
+        console.log(newProjectData);
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+        console.log(token);
+
+        const newProject = {
+        name  : newProjectData.projectName,
+        description: newProjectData.projectDesc,
+        owner: {
+          id: userId
+        }
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/project/create", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(newProject)
+        });
+
+        if (response.ok) {
+          // const text = await response.text();
+          // setMessage(text);
+          // const data = await response.json();
+          console.log("Project Added:", response);
+        } else {
+          setMessage("Failed to add Project");
+        }
+      } catch (err) {
+        console.error("Error add Project:", err);
+      }
+      
+    };
+
+
+
+    const handleAddProject =  async (newProjectData)=> {
+        await addProject(newProjectData);
+        console.log("Add project called");
+        setProjectModalOpen(false);
+        refreshContent();
+      
+    }
+
+
+
     
 
 
@@ -142,10 +235,20 @@ function ProjectsListView()
     return(
 
         <>
-        <NewProjectModal  open={isOpen} close={closeModal}/>
+        {/* <NewProjectModal  open={isOpen} close={closeModal}/> */}
+        {isProjectModalOpen && (
+                <NewMemberModal
+                  open={true}
+                  close={() => setProjectModalOpen(false)}
+                  variant="project"
+                  onSubmit={handleAddProject}
+                  
+                />
+              )}
+
 
         <div className={styles["main-div"]}>
-            <Sidebar> </Sidebar>
+            
 
             <div className={styles["projects-content"]}>
 
@@ -160,7 +263,7 @@ function ProjectsListView()
                             <Plus  color="white" size={20} strokeWidth={2.2} className={styles["icon"]}   />
                             <button    className={styles["nav-link"]}> <h2 className={styles["btn-name"]}> New Project </h2> </button>
                         </div> */}
-                        <button className={styles["project-btn"]}> <h2 className={styles["btn-name"]} onClick={() => setIsOpen(true)}> <Plus  color="white" size={20} strokeWidth={2.4} className={styles["project-icon"]}   /> New Project </h2> </button>
+                        <button className={styles["project-btn"]} onClick={() => setProjectModalOpen(true)}> <h2 className={styles["btn-name"]} > <Plus  color="white" size={20} strokeWidth={2.4} className={styles["project-icon"]}   /> New Project </h2> </button>
                         
                     </div>
                     
@@ -169,27 +272,80 @@ function ProjectsListView()
 
 
                 <div className={styles["search-container"]}>
-                    <div className={styles["search"]}>
-                        <div className={styles["input-wrapper"]}>
-                            <Search size={18} style={styles.icon} className={styles["input-icon"]} />
-                            <input  type="text" placeholder="Search Projects..."  className={styles["input"]}/>
-                        </div>
+
+
+                 
+                  
+
+
+
+                       
+                    <div className={styles["project-type-tabs"]}>
+                        {/* <button onClick={() => handleTabChange(TABS.All)} className={`${styles["tab-btn"]} ${activeTab === TABS.All ? styles["tab-active"] : ""}`}>
+                                              All Projects
+                      
+                        </button>
+                        <button className={ `${styles["tab-btn"]}   ${activeTab == TABS.Owned ? styles["tab-active"] : "" } ` } onClick={() => handleTabChange(TABS.Owned)}>
+                                              Owned 
+                                              
+                        </button>
+                        <button className={ `${styles["tab-btn"]}   ${activeTab == TABS.Shared ? styles["tab-active"] : "" } ` } onClick={() => handleTabChange(TABS.Shared)}>
+                                              Shared 
+                                              
+                        </button> */}
+
+                         <TabSwitchComponent options={tabs} activeTab={activeTab} onTabChange={handleTabChange} ></TabSwitchComponent>
+
+
+
+                        
+
                     </div>
-                    <div className={styles["filters"]}>
+
+
+                    
+
+
+                    
+                    
+                                          
+                                    
+
+
+
+
+
+                    
+                        <div className={styles["search-view-container"]}>
+                          <div className={styles["search"]}>
+                            <div className={styles["input-wrapper"]}>
+                              <Search size={18} style={styles.icon} className={styles["input-icon"]} />
+                              <input  type="text" placeholder="Search Projects..."  className={styles["input"]}/>
+                            </div>
+                           </div>
+
+
+
+                                                         
+
+
+                           
+                    {/* <div className={styles["filters"]}>
                         <button className={styles["filter-btn"]}> <Funnel  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/>   Filters </button>
-                    </div>
+                    </div> */}
                     <div className={styles["view-container"]}>
                         <div className={styles["view-btns"]}>
-                            <button className={styles["view-btn"]}> <Grid3X3  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/> </button>
-                            <button className={styles["view-btn"]}> <List  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/> </button>
+                            <button className={ `${styles["view-btn"]}   ${activeView == views.Grid ? styles["view-btn-active"] : "" } ` } onClick={()=>{handleViewChange(views.Grid)}}> <LayoutGrid  size={20} strokeWidth={2.0} className={styles["funnel-icon"]} /> </button>
+                            <button className={ `${styles["view-btn"]}   ${activeView == views.List ? styles["view-btn-active"] : "" } ` }  onClick={()=>{handleViewChange(views.List)}}> <List   size={20} strokeWidth={2.0} className={styles["funnel-icon"]} /> </button>
                         </div>
                     </div>
 
+                        </div>
                 </div>
 
                 
-                <div className={styles["project-list-div"]}>
-                            {/* <ProjectListCard title="Website Redesign" description={"Complete redesign of company website with modern UI/UX"}/> */}
+                {/* <div className={styles["project-list-div"]}>
+                            <ProjectListCard title="Website Redesign" description={"Complete redesign of company website with modern UI/UX"}/>
                             {projectsData.map((project, index) => (
                             <ProjectListCard 
                                 key={index} 
@@ -201,12 +357,48 @@ function ProjectsListView()
                             ))}
                             
                         
-                 </div>
+                 </div> */}
 
-                
-                
+
+
+                 {projectsData && projectsData.length > 0 ? (
+                          <div
+                            className={
+                              activeView == views.List
+                                ? styles["project-list-div"]
+                                : styles["project-grid-div"]
+                            }
+                          >
+                            {projectsData.map((project) => (
+                              <ProjectCardNew
+                                key={project.id}
+                                title={project.name}
+                                description={project.description}
+                                members={project.projectMembers}
+                                openProject={() =>
+                                  handleOpenProject(
+                                    project.id,
+                                    project.name,
+                                    project.description
+                                  )
+                                }
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className={styles.emptyState}>
+                            You don't have any active projects :)
+                          </div>
+                        )}
+
+               
+
 
             </div>
+
+
+
+            
            
 
 
