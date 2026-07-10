@@ -1,7 +1,10 @@
 package com.flowboard.app.controller;
 
 
+import com.flowboard.app.dto.request.AddMemberRequest;
+import com.flowboard.app.dto.response.ProjectMemberDTO;
 import com.flowboard.app.dto.response.ProjectResponse;
+import com.flowboard.app.dto.response.UserResponseDTO;
 import com.flowboard.app.entity.Project;
 import com.flowboard.app.entity.ProjectMember;
 import com.flowboard.app.entity.User;
@@ -39,14 +42,17 @@ public class ProjectController
     public ResponseEntity<List<ProjectResponse>> getProject(@AuthenticationPrincipal UserDetails userDetails)
     {
         String username = userDetails.getUsername();
-        //User user = userService.findUserByUsername(username);
-        //return projectService.getProjectsByUserId(user.getId());
-        return projectService.getProjectsByUserId(1);
+
+
+        User user = userService.findUserByUsername(username);
+        return projectService.getProjectsByUserId(user.getId());
+        //return projectService.getProjectsByUserId(1);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Project> deleteProject(@PathVariable Long id)
+    public ResponseEntity<String> deleteProject(@PathVariable Long id)
     {
+//        System.out.println("DELETE controller hit");
         return projectService.deleteProject(id);
     }
 
@@ -82,6 +88,35 @@ public class ProjectController
         return projectService.updateProjectDesc(id, desc);
 
     }
+
+
+    @PostMapping("/member/add")
+    public ResponseEntity<?> addMember(
+            @RequestBody AddMemberRequest request,
+            @RequestParam Long projectId) {
+
+        return projectService.addProjectMember(request, projectId);
+    }
+
+
+    @GetMapping("member/all")
+    public ResponseEntity<List<ProjectMemberDTO>> getMembers(@RequestParam long projectId)
+    {
+        return projectService.getProjectMembers(projectId);
+    }
+
+
+    @DeleteMapping("{projectId}/members/{userId}")
+    public ResponseEntity<String> deleteProjectMember(@PathVariable int projectId, @PathVariable int userId)
+    {
+
+        return projectService.deleteProjectMember(projectId, userId);
+    }
+
+
+
+
+
 
 
 }
