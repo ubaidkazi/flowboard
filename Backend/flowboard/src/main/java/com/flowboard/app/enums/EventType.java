@@ -13,7 +13,11 @@ public enum EventType
     COLUMN_CREATED,
     COLUMN_DELETED,
     COLUMN_UPDATED,
-    COLUMN_MOVED
+    COLUMN_MOVED,
+
+
+    //PROJECT EVENTS
+    BOARD_CREATED
 
 
 }
