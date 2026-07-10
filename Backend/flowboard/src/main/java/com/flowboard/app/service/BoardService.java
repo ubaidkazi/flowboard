@@ -1,11 +1,14 @@
 package com.flowboard.app.service;
 
-import com.flowboard.app.dto.request.MoveCardRequest;
+import com.flowboard.app.dto.response.BoardCardDataResponse;
+import com.flowboard.app.dto.response.BoardDataResponseDTO;
+import com.flowboard.app.dto.response.BoardResponseDTO;
 import com.flowboard.app.entity.*;
+import com.flowboard.app.mapper.BoardDataMapper;
+import com.flowboard.app.mapper.BoardResponseMapper;
 import com.flowboard.app.repository.*;
 import com.flowboard.app.util.JsonUtils;
-import com.flowboard.app.websocket.cardevents.CardMovedEvent;
-import jakarta.transaction.Transactional;
+import com.flowboard.app.websocket.projectevents.BoardAddedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.*;
 
-import static com.flowboard.app.enums.EventType.CARD_MOVED;
+import static com.flowboard.app.enums.EventType.*;
 
 @Service
 public class BoardService {
@@ -37,6 +40,13 @@ public class BoardService {
     @Autowired
     OutboxRepository outboxRepository;
 
+    @Autowired
+    private BoardDataMapper boardDataMapper;
+
+    @Autowired
+    private BoardResponseMapper boardResponseMapper;
+
+
     public ResponseEntity<Board> createBoard(Board board, Long projectId) {
         if (board.getColumns() != null) {
             for (TaskColumn column : board.getColumns()) {
@@ -54,6 +64,26 @@ public class BoardService {
 
         board.setProject(project);
 
+        BoardAddedEvent event = new BoardAddedEvent(
+                BOARD_CREATED,
+                board.getName(),
+                board.getDescription(),
+                userService.getCurrentUser().getId(),
+                Instant.now()
+        );
+
+        String payload = JsonUtils.toJson(event);
+
+        OutboxEvent outboxEvent = new OutboxEvent();
+        outboxEvent.setEventType("BOARD_CREATED");
+        outboxEvent.setTopic("/topic/projects/");
+        outboxEvent.setDestinatonId(projectId.intValue());
+        outboxEvent.setPayload(payload);
+        outboxEvent.setCreatedAt(Instant.now());
+
+
+        outboxRepository.save(outboxEvent);
+
         return new ResponseEntity<>(boardRepo.save(board), HttpStatus.OK);
     }
 
@@ -63,10 +93,23 @@ public class BoardService {
     }
 
 
-    public ResponseEntity<List<Board>> getBoardsByProjectId(Long projectId) {
-        List<Board> boards = boardRepo.findByProjectId(projectId);
-        return new ResponseEntity<>(boards, HttpStatus.OK);
+    //old method, not used currently
+    public ResponseEntity<List<BoardDataResponseDTO>> getBoardsByProjectId(Long projectId) {
+
+        List<BoardDataResponseDTO> boards = boardRepo.findByProjectId(projectId)
+                .stream()
+                .map(boardDataMapper::toDTO)
+                .toList();
+
+        return ResponseEntity.ok(boards);
     }
+
+
+    public ResponseEntity<List<BoardCardDataResponse>> getBoardDataByProjectId(Long projectId) {
+        List<BoardCardDataResponse> data = boardRepo.getBoardCardData(projectId.intValue());
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
 
     public ResponseEntity<Board> deleteBoard(int id) {
         try {
@@ -78,10 +121,11 @@ public class BoardService {
         }
     }
 
-    public Board getBoardById(int id) {
+    public BoardResponseDTO getBoardById(int id) {
         try {
             Board board = boardRepo.findById(id).get();
-            return sortBoardData(board);
+            Board sortedBoard = sortBoardData(board);
+            return boardResponseMapper.toDTO(sortedBoard);
         } catch (Exception e) {
             return null;
         }
@@ -124,6 +168,17 @@ public class BoardService {
         }
     }
 
+    public ResponseEntity<String> updateBoardName(int boardId, String newName)
+    {
+        Board board = boardRepo.findById(boardId).orElseThrow(()->new RuntimeException("board does not exist"));
+
+        board.setName(newName);
+        boardRepo.save(board);
+
+        String updatedName = boardRepo.findById(boardId).get().getName();
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedName);
+    }
 
 
 //    @Transactional
@@ -196,6 +251,18 @@ public class BoardService {
 //
 //        return new ResponseEntity<>("okay", HttpStatus.OK);
 //    }
+
+
+
+//    public ResponseEntity<List<BoardMemberDataResponse>> getBoardMembers()
+//    {
+//
+//        return
+//    }
+
+
+
+
 
 
 
