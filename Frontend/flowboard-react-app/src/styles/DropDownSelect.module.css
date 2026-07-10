@@ -1,0 +1,120 @@
+/* DROPDOWN CSS */
+
+.dropdown-div
+{
+    /* background-color: red; */
+}
+
+
+.dropdown-container {
+    position: relative;
+    width: 12rem;
+    font-size: 0.9rem;
+    
+}
+
+.dropdown-btn {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+   
+
+    
+}
+
+.selection-and-icon
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    white-space: nowrap;
+
+}
+
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    z-index: 100;
+    
+
+    transform: scale(0.98) translateY(-6px);
+    opacity: 0;
+    pointer-events: none;
+
+    transform-origin: top;
+    transition: opacity 160ms ease, transform 160ms ease;
+
+}
+
+.open {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+}
+
+.closed {
+    opacity: 0;
+    transform: scale(0.98) translateY(-6px);
+    pointer-events: none;
+}
+
+.dropdown-option {
+    padding: 10px 14px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* background-color: red; */
+}
+
+.dropdown-option:hover {
+    background-color: #145cec;
+    cursor: pointer;
+    color: white;
+}
+
+.dropdown-option.selected {
+    background: #e5e7eb;
+    font-weight: 200;
+    color: black;
+
+}
+
+
+
+.dropdown-option.selected  .check-icon{
+    display: flex;
+}
+
+
+
+.check-icon
+{
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+

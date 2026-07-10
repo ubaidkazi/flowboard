@@ -54,6 +54,7 @@
     
     border: none;
     /* background-color: rgb(149, 16, 16); */
+    background-color: inherit;
     font-weight: bolder;
     font-size: 1.2rem;
     border-radius: 20px;
@@ -75,8 +76,9 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    background-color: rgb(241, 241, 241);
-    border-radius: 10px;
+    background-color: rgb(212, 209, 209);
+    border-radius: 6px;
+    border: 2px rgb(68, 65, 65) solid;
 }
 .form
 {
@@ -97,15 +99,16 @@
 .label
 {
     padding: 10px 20px;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
 
 }
 
 .input
 {
-    border-radius: 8px;
+    border-radius: 4px;
     border: 0.5px solid lightgray;
-    padding: 2px 15px;
+    padding: 2px 25px;
+    font-size: 1.2rem;
 }
 .create-btn-div
 {
@@ -113,6 +116,7 @@
     justify-content: center;
     margin: 40px 20px;
     padding: 20px 10px;
+    /* background-color: aqua; */
 }
 .create-btn
 {
@@ -125,11 +129,18 @@
     border-radius: 8px;
     border: 0.5px solid lightgray;
     transition: background-color 0.3s ease;
-    padding: 10px 25px;
+    padding: 15px 35px;
+    font-size: 1.3rem;
 }
 
 .create-btn:hover
 {
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.61);
+}
+
+.add-icon
+{
+    padding: 2px 10px;
+    
 }
