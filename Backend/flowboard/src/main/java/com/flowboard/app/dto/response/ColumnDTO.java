@@ -1,23 +1,19 @@
 package com.flowboard.app.dto.response;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectResponse
+public class ColumnDTO
 {
-    private Long id;
+    private int id;
     private String name;
-    private String description;
-    private String role;
-
-    private List<ProjectMemberDTO> projectMembers;
-
-
+    private int position;
+    private List<CardDTO> cards;
 }

@@ -39,6 +39,10 @@ public class Project
     @ManyToOne
     private Team team; // Nullable — if null, it’s a personal project
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(
+            mappedBy = "project",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<ProjectMember> members;
 }

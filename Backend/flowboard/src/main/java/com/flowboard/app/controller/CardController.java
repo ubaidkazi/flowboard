@@ -3,13 +3,20 @@ package com.flowboard.app.controller;
 
 
 import com.flowboard.app.dto.request.MoveCardRequest;
+import com.flowboard.app.dto.response.BoardCardDataResponse;
+import com.flowboard.app.dto.response.BoardMemberDataResponse;
+import com.flowboard.app.dto.response.CardDTO;
+import com.flowboard.app.dto.response.UserResponseDTO;
 import com.flowboard.app.entity.Card;
+import com.flowboard.app.entity.User;
 import com.flowboard.app.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -60,6 +67,30 @@ public class CardController
     public ResponseEntity<String> moveCard(@RequestBody MoveCardRequest request)
     {
         return cardService.moveCard(request);
+
+    }
+
+    @PostMapping("card/{cardId}/{userId}")
+    public ResponseEntity<CardDTO> assignCard(@PathVariable int cardId, @PathVariable int userId)
+    {
+        return cardService.assignCard(userId, cardId);
+    }
+
+
+    @DeleteMapping("card/{cardId}/{userId}")
+    public ResponseEntity<CardDTO> unAssignCard(@PathVariable int cardId, @PathVariable int userId)
+    {
+        return cardService.unAssignCard(userId, cardId);
+    }
+
+
+
+
+
+    @GetMapping("card/assign/{cardId}")
+    public ResponseEntity<List<BoardMemberDataResponse>> getCardAssignees(@PathVariable int cardId)
+    {
+        return cardService.getCardAssignees(cardId);
 
     }
 

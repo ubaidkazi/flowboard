@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Card
@@ -32,6 +34,24 @@ public class Card
     private String progress;
     private LocalDate dueDate;
     private boolean checked;
+
+
+    public List<User> getAssignedMembers() {
+        return assignedMembers;
+    }
+
+    public void setAssignedMembers(List<User> assignedMembers) {
+        this.assignedMembers = assignedMembers;
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name="card_members",
+            joinColumns=@JoinColumn(name="card_id"),
+            inverseJoinColumns=@JoinColumn(name="user_id")
+    )
+    private List<User> assignedMembers = new ArrayList<>();
+
 
     public String getPriority() {
         return priority;

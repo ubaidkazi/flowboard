@@ -2,14 +2,13 @@ package com.flowboard.app.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowboard.app.dto.request.MoveCardRequest;
-import com.flowboard.app.entity.Board;
-import com.flowboard.app.entity.Card;
-import com.flowboard.app.entity.OutboxEvent;
-import com.flowboard.app.entity.TaskColumn;
-import com.flowboard.app.repository.BoardRepo;
-import com.flowboard.app.repository.CardRepo;
-import com.flowboard.app.repository.OutboxRepository;
-import com.flowboard.app.repository.TaskColumnRepo;
+import com.flowboard.app.dto.response.BoardMemberDataResponse;
+import com.flowboard.app.dto.response.CardDTO;
+import com.flowboard.app.dto.response.UserResponseDTO;
+import com.flowboard.app.entity.*;
+import com.flowboard.app.mapper.CardMapper;
+import com.flowboard.app.mapper.UserMapper;
+import com.flowboard.app.repository.*;
 import com.flowboard.app.util.JsonUtils;
 import com.flowboard.app.websocket.BoardEventPublisher;
 import com.flowboard.app.websocket.cardevents.CardCreatedEvent;
@@ -25,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import static com.flowboard.app.enums.EventType.*;
@@ -46,11 +46,19 @@ public class CardService {
     @Autowired
     CardRepo cardRepo;
 
+
+    @Autowired
+    UserRepo userRepo;
+
     @Autowired
     UserService userService;
 
     @Autowired
-    ObjectMapper objectMapper;
+    CardMapper cardMapper;
+
+
+
+
 
     @Autowired
     OutboxRepository outboxRepository;
@@ -400,6 +408,62 @@ public class CardService {
 
         return ResponseEntity.ok("Card moved successfully");
     }
+
+
+
+    public ResponseEntity<CardDTO> assignCard(int userId, int cardId)
+    {
+        User assignee = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Card card= cardRepo.findById(cardId).orElseThrow(() -> new RuntimeException("Card not found"));
+
+        card.getAssignedMembers().add(assignee);
+        Card savedCard = cardRepo.save(card);
+
+
+
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(cardMapper.toDTO(savedCard));
+    }
+
+
+    public ResponseEntity<CardDTO> unAssignCard(int userId, int cardId) {
+
+        Card card = cardRepo.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+
+        boolean removed = card.getAssignedMembers()
+                .removeIf(user -> user.getId().equals(userId));
+
+        if (!removed) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(cardMapper.toDTO(card));
+        }
+
+        Card savedCard = cardRepo.save(card);
+
+        return ResponseEntity.ok(cardMapper.toDTO(savedCard));
+    }
+
+
+
+    public ResponseEntity<List<BoardMemberDataResponse>> getCardAssignees(int cardId)
+    {
+        Card card = cardRepo.findById(cardId).orElseThrow(() -> new RuntimeException("Card not found"));
+
+        List<BoardMemberDataResponse>  assignees =  card.getAssignedMembers()
+                .stream()
+                .map(user -> new BoardMemberDataResponse(
+                        user.getId(),
+                        user.getFullName()
+                ))
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(assignees);
+
+
+    }
+
 
 
 
