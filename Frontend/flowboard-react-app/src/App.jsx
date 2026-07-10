@@ -1,6 +1,7 @@
-import './App.css'
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from './pages/LandingPage'
+import NewLandingPage from './pages/NewLandingPage'
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import PrivateRoute from '../PrivateRoute';
@@ -8,39 +9,88 @@ import Dashboard from './pages/Dashboard';
 import ProjectsListView from './pages/ProjectsListView';
 import ProjectView from './pages/ProjectView';
 import Board from './pages/Board';
+import MainLayout from './components/MainLayout';
+import TeamView from './pages/TeamView';
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
+import TTW from "./pages/TestTW";
+import BoardLayout from './components/BoardLayout';
+import BoardCopy from "./pages/BoardCopy";
+
+
 
 function App() {
 
 
   return (
     <>
-      
 
-     <Router>
+
+     <div className="app">
+      {/* your app content */}
+
+      <Router>
       <Routes>
-        <Route path="/" element={<LandingPage/>} />
+
+
+        {/* Not Protected + No Layout */}
+        <Route path="/" element={<NewLandingPage/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/login" element={<Login/>} />
+        <Route path="/TW" element={<TTW/>} />
+        {/* <Route path="/dashboardtemp" element={<Dashboardtemp/>} /> */}
 
 
 
-         {/* Protected routes */}
 
+
+        {/* Protected + MAIN Layout */}
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/Dashboard/Projects" element={<ProjectsListView/>} />
+            <Route path="/Dashboard/Projects/:projectId/:projectName" element={<ProjectView/>} />
+            <Route path="/Dashboard/People" element={<TeamView/>} />
+            <Route path="/Dashboard/Analytics" element={<Analytics/>} />
+            <Route path="/Dashboard/Settings" element={<Settings />} />
+          </Route>
+
         </Route>
 
-        <Route element={<PrivateRoute />}>
-          <Route path="/Dashboard/Projects" element={<ProjectsListView/>} />
+
+       
+
+        
+        {/* Protected + board Layout */}
+        
+        {/* <Route element={<PrivateRoute />}>
+          <Route element={<BoardLayout />}>
+           <Route path="/board/:boardId" element={<Board/>} />
+            
+          </Route>
+
+        </Route>  */}
+
+
+
+
+         <Route element={<PrivateRoute />}>
+          
+           <Route path="/board/:boardId" element={<Board/>} />
+            
+    
+        </Route>
+  
+
+         <Route element={<PrivateRoute />}>
+          
+           <Route path="/boards/:boardId" element={<BoardCopy/>} />
+            
+    
         </Route>
 
-        <Route element={<PrivateRoute />}>
-          <Route path="/Dashboard/Projects/:projectId/:projectName" element={<ProjectView/>} />
-        </Route>
 
-        <Route element={<PrivateRoute />}>
-          <Route path="/board/:boardId" element={<Board/>} />
-        </Route>
+
 
 
         
@@ -49,6 +99,14 @@ function App() {
 
       </Routes>
     </Router>
+    
+    </div>
+
+
+
+      
+
+     
 
         
 

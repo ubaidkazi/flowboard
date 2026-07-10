@@ -70,11 +70,11 @@ const formatDueDate = (dueDate) => {
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
-            {...provided.dragHandleProps}
+            
             className={styles.card}
           >
             {/* INNER: your full visual styling, hover, padding, flex */}
-            <div className={`${styles.cardContent} ${snapshot.isDragging ? styles.dragging : ''}`} onClick={() => onClick(card)}>
+            <div {...provided.dragHandleProps} className={`${styles.cardContent} ${snapshot.isDragging ? styles.dragging : ''}`} onClick={() => onClick(card)}>
               <div className={styles.cardHeader}>
                 <div className={styles.nameCheckbox}>
                   <label
@@ -142,7 +142,7 @@ const formatDueDate = (dueDate) => {
 
               {card.dueDate && (
                 <div className={`${styles.dueDateDiv} ${statusClass}`}>
-                <Calendar size={13}/> {formatDueDate(card.dueDate)}
+                <Calendar size={13}/> <div>{formatDueDate(card.dueDate)}  </div>
                 </div>
               )}
             </div>
