@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "../styles/NavBar.module.css";
-import { Kanban } from "lucide-react";
+import { Kanban, Layers } from "lucide-react";
 
 
 
@@ -38,7 +38,11 @@ function NavBar() {
                 <NavLink to="/"  >
                 
                 <div className={styles["home-link-w-img"]}>
-                  <Kanban size={66} className={styles["icon"]} color="#3b82f6" strokeWidth={2}></Kanban>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--primary)">
+                                        <Layers color="white" className="h-5 w-5" /> 
+
+                                        
+                </div>
                   {/* <img src={kanbanimg} className={styles["kanban-img"]}></img> */}
                   <span className={styles["home-link-text-1"]}>Flow</span>
                   <span className={styles["home-link-text-2"]}>Board</span>
