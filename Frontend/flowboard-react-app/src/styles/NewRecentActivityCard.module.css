@@ -1,0 +1,116 @@
+
+
+.card
+{
+    padding: 0.2rem 1rem;
+    padding-bottom: 0.4rem;
+    padding-left: 0rem;
+    /* background-color: red; */
+    /* min-width: 200px; */
+
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    flex-shrink: 0;
+
+    border-bottom: 0.5px solid lightgray;
+    border-radius: 0px;
+    
+
+    /* border: 2px solid rgb(224, 1, 1); */
+
+
+
+    /* background-color: red; */
+
+
+}
+
+.left-section {
+    flex: 0 0 48px;   /* fixed width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.right-section
+{
+    flex: 4;
+    /* border: 1px solid black; */
+    gap: 0rem;
+
+    display: flex;
+    flex-direction: column;
+    
+
+}
+
+.avatars
+{
+    flex-shrink: 0;
+    background-color: red;
+}
+
+.upper-right-section
+{
+    display: flex;
+    gap: 0.2rem;
+    padding: 0;
+    margin: 0;
+}
+
+.time-stamp
+{
+    font-size: 0.8rem;
+    padding: 0;
+    margin: 0;
+    /* border: 1px solid red; */
+    color: var(--muted-foreground);
+}
+
+
+.user-name, .action
+{
+    font-size: 1rem;
+    font-weight: 600;
+
+}
+.action-type
+{
+    color: var(--muted-foreground);
+    font-weight: lighter;
+}
+
+
+.user-name, .action, .action-type
+{
+    white-space: nowrap;
+    font-size: 0.8rem;
+}
+
+
+
+
+/* PHONES */
+@media (max-width: 767px)
+{
+    .user-name, .action-type, .action
+    {
+        font-size: 0.4rem;
+        /* background-color: red; */
+    }
+}
+
+
+
+/* TABLETS */
+@media (max-width: 1373px)
+{
+    .user-name, .action-type, .action
+    {
+        font-size: 0.76rem;
+        /* background-color: red; */
+
+    }
+}

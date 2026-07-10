@@ -1,0 +1,88 @@
+.card
+{
+    display: flex;
+    flex-direction: column;
+    padding: 2.2rem 1.5rem;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    gap: 0.6rem;
+    transition: color 0.4s ease-in;
+
+    
+
+
+}
+
+.card:hover
+{
+    border: 0.5px solid var(--primary-muted);
+    cursor: pointer;
+    /* box-shadow: 0 0 5px var(--primary-muted); */
+}
+
+.card:hover .icon, .card:hover .title
+{
+    color: hsl(210, 80%, 49%);
+}
+
+.iconDiv
+{
+    transition: background 0.2s ease-in;
+    /* border: 1px solid red; */
+
+}
+
+.card:hover .iconDiv
+{
+    background-color: var(--icon-hover-bg);
+
+}
+
+
+
+.title-description
+{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.title
+{
+    font-size: 1rem;
+    font-weight: 600;
+    
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+
+}
+
+
+.description
+{
+    color: var(--muted-foreground);
+    font-weight: 200;
+    font-size: 0.85rem;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;    
+}
+.users-timestamp-section
+{
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+}
+
+
+
+.activity-timestamp
+{
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+    font-weight: 200;
+    
+}
