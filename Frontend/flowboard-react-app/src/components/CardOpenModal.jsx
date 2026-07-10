@@ -1,12 +1,18 @@
+import Avatar from './/ui/avatar-new';
 import styles from "../styles/CardOpenModal.module.css";
-import { X, Check, UserRoundPlus, Tag, Trash2, Save } from "lucide-react";
+import { X, Check, UserRoundPlus, Tag, Trash2, Save, PlusCircle, Plus, Database } from "lucide-react";
 import { useState, useEffect } from "react";
+import TaskBadge from './ui/task-badge';
+import MemberSearchCard from './ui/MemberSearchCard';
+import AvatarGroup from './AvatarGroup';
 
-function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId }) {
+function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, projectMembers, onAddMember, onRemoveMember}) {
   const card = CurrentCard;
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(card.title);
+  const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
+  const [memberSearch, setMemberSearch] = useState("");
 
   // Keep editedTitle in sync when card changes
   useEffect(() => {
@@ -28,9 +34,45 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId }) {
   // };
 
 
+
+    const isAssigned = (userId) => {
+
+    return CurrentCard?.assignedMembers?.some(
+        member => member.id === userId
+    );
+};
+
+
+
+
+
+  const filteredMembers = projectMembers
+  ?.filter((member) => {
+    const search = memberSearch.toLowerCase();
+
+    return (
+      member.fullName?.toLowerCase().includes(search) ||
+      member.username?.toLowerCase().includes(search) ||
+      member.email?.toLowerCase().includes(search)
+    );
+  })
+  .sort((a, b) => Number(isAssigned(b.id)) - Number(isAssigned(a.id)));
+
+
+
   const updateCard = (updates) => {
   onUpdate(card.id, updates);
-};
+    };
+
+
+
+  const toggleAddMemberModal = (state)=>
+  {
+    setAddMemberModalOpen(!state);
+  }
+
+
+
 
 
 
@@ -39,10 +81,17 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId }) {
       <div className={styles.modalOverlay} onClick={onClose}>
         <div></div>
         <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          
+          
           <div className={styles.modalHeader}>
+
+
             <div className={styles["checkbox-and-name"]}>
               {/* Checkbox */}
-              <label className={styles["trello-checkbox"]}>
+
+              <div>
+
+                <label className={styles["card-checkbox"]}>
                 <input
                   type="checkbox"
                   checked={card.checked}
@@ -52,6 +101,10 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId }) {
                   {card.checked && <Check size={14} strokeWidth={3} color="#fff" />}
                 </span>
               </label>
+
+
+              </div>
+              
 
               {/* Editable Title */}
               {isEditingTitle ? (
@@ -78,28 +131,157 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId }) {
                   autoFocus
                 />
               ) : (
-                <h2 onClick={() => setIsEditingTitle(true)} className={styles["card-title"]}>
+                  <div onClick={() => setIsEditingTitle(true)} className={styles["card-title"]}>
                   {card.title}
-                </h2>
+                </div>
+
+                
               )}
             </div>
 
             <div className={styles.closeBtn} onClick={onClose}>
               <X size={20} />
             </div>
+
+
           </div>
 
-          <div className={styles["assign-people"]}>
-            <p>
-              <UserRoundPlus size={20} /> Assign
-            </p>
+
+
+        <div className={styles["members-and-labels-div"]}>
+
+          <div className={styles["members"]}>
+
+            <div className={styles["members-heading"]}>
+               <UserRoundPlus size={20} />
+                <p>Assigned To </p>
+            </div>
+
+
+            <div className={styles["card-members"]}>
+
+              <div>
+                <AvatarGroup users={card.assignedMembers} className={styles["avatar-group"]}> </AvatarGroup>
+              </div>
+
+
+             
+
+              <div className={styles["add-members"]}>
+                <button className={styles["addMembers-button"]} onClick={()=>{toggleAddMemberModal(addMemberModalOpen)}}> <Plus size={21} color={"white"}> </Plus> </button>
+                
+                
+                {addMemberModalOpen &&
+                (
+                  <div onClick={toggleAddMemberModal} className={styles["search-member-modal-overlay"]}>
+
+                    <div className={styles["search-member-modal"]}  onClick={ (e) => {e.stopPropagation()}}>
+
+
+
+                  <div className={styles["member-modal-header"]}>
+
+                      <h3 className={styles["member-modal-heading"]}> Members </h3>
+                      
+                      <X className={styles["member-modal-close-btn"]} onClick={()=>{toggleAddMemberModal(addMemberModalOpen)}}></X>
+                  </div>
+
+
+                  <div className={styles["member-search-container"]}>
+
+                    <input type='text' placeholder='Seach Members' className={styles["search-member-input"]} value={memberSearch} onChange={(e) => setMemberSearch(e.target.value)}/>
+
+                    <div className={styles["member-search-result"]}>
+
+                     <p style={{ padding: "0.2rem" }}>Project Members</p>
+
+
+
+                     { filteredMembers.map((projectMember, index)=>(
+                            <MemberSearchCard  key={index} userId={projectMember.id} fullName={projectMember.fullName} onClick={()=>{
+
+                                                                          if(isAssigned(projectMember.id))
+                                                                            {onRemoveMember(projectMember.id);}
+                                                                            else 
+                                                                            {onAddMember(projectMember.id); 
+
+                                                                            }}} 
+                                                                            isMember={isAssigned(projectMember.id)}
+                                                                            >                                                    
+                            </MemberSearchCard>
+
+                     ))
+
+                     }
+
+
+
+
+
+
+
+                    
+                    
+                      {/* <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}} isMember={true}  />
+                       <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}}  />
+                       <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}}  />
+                       <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}}  /> */}
+                       
+
+                      
+                    </div>
+
+                  </div>
+
+                 
+
+                </div>
+
+                  
+                  </div>
+                )}
+
+              </div>
+              
+
+            </div>
+           
           </div>
 
           <div className={styles["labels"]}>
-            <p>
-              <Tag /> Add Labels
-            </p>
+
+
+            <div className={styles["labels-heading"]}>
+                <Tag />
+                <p> Add Labels </p>
+            </div>
+
+
+            <div className={styles["card-labels"]}>
+
+             
+
+                <TaskBadge badgeTitle={"Web design"}></TaskBadge>
+                <TaskBadge badgeTitle={"Database Migration"}></TaskBadge>
+                <TaskBadge badgeTitle={"Project X"}></TaskBadge>
+                <TaskBadge badgeTitle={"Design Workflows"}></TaskBadge>
+
+
+
+
+
+             
+            </div>
+
+
+           
           </div>
+
+
+        </div>
+          
+
+
 
           <div className={styles["options-div"]}>
             {/* Priority */}

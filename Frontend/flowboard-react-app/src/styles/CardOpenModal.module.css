@@ -8,28 +8,31 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
   backdrop-filter: blur(2px);
   animation: fadeIn 0.25s ease-out;
+  inset: 0;
+  z-index: 1001;
+
 }
 
 .modalContent {
   background: #ffffff;
   padding: 2rem;
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   width: 55%;
   max-width: 900px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-  height: 75%;
+  /* box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); */
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   transition: transform 0.2s ease, box-shadow 0.25s ease;
   animation: scaleIn 0.1s ease-out;
+  overflow: visible;
 }
 
 .modalContent:hover {
-  transform: translateY(-2px);
+  transform: translateY(0px);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
 }
 
@@ -41,12 +44,18 @@
   margin-bottom: 1rem;
   border-bottom: 1px solid #ebecf0;
   padding-bottom: 10px;
+  align-items: center;
+
+  /* background-color: beige; */
+
 }
 
 .checkbox-and-name {
   display: flex;
   align-items: center;
-  gap: 15px;
+
+  gap:1rem;
+  /* background-color: red; */
 
 }
 
@@ -65,7 +74,7 @@
 }
 
 /* Checkbox */
-.trello-checkbox {
+.card-checkbox {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
@@ -73,13 +82,15 @@
   gap: 8px;
   font-size: 14px;
   color: #172b4d;
+  padding: 1rem 0rem;
+  /* background-color: beige; */
 }
 
-.trello-checkbox input[type="checkbox"] {
+.card-checkbox input[type="checkbox"] {
   display: none;
 }
 
-.trello-checkbox .circle {
+.card-checkbox .circle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,17 +102,144 @@
   transition: all 0.25s ease-in-out;
 }
 
-.trello-checkbox:hover .circle {
+.card-checkbox:hover .circle {
   border-color: #0079bf;
   transform: scale(1.05);
 }
 
-.trello-checkbox input[type="checkbox"]:checked + .circle {
+.card-checkbox input[type="checkbox"]:checked + .circle {
   background-color: #0079bf;
   border-color: #0079bf;
   box-shadow: 0 0 5px rgba(0, 121, 191, 0.3);
   animation: popIn 0.25s ease forwards;
 }
+
+.members-and-labels-div
+{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.members, .labels
+{
+  display: flex;
+  flex-direction: column;
+  /* background-color: red; */
+  gap: 0.5rem;
+  padding: 1rem 0rem;
+}
+
+.members-heading, .labels-heading
+{
+  display: flex;
+  gap: 0.2rem
+}
+
+.card-members, .card-labels
+{
+  display: flex;
+  /* background-color: black; */
+}
+.addMembers-button
+{
+   width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  background-color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.card-labels
+{
+  gap: 0.2rem;
+}
+
+
+
+
+.search-member-modal
+{
+  
+      position: absolute;
+
+  background-color: rgb(255, 255, 255);
+  /* padding: 0.5rem 2rem; */
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  /* width: 500px; */
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+}
+.member-modal-header
+{
+  display: flex;
+  flex-direction: row ;
+  justify-content: flex-end;
+  /* background-color: rgb(197, 9, 9); */
+  gap:5rem;
+  padding: 0.4rem 0.3rem;
+  align-items: center;
+  
+
+
+}
+.member-modal-heading
+{
+  /* background-color: blue; */
+}
+.member-modal-close-btn:hover
+{
+  color: red;
+  cursor: pointer;
+
+
+}
+
+.member-search-container
+{
+  padding: 1rem;
+}
+
+
+
+.search-member-input
+{
+  padding: 0.2rem 1rem;
+  outline: none;
+  border-radius: var(--radius);
+  border: 1px solid var(--ring);
+  
+
+
+
+
+}
+
+.search-member-input:focus
+{
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 5px var(--ring);
+}  
+
+
+.member-search-result
+{
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.5rem  0rem;
+}
+
+
 
 /* Inputs & Selects */
 .options-div {
@@ -237,16 +375,35 @@
 {
   font-size: 1.2rem;
   font-weight: bold;
-  border: none;
-  border-bottom: 1px solid #ccc;
+  border-radius: var(--radius);
   outline: none;
-  background: transparent;
   width: 80%;
-  padding: 2px;
-  margin: 17px 0;
+  border: 1px solid var(--ring) !important;
+  padding: 0.2rem 1rem;
+  box-shadow: 0 0 5px var(--ring) !important;
+ 
+
+}
+.editable-input:focus
+{
+  border: 1px solid;
+   border-color: var(--ring);
+  box-shadow: 0 0 5px var(--ring);
+
+
 }
 
+
+
+
+
+
+
+
+
 .card-title {
-  font-size: 20px;
+  /* background-color: yellowgreen; */
+  font-size: 2rem;
   font-weight: bold;
+  
 }
