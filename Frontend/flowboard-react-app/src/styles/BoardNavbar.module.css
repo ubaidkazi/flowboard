@@ -1,0 +1,98 @@
+.right-section
+{
+    display: flex;
+    align-items: center;
+    /* background-color: black; */
+    gap:1rem;
+    z-index: 999;
+}
+.bg-color-div
+{
+    display: flex;
+
+}
+
+
+.bg-color-btn
+{
+    display: flex;
+    padding: 0.3rem 0.8rem;
+    gap: 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: black;
+    border: 0.5px solid lightgrey;
+    border-radius: 10px;
+    
+    transition: background 0.15s ease;
+    align-items: center;
+    
+
+
+}
+
+.bg-color-btn:hover
+{
+    background-color: var(--primary);
+    color: white;
+}
+
+.trigger-icon
+{
+    background-color: red;
+    align-self: center;
+}
+
+.menu-trigger-container
+{
+    
+    /* background-color: blue; */
+    padding: 0.2rem;
+
+    display: flex;
+    align-items: center;
+    z-index: 1001;
+
+
+}
+.goBackBtn
+{
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+}
+.goBackBtn:hover
+{
+    color: black;
+}
+
+.board-name-input
+{
+    padding: 0 1rem;
+    font-weight: 500;
+
+    padding: 0rem 0.5rem;
+
+
+    border-radius: var(--radius);
+
+
+
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 15px var(--ring);
+
+}
+.board-name-input:focus
+{
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 5px var(--ring);
+
+}
+
+
+.board-name
+{
+    color: back;
+    font-weight: 600;
+}
