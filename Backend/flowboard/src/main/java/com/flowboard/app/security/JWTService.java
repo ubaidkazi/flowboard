@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,10 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-    // This must be a valid Base64 encoded string of sufficient length (32 bytes / 256 bits for HmacSHA256)
-    // Generate one here: https://www.base64encode.org/
-    // Example key (DO NOT USE THIS EXACT KEY IN PRODUCTION):
-    private final String secretkey = "FTeLhEZ6ppaofwmLpOJ+sUXTYVIumGdnqXwr8zS9ysk=";
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
@@ -34,7 +35,7 @@ public class JWTService {
     }
 
     private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretkey);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
