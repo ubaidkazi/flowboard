@@ -7,6 +7,7 @@ import NewProjectModal from '../components/NewProjectModal';
 import ProjectCardNew from '../components/ProjectCardNew';
 import TabSwitchComponent from '../components/ui/tab-switch-component';
 import NewMemberModal from '../components/NewMemberModal';
+import { API_BASE_URL } from '../api/config';
 
 
 function ProjectsListView()
@@ -68,7 +69,7 @@ function ProjectsListView()
         console.log(token);
   
         try {
-          const response = await fetch("http://localhost:8080/project", {
+          const response = await fetch(`${API_BASE_URL}/project`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -127,7 +128,7 @@ function ProjectsListView()
 
      
       try {
-        const response = await fetch(`http://localhost:8080/project/${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/project/${projectId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -179,7 +180,7 @@ const addProject = async(newProjectData) => {
       }
 
       try {
-        const response = await fetch("http://localhost:8080/project/create", {
+        const response = await fetch(`${API_BASE_URL}/project/create`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,

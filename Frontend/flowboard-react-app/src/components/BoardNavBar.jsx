@@ -7,6 +7,7 @@ import { Plus, X, CircleArrowLeft, LogOut, User, ArrowLeft, Palette, UserPlus, S
 import CardOpenModal from "../components/CardOpenModal.jsx";
 import AvatarGroup from "../components/AvatarGroup.jsx";
 import Avatar from "../components/ui/avatar-new.jsx";
+import { API_BASE_URL } from "../api/config.js";
 
 
 import SockJS from 'sockjs-client';
@@ -75,7 +76,7 @@ function BoardNavbar({boardData, boardBackground, setBoardBackground,}) {
 
      
       try {
-        const response = await fetch(`http://localhost:8080/board/name/${boardId}`, {
+        const response = await fetch(`${API_BASE_URL}/board/name/${boardId}`, {
           method: "PUT",
           headers: {
           Authorization: `Bearer ${token}`,

@@ -1,6 +1,7 @@
 import styles from '../styles/NewProjectModal.module.css';
 import { Save, CirclePlus, CircleX } from 'lucide-react';
 import { useState } from 'react';
+import { API_BASE_URL } from '../api/config';
 
 function NewProjectModal({open, close})
 {
@@ -44,7 +45,7 @@ function NewProjectModal({open, close})
       }
 
       try {
-        const response = await fetch("http://localhost:8080/project/create", {
+        const response = await fetch(`${API_BASE_URL}/project/create`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,

@@ -2,6 +2,7 @@ import styles from '../styles/NewMemberModal.module.css';
 import { Save, CirclePlus, CircleX, Variable, XIcon} from 'lucide-react';
 import { useState, useRef, useEffect} from 'react';
 import UserResultCard from './UserResultCard';
+import { API_BASE_URL } from '../api/config';
 
 function NewMemberModal({open, close, projectId, addMember, currentUsers, variant="default", onSubmit})
 {
@@ -165,7 +166,7 @@ function NewMemberModal({open, close, projectId, addMember, currentUsers, varian
     // console.log(JSON.stringify(newMember));
 
       try {
-        const response = await fetch(`http://localhost:8080/users/search?query=${query}`, {
+        const response = await fetch(`${API_BASE_URL}/users/search?query=${query}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

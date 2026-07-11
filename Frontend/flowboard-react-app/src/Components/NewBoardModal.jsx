@@ -1,6 +1,7 @@
 import styles from '../styles/NewProjectModal.module.css';
 import { Save, CirclePlus, CircleX } from 'lucide-react';
 import { useState } from 'react';
+import { API_BASE_URL } from '../api/config';
 
 function NewBoardModal({open, close, projectId})
 {
@@ -45,7 +46,7 @@ function NewBoardModal({open, close, projectId})
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/board/${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/board/${projectId}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,

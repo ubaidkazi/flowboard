@@ -2,6 +2,7 @@ import styles from '../styles/Signup.module.css';
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Kanban, User, Lock, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers } from 'lucide-react';
+import { API_BASE_URL } from '../api/config';
 
 function Signup() {
 
@@ -36,7 +37,7 @@ function Signup() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

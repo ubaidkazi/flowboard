@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "../../styles/Avatar.module.css";
+import { API_BASE_URL } from "..//../api/config.js";
 
 const colors = [
   "#2563eb",
@@ -28,7 +29,7 @@ export default function Avatar({ fullName, userId, variant = "small" }) {
   //   );
   // }
 
-  const imgSrc = `http://localhost:8080/user/${userId}/profile-picture`;
+  const imgSrc = `${ API_BASE_URL }/user/${userId}/profile-picture`;
 
 
   const initials = fullName

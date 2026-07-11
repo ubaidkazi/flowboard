@@ -3,6 +3,7 @@ import { Droppable, Draggable } from '@hello-pangea/dnd';
 import Card from './Card';
 import styles from '../styles/Column.module.css';
 import { Plus, X } from 'lucide-react';
+import { API_BASE_URL } from '../api/config';
 
 function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, onDeleteCard, addOptimisticCard }) {
   const token = localStorage.getItem("token");
@@ -24,7 +25,7 @@ function Column({ column, index, boardId, refresh, onCardClick, onCardUpdate, on
   }
 
   try {
-    const response = await fetch(`http://localhost:8080/board/${boardId}/${column.id}`, {
+    const response = await fetch(`${API_BASE_URL}/board/${boardId}/${column.id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -66,7 +67,7 @@ const handleColumnNameSave = async () => {
 
   try {
     const res = await fetch(
-      `http://localhost:8080/board/column/${column.id}`,
+      `${API_BASE_URL}/board/column/${column.id}`,
       {
         method: "PUT",
         headers: {
@@ -134,7 +135,7 @@ const handleColumnNameSave = async () => {
 
   try {
     await fetch(
-      `http://localhost:8080/board/card/${boardId}/${column.id}`,
+      `${API_BASE_URL}/board/card/${boardId}/${column.id}`,
       {
         method: "POST",
         headers: {

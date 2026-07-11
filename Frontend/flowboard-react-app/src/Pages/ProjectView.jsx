@@ -14,7 +14,7 @@ import NewBoardModal from '../components/NewBoardModal';
 import NewMemberModal from '../components/NewMemberModal'
 import TabSwitchComponent from '../components/ui/tab-switch-component';
 import SprintCard from '../components/SprintCard';
-
+import { API_BASE_URL } from '../api/config';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import BoardCard from '../components/BoardCard';
@@ -119,7 +119,7 @@ function ProjectView()
       let stompClient;
     
      
-      const socket = new SockJS("http://localhost:8080/ws");
+      const socket = new SockJS(`${API_BASE_URL}/ws`);
     
       stompClient = new Client({
         webSocketFactory: () => socket,
@@ -211,7 +211,7 @@ function ProjectView()
 
      
       try {
-        const response = await fetch(`http://localhost:8080/project/desc/${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/project/desc/${projectId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -279,7 +279,7 @@ function ProjectView()
 
      
       try {
-        const response = await fetch(`http://localhost:8080/project/${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/project/${projectId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -321,7 +321,7 @@ function ProjectView()
       //console.log(token);
 
       try {
-        const response = await fetch(`http://localhost:8080/board/project/${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/board/project/${projectId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -357,7 +357,7 @@ function ProjectView()
       //console.log(token);
 
       try {
-        const response = await fetch(`http://localhost:8080/project/member/all?projectId=${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/project/member/all?projectId=${projectId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -403,7 +403,7 @@ function ProjectView()
 
      
       try {
-        const response = await fetch(`http://localhost:8080/board/${boardId}`, {
+        const response = await fetch(`${API_BASE_URL}/board/${boardId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -436,7 +436,7 @@ function ProjectView()
 
      
       try {
-        const response = await fetch(`http://localhost:8080/project/${projectId}/members/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/project/${projectId}/members/${userId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -489,7 +489,7 @@ function ProjectView()
         console.log(token);
 
       try {
-        const response = await fetch(`http://localhost:8080/project/${projectId}/members/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/project/${projectId}/members/${userId}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -533,7 +533,7 @@ function ProjectView()
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/board/${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/board/${projectId}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -584,7 +584,7 @@ function ProjectView()
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`http://localhost:8080/project/name/${projectId}`, {
+      const response = await fetch(`${API_BASE_URL}/project/name/${projectId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -619,7 +619,7 @@ function ProjectView()
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`http://localhost:8080/project/name/${projectId}`, {
+      const response = await fetch(`${API_BASE_URL}/project/name/${projectId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -654,7 +654,7 @@ function ProjectView()
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`http://localhost:8080/project/desc/${projectId}`, {
+      const response = await fetch(`${API_BASE_URL}/project/desc/${projectId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -704,7 +704,7 @@ const addProjectMember = async (identifier, role) => {
     console.log("Sending request body:", body);
 
     const response = await fetch(
-      `http://localhost:8080/project/member/add?projectId=${projectId}`,
+      `${API_BASE_URL}/project/member/add?projectId=${projectId}`,
       {
         method: "POST",
         headers: {

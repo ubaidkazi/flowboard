@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { User, Bell, Palette,Shield, Settings2, Save, Camera, Upload, Layers, Bookmark} from 'lucide-react';
 import TabSwitchComponent from "../components/ui/tab-switch-component";
 import Avatar from '../components/ui/avatar-new';
-
+import { API_BASE_URL } from '../api/config';
 
 function Settings()
 {   
@@ -46,7 +46,7 @@ function Settings()
   formData.append("file", file);
 
   const response = await fetch(
-    `http://localhost:8080/user/${userId}/profile-picture`,
+    `${API_BASE_URL}/user/${userId}/profile-picture`,
     {
       method: "PUT",
       headers: {

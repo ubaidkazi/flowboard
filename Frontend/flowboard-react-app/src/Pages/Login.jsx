@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css";
 import { Link, NavLink } from "react-router-dom";
 import { Kanban, User, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers } from "lucide-react";
+import { API_BASE_URL } from "../api/config";
 
 function Login()
 {
@@ -44,7 +45,7 @@ function Login()
         e.preventDefault();
     
         try {
-          const response = await fetch("http://192.168.1.94:8080/auth/login", {
+          const response = await fetch(`${API_BASE_URL}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)

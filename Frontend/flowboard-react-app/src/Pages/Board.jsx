@@ -6,7 +6,7 @@ import Column from "../components/Column.jsx";
 import { Plus, X, CircleArrowLeft, LogOut, User} from "lucide-react";
 import CardOpenModal from "../components/CardOpenModal.jsx";
 import BoardNavbar from "../components/BoardNavBar.jsx";
-
+import { API_BASE_URL } from "../api/config.js";
 
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
@@ -115,7 +115,7 @@ useEffect(() => {
       //console.log(token);
 
       try {
-        const response = await fetch(`http://localhost:8080/project/member/all?projectId=${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/project/member/all?projectId=${projectId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -155,7 +155,7 @@ const closeModal = ()=>
  const fetchBoard = async () => {
   const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8080/board/${boardId}`, {
+      const res = await fetch(`${API_BASE_URL}/board/${boardId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -184,7 +184,7 @@ const closeModal = ()=>
   let stompClient;
 
  
-  const socket = new SockJS("http://localhost:8080/ws");
+  const socket = new SockJS(`${API_BASE_URL}/ws`);
 
   stompClient = new Client({
     webSocketFactory: () => socket,
@@ -532,7 +532,7 @@ const handleLogout = () => {
 // ============== how column was being added at first ==================
 // const handleAddColumn = async () => {
 //   const token = localStorage.getItem("token");
-//   const url = `http://localhost:8080/board/column/${boardId}`;
+//   const url = `${API_BASE_URL}/board/column/${boardId}`;
 //   const columnData = { name: columnName };
 
 //   try {
@@ -595,7 +595,7 @@ const updateMember = async (userId, method) => {
 
   try {
     const response = await fetch(
-      `http://localhost:8080/card/${selectedCardId}/${userId}`,
+      `${API_BASE_URL}/card/${selectedCardId}/${userId}`,
       {
         method,
         headers: {
@@ -669,7 +669,7 @@ const handleAddColumn = async () => {
   }
 
   const token = localStorage.getItem("token");
-  const url = `http://localhost:8080/board/column/${boardId}`;
+  const url = `${API_BASE_URL}/board/column/${boardId}`;
   const columnData = { name: columnName };
 
   // Temporary client-side ID
@@ -806,7 +806,7 @@ const sendMoveColRequest = async (payload) => {
   const token = localStorage.getItem("token");
   //console.log(JSON.stringify(payload));
   try {
-    const res = await fetch("http://localhost:8080/board/moveColumn", {
+    const res = await fetch(`${API_BASE_URL}/board/moveColumn`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -838,7 +838,7 @@ const sendMoveCardRequest = async (payload) => {
   const token = localStorage.getItem("token");
   //console.log(JSON.stringify(payload));
   try {
-    const res = await fetch("http://localhost:8080/card/moveCard", {
+    const res = await fetch(`${API_BASE_URL}/card/moveCard`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -902,7 +902,7 @@ const handleDeleteCard = async (cardId, columnId) => {
   
   try {
       
-      await fetch(`http://localhost:8080/board/${boardId}/${columnId}/${cardId}`, {
+      await fetch(`${API_BASE_URL}/board/${boardId}/${columnId}/${cardId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -929,7 +929,7 @@ const handleDeleteCard = async (cardId, columnId) => {
     const token = localStorage.getItem("token");
 
     try {
-      await fetch(`http://localhost:8080/cards/${cardId}`, {
+      await fetch(`${API_BASE_URL}/cards/${cardId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

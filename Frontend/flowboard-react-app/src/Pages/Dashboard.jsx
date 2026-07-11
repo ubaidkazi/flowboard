@@ -14,7 +14,7 @@ import UpcomingTaskCard from '../components/UpcomingTaskCard';
 import NewRecentActivityCard from '../components/NewRecentActivityCard';
 import QuickActionCard from '../components/QuickActionCard';
 import ProjectCardNew from '../components/ProjectCardNew';
-
+import { API_BASE_URL } from '../api/config';
 
 function Dashboard()
 {
@@ -30,7 +30,7 @@ function Dashboard()
             console.log(token);
       
             try {
-              const response = await fetch("http://localhost:8080/project", {
+              const response = await fetch(`${API_BASE_URL}/project`, {
                 method: "GET",
                 headers: {
                   Authorization: `Bearer ${token}`,

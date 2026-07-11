@@ -12,6 +12,7 @@ import {
 } from "../components/ui/dropdown-menu"                
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Search, Bell, Moon, Sun, LogOut, User, Settings, Layers } from "lucide-react"
+import { API_BASE_URL } from "../api/config"
 
 
 const fullName = localStorage.getItem("fullName");
@@ -22,7 +23,7 @@ const userId = localStorage.getItem("userId");
 const currentUser = {
   name: fullName,
   email: email,
-  avatar: `http://localhost:8080/user/${userId}/profile-picture`,
+  avatar: `${API_BASE_URL}/user/${userId}/profile-picture`,
 }
 
 

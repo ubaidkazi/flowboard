@@ -1,6 +1,7 @@
 import { act } from 'react';
 import styles from '../styles/NewRecentActivityCard.module.css';
 import Avatar from './ui/avatar-new';
+import { API_BASE_URL } from '../api/config';
 
 
 
@@ -11,7 +12,7 @@ const user1 =
     {
       id: 1,
       name: "John Smith",
-      avatarUrl: `http://localhost:8080/user/${userId}/profile-picture`
+      avatarUrl: `${API_BASE_URL}/user/${userId}/profile-picture`
     }
 
 
