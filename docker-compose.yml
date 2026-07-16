@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: flowboard-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD:  ${MYSQL_ROOT_PASSWORD}
+
+
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 10
+      timeout: 5s
+
+  backend:
+    build:
+      context: ./Backend/flowboard
+
+    container_name: flowboard-backend
+
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+
+volumes:
+  mysql_data:
