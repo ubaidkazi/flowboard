@@ -1,4 +1,3 @@
-version: "3.9"
 
 services:
   mysql:
@@ -44,6 +43,20 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+
+
+  frontend:
+    build:
+      context: ./Frontend/flowboard-react-app
+
+    container_name: flowboard-frontend
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - backend
 
 volumes:
   mysql_data:

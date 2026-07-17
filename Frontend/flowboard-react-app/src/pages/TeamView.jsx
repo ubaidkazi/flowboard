@@ -3,7 +3,7 @@ import styles from '../styles/TeamView.module.css';
 import { NavLink } from 'react-router-dom';
 import ProjectCard from '../components/ProjectCard';
 import { Kanban, CircleCheckBig, Users, Clock4Icon, ChartColumn, Plus, Search, Funnel, Grid3X3, List} from 'lucide-react';
-import TeamMemberCard from '../Components/TeamMemberCard';
+import TeamMemberCard from '../components/TeamMemberCard';
 
 
 

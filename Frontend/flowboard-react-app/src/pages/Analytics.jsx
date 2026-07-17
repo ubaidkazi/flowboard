@@ -8,8 +8,8 @@ import QuickActionButton from '../components/QuickActionBtn';
 import QuickActionButtonBlack from '../components/QuickActionBtnBlack';
 import RecentActivityCard from '../components/RecentActivityCard';
 import ProjectListCard from '../components/ProjectListCard';
-import ProjectPerformanceCard from '../Components/ProjectPerformanceCard';
-import TeamPerformanceCard from '../Components/TeamPerformanceCard';
+import ProjectPerformanceCard from '../components/ProjectPerformanceCard';
+import TeamPerformanceCard from '../components/TeamPerformanceCard';
 import { useState, useRef, useEffect } from 'react';
 import DropDownSelect from '../components/ui/dropdown-select';
 import TasksChart from '../components/ui/TasksChart';
@@ -18,7 +18,7 @@ import LeaderBoardCard from '../components/ui/leader-board-card';
 import {users} from "../components/MockData";
 import TeamPerformanceChart from '../components/ui/TeamPerformanceChart';
 import NewProjectPerformanceCard from '../components/NewProjectPerformanceCard';
-import TeamMemberCard from '../Components/TeamMemberCard';
+import TeamMemberCard from '../components/TeamMemberCard';
 
 function Analytics()
 {
