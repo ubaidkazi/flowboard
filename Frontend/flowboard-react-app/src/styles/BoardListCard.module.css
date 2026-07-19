@@ -1,0 +1,284 @@
+.card
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 94%;
+    min-width: 25% !important;
+    background-color: white;
+    border: 0.5px solid lightgray;
+    padding: 70px 40px;
+    /* border-radius: 10px; */
+    min-height: 50px;
+    height: 45px;
+    margin: 0;
+}
+
+.card:hover
+{
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.242), 
+            0 1px 2px -1px rgba(0, 0, 0, 0.242);
+}
+.icon-div
+{
+    display: flex;
+    align-items:center;
+    justify-content: space-between;
+    margin-bottom: 0px;
+    margin-top: 0;
+    /* background-color: #3b82f6; */
+}
+
+.menu-icon:hover
+{
+    cursor: pointer;
+}
+
+.del-icon-div
+{
+    /* background-color: black; */
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+
+}
+
+.del-icon-div:hover
+{
+    background-color: rgba(244, 3, 3, 0.852);
+}
+.del-icon-div:hover .menu-icon
+{
+    color: rgb(255, 255, 255);
+}
+
+
+
+.card-title
+{
+    font-size: 1.2rem;
+    font-weight: 550;
+    padding: 10px 10px;
+
+}
+.card-desc
+{
+    font-size: 0.9rem;
+    font-weight: lighter;
+
+}
+
+.progress-container {
+  width: 100%;
+  
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #3333338e;
+}
+.progress-percent
+{
+    color: black;
+    font-weight: 560;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #e5e7eb;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill 
+{
+  width: 75%;
+  height: 100%;
+  background-color: #3b82f6; 
+  transition: width 0.3s ease;
+  border-radius: 5px;
+}
+
+
+.stats-div
+{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.left-stats-div, .right-stats-div
+{
+    display: flex;
+    align-items: center;
+
+}
+
+.tasks-stat, .days-left, .members-num
+{
+    color: rgba(0, 0, 0, 0.542);
+    font-weight: lighter;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+
+.members-div
+{
+    display: flex;
+    align-items: center;
+    margin: 5px 0px;
+
+}
+
+/* .status-div
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0px;
+}
+
+.status, .priority
+{
+    
+    width: fit-content;
+    border-radius: 5px;
+    text-align: center;
+}
+.status h3, .priority h3
+{
+    font-size: 0.7rem;
+    font-weight: lighter;
+    padding: 0;
+    padding: 4px 7px;
+    margin: 0;
+    margin: 5px 5px;
+}
+.status
+{
+    background-color: rgba(0, 128, 0, 0.862);
+    
+}
+.priority
+{
+    
+    background-color: rgba(255, 0, 0, 0.553);         
+    backdrop-filter: blur(10px);         
+    
+}
+.priority h3
+{
+    color: rgb(255, 0, 0);
+} */
+
+.status-div
+{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin: 15px 0px;
+    /* background-color: #3b82f6; */
+
+}
+
+
+.status
+{
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 4px 20px;
+    border-radius: 5px;
+    display: inline-block;
+    text-transform: lowercase;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* margin-right: 10px; */
+    text-decoration: none;
+}
+
+
+.state {
+  background-color: rgba(34, 197, 94, 0.299);  
+  color: rgba(22, 101, 52, 0.812);                 
+  backdrop-filter: blur(4px);
+  padding-right: 40px;
+  padding-left: 40px;
+}
+
+
+.priority {
+  background-color: rgba(247, 102, 102, 0.299); 
+  color: rgba(142, 27, 27, 0.773);                   
+  backdrop-filter: blur(4px);
+
+}
+ 
+
+
+
+.action-div
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    /* background-color: #095bff; */
+    
+}
+.action-navlink1, .action-navlink2
+{
+    text-decoration: none;
+    padding: 15px 20px;
+    font-size: 0.88rem;
+    font-weight: 555;
+    width: 48%;
+    height: 30%;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 4px;
+
+}
+
+.action-navlink1
+{
+    background-color: white;
+    color:black;
+    border: 0.5px solid lightgray;
+    transition: background-color 0.3s ease;
+
+}
+.action-navlink1:hover
+{
+    background-color: rgba(226, 226, 226, 0.822);
+}
+.action-navlink2
+{
+    background-color: black;
+    color: white;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    
+}
+.action-navlink2
+
+
+
+
+
+
+.action-navlink2:hover
+{
+    background-color: rgba(0, 0, 0, 0.689);
+}

@@ -1,0 +1,352 @@
+/* 1. Blue Gradient */
+/* .bg-gradient-blue {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--primary) 20%, transparent),
+    color-mix(in oklch, var(--accent) 20%, transparent)
+  );
+} */
+
+/* 2. Green Gradient */
+/* .bg-gradient-green {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-2) 20%, transparent),
+    color-mix(in oklch, var(--chart-3) 20%, transparent)
+  );
+} */
+
+/* 3. Purple Gradient */
+/* .bg-gradient-purple {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-4) 20%, transparent),
+    color-mix(in oklch, var(--primary) 20%, transparent)
+  );
+} */
+
+/* 4. Orange Gradient */
+/* .bg-gradient-orange {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--warning) 20%, transparent),
+    color-mix(in oklch, var(--destructive) 20%, transparent)
+  );
+} */
+
+/* 5. Neutral */
+/* .bg-neutral {
+  background-color: color-mix(in oklch, var(--secondary) 50%, transparent);
+} */
+
+
+/* 1. Blue Gradient */
+.bgGradientBlue {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--primary) 20%, transparent),
+    color-mix(in oklch, var(--accent) 20%, transparent)
+  );
+}
+
+/* 2. Green Gradient */
+.bgGradientGreen {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-2) 20%, transparent),
+    color-mix(in oklch, var(--chart-3) 20%, transparent)
+  );
+}
+
+/* 3. Purple Gradient */
+.bgGradientPurple {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--chart-4) 20%, transparent),
+    color-mix(in oklch, var(--primary) 20%, transparent)
+  );
+}
+
+/* 4. Orange Gradient */
+.bgGradientOrange {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--warning) 20%, transparent),
+    color-mix(in oklch, var(--destructive) 20%, transparent)
+  );
+}
+
+/* 5. Neutral */
+.bgNeutral {
+  background: color-mix(in oklch, var(--secondary) 50%, transparent);
+}
+
+
+
+
+.board-wrapper 
+{
+    display: flex;
+    flex-direction: column;
+   /* background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, var(--warning) 20%, transparent),
+    color-mix(in oklch, var(--destructive) 20%, transparent)
+  ); */
+    /* height: 94vh; */
+    width: 100vw;
+    height: 100vh;
+
+    overflow-y: hidden;
+
+
+
+
+
+
+
+
+
+    user-select: none;
+    /* overflow-x: auto; */
+
+
+    transition: background 0.3s ease;
+    
+
+
+   
+}
+
+
+
+.board-content
+{
+    display: flex;
+    /* height: 100%; */
+    /* background-color: rgba(12, 11, 10, 0.712); */
+    width: 100%;
+
+    /* background-image: url('../assets/board-background.jpg'); */
+    background-size: cover;       /* makes image cover the whole element */
+    background-position: center;  /* centers the image */
+    background-repeat: no-repeat;
+    /* background-color: red;   */
+    overflow: hidden;
+
+
+
+    
+
+    
+
+   
+}
+
+.nav-bar
+{
+  z-index: 1002;
+}
+
+.column-scroll-wrapper {
+    width:100%;
+    height:100%;
+
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    background-color: red;
+}
+
+
+
+.column-container {
+    color: rgb(14, 13, 13);
+    display: flex;
+    white-space: nowrap;     /* optional if using inline-blocks or text */
+    flex-wrap: nowrap;    /* critical for horizontal growth */
+    gap: 5px;
+
+    /* min-height: 100%; */
+    width: 100%;
+    flex-direction: row;
+    /* align-items: safe; */
+    /* background-color: rgb(138, 52, 52); */
+;
+    
+    overflow: auto;
+
+
+    padding: 0px 20px;
+    /* box-sizing: border-box; */
+  
+
+
+   
+    overflow-anchor: none;
+  
+
+
+   /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--foregroud) transparent;
+
+  /* background-color: black; */
+  padding-right: 18rem;
+}
+
+/* Chrome, Edge, Safari */
+.cards::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cards::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cards::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.cards::-webkit-scrollbar-thumb:hover {
+  background: #001308;
+}
+  
+
+.column-container:active {
+  cursor: grabbing;
+}
+
+/* 
+.column-container > * {
+    /* Set a fast transition time (150-200ms)
+    transition: transform 150ms ease-out; 
+    will-change: transform; 
+} */
+
+
+
+.add-column-button {
+  background-color: rgba(255, 255, 255, 0.644);
+  border: 0.5px solid rgba(211, 211, 211, 0.198);
+  padding: 0 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bolder;
+  color: #ffffff;
+  margin: 20px 5px;
+  padding: 20px 15px;
+  min-width:12%;
+  text-align: left;
+  height: fit-content;
+  max-height: 2%;
+  color: black;
+  width: 2%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  margin-right: 20px;
+  border: 1px solid var(--border);
+  min-width: 200px;
+}
+
+.add-column-button:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.add-column {
+  display: flex; 
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+  /* margin-right: 20px; */
+  /* padding: 5px 2px; */
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  padding: 1rem 1rem;
+  min-width: 20%;
+  min-width: 250px;
+  /* background-color: red; */
+  border: 2px dotted var(--border);
+}
+.col-name-input
+{
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    margin: 0;
+    border-radius: var(--radius);
+    box-shadow: 0px 0px 0px 5px var(--ring);
+    border: 0.5px solid var(--border);
+}
+.col-btn-div
+{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    gap: 0.2rem;
+    /* background-color: red; */
+
+}
+.col-btn
+{
+    flex: 1;
+  padding: 8px 12px;
+
+  border-radius: 6px;
+  border: none;
+
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+
+
+
+}
+
+.col-btn:active
+{
+  transform: scale(0.97);
+}
+.col-cancel-btn
+{
+    display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px;
+  border-radius: 6px;
+
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+
+
+.col-cancel-btn:hover
+{
+    background-color: var(--primary);
+    color: #ffffff;
+    
+}
+.col-btn:hover
+{
+  background-color: var(--primary-muted);
+}
+

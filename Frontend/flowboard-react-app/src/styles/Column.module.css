@@ -1,0 +1,368 @@
+/* Outer wrapper: visual styling + padding */
+/* .columnOuter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 13%;
+  max-width: 240px;
+  margin: 20px 5px;
+
+  background-color: rgba(255, 255, 255, 0.678);
+  border-radius: 10px;
+  color: #000;
+
+  padding: 18px 10px;
+  flex: 0 0 auto;
+  height: fit-content;
+  max-height: 90%;
+}
+ */
+
+ .columnOuter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  
+  width: clamp(220px, 18vw, 300px);
+
+  margin: 20px 6px;
+
+  background-color: rgba(255, 255, 255, 0.733);
+  border-radius: 10px;
+  color: #000;
+
+  /* padding:  1rem 0.2rem; */
+
+  flex: 0 0 auto;
+  height: fit-content;
+  max-height: 90%;
+  /* max-height: 90%; */
+      width:300px;  
+
+  /* background-color: red; */
+  overflow: hidden ;
+
+
+    border: 2px solid var(--border);
+
+  
+
+
+}
+
+
+/* Scrollable area: only for cards */
+.columnScroll {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  max-height: 90vh; /* scroll after 90% of viewport */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.2rem 0.3rem;
+  overflow-y: hidden;
+
+  /* background-color: #000; */
+
+}
+
+/* Cards container: no padding to avoid DnD offset issues */
+.cards {
+  display: flex;
+  flex-direction: column;
+  /* background-color: black; */
+  /* padding: 0.2rem 0.3rem; */
+  gap: 0.4rem;
+
+  /* background-color: yellowgreen; */
+  overflow-y: auto;
+
+    /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Chrome, Edge, Safari */
+.cards::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cards::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cards::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.cards::-webkit-scrollbar-thumb:hover {
+  background: #001308;
+}
+  
+
+
+
+.cards:empty {
+  min-height: 36px;
+}
+
+
+.col-name-div
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* background-color: red; */
+  padding: 0rem 1rem;
+  padding-top: 0.5rem;
+  
+}
+
+/* Column header */
+.column-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: left;
+  padding: 6px 8px;
+  cursor:text;
+  user-select: none;
+  margin-bottom: 4px;
+
+   
+
+
+
+
+}
+
+
+.column-del
+{
+  color: grey;
+
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+}
+
+
+
+.column-del:hover
+{
+  color: white;
+  cursor: pointer;
+   background-color: red;
+
+
+}
+
+
+
+.add-card-button {
+  user-select: none;
+}
+
+
+.add-card-button {
+  position: relative;
+  overflow: hidden;
+
+  border: 1px solid lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 0.6rem 2rem;
+  border-radius: 6px;
+
+  background-color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  /* background-color: red; */
+
+  transition:
+  background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* animated background layer */
+.add-card-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(0, 0, 0, 0.05),
+    transparent
+  );
+
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+
+/* hover state */
+.add-card-button:hover {
+  cursor: pointer;
+  transform: translateY(-1px);
+  border-color: #cfcfcf;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: var(--primary);
+  color: white;
+}
+
+/* animate the sweep */
+.add-card-button:hover::before {
+  transform: translateX(100%);
+}
+
+/* keep text above animation */
+.add-card-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* container */
+.add-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 12px;
+  border-radius: 8px;
+
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+
+  animation: fadeIn 0.15s ease-out;
+}
+
+
+
+
+
+
+/* input */
+.card-name-input{
+  padding: 10px 12px;
+  font-size: 0.95rem;
+
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  outline: none;
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-name-input::placeholder {
+  color: #9ca3af;
+}
+
+.card-name-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* buttons wrapper */
+.card-btn-div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* primary action */
+.card-btn {
+  flex: 1;
+  padding: 8px 12px;
+
+  border-radius: 6px;
+  border: none;
+
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.card-btn:hover {
+  background: #2563eb;
+}
+
+.card-btn:active {
+  transform: scale(0.97);
+}
+
+/* cancel button */
+.card-cancel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px;
+  border-radius: 6px;
+
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.card-cancel-btn:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+/* entrance animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.column-name-input {
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  background: #fff; /* visible background */
+  width: 100%;       /* fill flex container */
+  padding: 4px 2px;
+  margin: 0;          /* remove margin interfering with flex */
+  box-sizing: border-box;
+}
+
+
+
+
+
+
+
