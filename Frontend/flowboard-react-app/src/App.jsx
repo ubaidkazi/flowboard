@@ -48,11 +48,11 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/Dashboard/Projects" element={<ProjectsListView/>} />
-            <Route path="/Dashboard/Projects/:projectId/:projectName" element={<ProjectView/>} />
-            <Route path="/Dashboard/People" element={<TeamView/>} />
-            <Route path="/Dashboard/Analytics" element={<Analytics/>} />
-            <Route path="/Dashboard/Settings" element={<Settings />} />
+            <Route path="/dashboard/projects" element={<ProjectsListView/>} />
+            <Route path="/dashboard/projects/:projectId/:projectName" element={<ProjectView/>} />
+            <Route path="/dashboard/people" element={<TeamView/>} />
+            <Route path="/dashboard/analytics" element={<Analytics/>} />
+            <Route path="/dashboard/settings" element={<Settings />} />
           </Route>
 
         </Route>
