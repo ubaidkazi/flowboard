@@ -213,7 +213,7 @@ const goToSettings = ()=>
 
           <Link  className={`flex items-center gap-2 hover:text-foreground transition-colors ${styles["goBackBtn"]}`} onClick={()=>navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
-            <span className=" hidden sm:inline">{"GO BACK"}</span>
+            <span className=" hidden sm:inline">{"Project"}</span>
           </Link>
           
           <div className="h-6 w-px bg-border" />
@@ -408,7 +408,7 @@ const goToSettings = ()=>
 
 
             <ThreeDotMenu
-                trigger={<button className={styles["bg-color-btn"]} > <Palette/> Background </button>}
+                trigger={<button className={styles["bg-color-btn"]} > <Palette size={20}/> Background </button>}
                options={boardBackground.map((bg) => ({
     label: bg.label,
     icon: <ColorBox className={bg.previewClass}  />,
@@ -423,12 +423,12 @@ const goToSettings = ()=>
         </div>
         <div className={styles["bg-color-div"]}>
 
-            <button className={styles["bg-color-btn"]} > <UserPlus/> Invite </button>
+            <button className={styles["bg-color-btn"]} > <UserPlus size={20}/> Invite </button>
 
         </div>
         <div className={styles["bg-color-div"]}>
 
-            <button className={styles["bg-color-btn"]} >  <Sun></Sun>  </button>
+            <button className={styles["bg-color-btn"]} >  <Sun size={20}></Sun>  </button>
 
         </div>
 
@@ -443,7 +443,7 @@ const goToSettings = ()=>
         
 
             <ThreeDotMenu
-                trigger={<button>
+                trigger={<button className={styles["bg-color-btn"]}>
            <Ellipsis color="black" size={21}></Ellipsis>
             </button>}
       options={[

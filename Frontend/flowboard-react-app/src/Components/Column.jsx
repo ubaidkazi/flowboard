@@ -215,6 +215,7 @@ const handleColumnNameSave = async () => {
         onClick={() => {setIsEditingColName(true); setEditedColName(column.name);}}
       >
         {column.name}
+        
       </div>
 
       <div

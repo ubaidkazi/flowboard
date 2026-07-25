@@ -20,8 +20,8 @@
     gap: 1rem;
     font-size: 0.9rem;
     font-weight: 500;
-    color: black;
-    border: 0.5px solid lightgrey;
+    color: rgba(0, 0, 0, 0.774);
+    /* border: 0.5px solid lightgrey; */
     border-radius: 10px;
     
     transition: background 0.15s ease;

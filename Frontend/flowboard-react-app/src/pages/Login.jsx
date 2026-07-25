@@ -5,6 +5,10 @@ import { Link, NavLink } from "react-router-dom";
 import { Kanban, User, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers } from "lucide-react";
 import { API_BASE_URL } from "../api/config";
 
+
+
+
+
 function Login()
 {
 
@@ -65,8 +69,7 @@ function Login()
             setShowSuccess(true);
             proceedFromLogin();
             //alert("Login successful!");
-            console.log(data);
-            console.log(localStorage.getItem("userId"));
+            
           } else {
             const error = await response.text();
             setShowError(true);
@@ -86,6 +89,10 @@ function Login()
           console.error(error);
         }
       };
+
+
+    
+
     
 
     return(

@@ -38,7 +38,7 @@
   height: fit-content;
   max-height: 90%;
   /* max-height: 90%; */
-      width:300px;  
+  width:400px;  
 
   /* background-color: red; */
   overflow: hidden ;
@@ -179,7 +179,7 @@
   position: relative;
   overflow: hidden;
 
-  border: 1px solid lightgray;
+  /* border: 1px solid lightgray; */
   display: flex;
   align-items: center;
   justify-content: center;

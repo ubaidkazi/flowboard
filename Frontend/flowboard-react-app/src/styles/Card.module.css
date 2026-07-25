@@ -2,13 +2,15 @@
 .card {
   /* width: 100%; */
   
+  
 }
 
 /* INNER container — full visual styling */
 .cardContent {
   background: #fff;
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1rem 1.3rem;
+  padding-right: 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -16,6 +18,8 @@
   transition: transform 0.12s ease, box-shadow 0.15s ease;
   /* will-change: transform; */
   border: 1px solid var(--border);
+
+  
 
 
 }
@@ -89,6 +93,21 @@
 
   padding: 5px;
 }
+.cardDesc
+{
+  padding: 2rem 1rem;
+
+  font-weight: 500;
+  font-size: 0.8rem;
+  white-space: wrap;
+
+  text-overflow: ellipsis;
+  color: var(--muted-foreground);
+
+  padding: 0.5rem;
+
+
+}
 
 /* Delete icon */
 .cardDelete {
@@ -150,13 +169,13 @@
 
 .editable-input
 {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 0.85rem;
+  /* font-weight: bold; */
   border: none;
   border-bottom: 1px solid #ccc;
   outline: none;
   background: transparent;
-  width: 80%;
+  width: 90%;
   padding: 2px;
   margin: 17px 0;
 

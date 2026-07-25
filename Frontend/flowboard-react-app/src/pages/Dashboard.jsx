@@ -27,7 +27,7 @@ function Dashboard()
         useEffect(() => {
           const fetchProjects = async () => {
             const token = localStorage.getItem("token");
-            console.log(token);
+            // console.log(token);
       
             try {
               const response = await fetch(`${API_BASE_URL}/project`, {
@@ -41,7 +41,7 @@ function Dashboard()
                 // const text = await response.text();
                 // setMessage(text);
                 const data = await response.json();
-                console.log("Fetched boards:", data);
+                // console.log("Fetched boards:", data);
                 setProjectsData(data);
               } else {
                 console.log("Failed to load projects data");

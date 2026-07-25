@@ -27,7 +27,7 @@ function Sidebar()
     if (!fullName) return '';
 
     const names = fullName.trim().split(' ');
-    console.log(names);
+    // console.log(names);
     if (names.length === 1) return names[0][0].toUpperCase();
 
     if(names.length > 2 ) return (
@@ -57,10 +57,10 @@ function Sidebar()
 
                 <div className={styles["top-section"]}>
                     <NavLink to="/dashboard" end  className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]} > <LayoutDashboard size={22} strokeWidth={1.5} className={styles["link-icon"]} /> Dashboard </NavLink>
-                    <NavLink to="/Dashboard/Projects" className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]}> <FolderKanban size={22}  strokeWidth={1.5}  className={styles["link-icon"]}/> Projects </NavLink>
+                    <NavLink to="/dashboard/projects" className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]}> <FolderKanban size={22}  strokeWidth={1.5}  className={styles["link-icon"]}/> Projects </NavLink>
                     {/* <NavLink to="/Dashboard/people"className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]}> <Users size={22} strokeWidth={1.5} className={styles["link-icon"]}  /> <span> My Team </span>  </NavLink> */}
-                    <NavLink to="/Dashboard/Analytics" className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]}>  <ChartColumn size={22}  strokeWidth={1.5} className={styles["link-icon"]} /> Analytics </NavLink>
-                    <NavLink to="/Dashboard/Settings"className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]}><Settings size={22} strokeWidth={1.5} className={styles["link-icon"]} /> Settings </NavLink>
+                    <NavLink to="/dashboard/analytics" className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]}>  <ChartColumn size={22}  strokeWidth={1.5} className={styles["link-icon"]} /> Analytics </NavLink>
+                    <NavLink to="/dashboard/settings"className={({ isActive }) => isActive  ? `${styles["nav-link"]} ${styles["active-nav-link"]}` : styles["nav-link"]}><Settings size={22} strokeWidth={1.5} className={styles["link-icon"]} /> Settings </NavLink>
                 
                 </div>
 

@@ -119,10 +119,19 @@ const formatDueDate = (dueDate) => {
                       autoFocus
                     />
                       )
-                          : (<p onClick={(e) => {
+                          : (
+                          <div>
+                            <p onClick={(e) => {
                             e.stopPropagation();
                              setIsEditingTitle(true);
-                          }}  className={styles.cardName}>{card.title}</p>)}
+                          }}  className={styles.cardName}>{card.title}</p>
+
+                           <p
+                             
+                          className={styles.cardDesc}>{card.description}</p>
+
+                          
+                          </div>)}
         
 
                   

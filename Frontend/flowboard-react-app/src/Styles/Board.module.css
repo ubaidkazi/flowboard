@@ -112,6 +112,10 @@
 
 
     transition: background 0.3s ease;
+    /* background-color: red !important; */
+    
+
+    
     
 
 
@@ -126,6 +130,7 @@
     /* height: 100%; */
     /* background-color: rgba(12, 11, 10, 0.712); */
     width: 100%;
+    height: 100%;
 
     /* background-image: url('../assets/board-background.jpg'); */
     background-size: cover;       /* makes image cover the whole element */
@@ -133,6 +138,11 @@
     background-repeat: no-repeat;
     /* background-color: red;   */
     overflow: hidden;
+
+    /* background-color: red; */
+
+
+   
 
 
 
@@ -155,7 +165,8 @@
     overflow-x: hidden;
     overflow-y: hidden;
 
-    background-color: red;
+    /* background-color: red; */
+    
 }
 
 
@@ -172,7 +183,7 @@
     flex-direction: row;
     /* align-items: safe; */
     /* background-color: rgb(138, 52, 52); */
-;
+
     
     overflow: auto;
 
@@ -193,6 +204,8 @@
 
   /* background-color: black; */
   padding-right: 18rem;
+  
+  
 }
 
 /* Chrome, Edge, Safari */

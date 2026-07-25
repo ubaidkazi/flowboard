@@ -8,6 +8,10 @@ import ProjectCardNew from '../components/ProjectCardNew';
 import TabSwitchComponent from '../components/ui/tab-switch-component';
 import NewMemberModal from '../components/NewMemberModal';
 import { API_BASE_URL } from '../api/config';
+import {getProjects} from '../service/projectService';
+
+
+
 
 
 function ProjectsListView()
@@ -16,6 +20,8 @@ function ProjectsListView()
     const [projectsData, setProjectsData] = useState([]);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [isProjectModalOpen, setProjectModalOpen] = useState(false);
+
+
 
 
 
@@ -62,38 +68,28 @@ function ProjectsListView()
 
 
   // GET ALL THE Projects
-    //display the name and desc of each projects
-    useEffect(() => {
-      const fetchProjects = async () => {
-        const token = localStorage.getItem("token");
-        console.log(token);
-  
-        try {
-          const response = await fetch(`${API_BASE_URL}/project`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-  
-          if (response.ok) {
-            // const text = await response.text();
-            // setMessage(text);
-            const data = await response.json();
-            console.log("Fetched boards:", data);
-            setProjectsData(data);
-          } else {
-            console.log("Failed to load projects data");
-          }
-        } catch (err) {
-          console.error("Error fetching project:", err);
-          console.log("Server error");
-        }
-      };
-  
-      fetchProjects();
-    }, [refreshTrigger]);
+  //display the name and desc of each projects
+  useEffect(() => {
 
+    const fetchProjects = async () => {
+
+        try {
+
+            const data = await getProjects();
+            setProjectsData(data);
+
+        } catch(error) {
+
+            console.error(error);
+
+        }
+
+    };
+
+
+    fetchProjects();
+
+}, [refreshTrigger]);  
 
     
     const refreshContent = () => {
