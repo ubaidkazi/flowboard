@@ -39,7 +39,7 @@ public class SecurityConfig
                 .cors(Customizer.withDefaults()) //Enable CORS support
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/register", "/auth/login", "/ws/**", "/user/*/profile-picture").permitAll()
+                        .requestMatchers("/auth/register", "/auth/login", "auth/demoLogin",  "/ws/**", "/user/*/profile-picture").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

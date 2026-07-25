@@ -53,6 +53,26 @@ public class UserController
 
     }
 
+
+
+    @PostMapping("auth/demoLogin")
+    public ResponseEntity<?> demoLogin()
+    {
+
+        try
+        {
+
+            //System.out.println("Generated token: " + token);
+            return userService.verifyDemo();
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>("Exception", HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+
 //    @GetMapping("currentuser")
 //    public ResponseEntity<String> getCurrentUser()
 //    {

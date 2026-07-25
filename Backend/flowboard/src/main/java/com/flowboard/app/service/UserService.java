@@ -34,6 +34,11 @@ public class UserService
     @Autowired
     AuthenticationManager authenticationManager;
 
+    private final static String DEMO_EMAIL = "demo@flowboardapp.live";
+
+
+
+
     public User register(User user)
     {
         return repo.save(user);
@@ -53,6 +58,24 @@ public class UserService
         }
         return new ResponseEntity<>("Invalid Credentials", HttpStatus.UNAUTHORIZED);
     }
+
+
+    public ResponseEntity<?> verifyDemo()
+    {
+        User user = repo.findByEmail(DEMO_EMAIL)
+                .orElseThrow(() -> new RuntimeException("Demo user not found"));
+
+        String token = jwtService.generateToken(user.getUsername());
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "userId", user.getId(),
+                "userName", user.getUsername(),
+                "email", user.getEmail(),
+                "fullName", user.getFullName()
+        ));
+    }
+
 
 
 
