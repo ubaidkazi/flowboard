@@ -1,5 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import LandingPage from './pages/LandingPage'
 import NewLandingPage from './pages/NewLandingPage'
 import Signup from './pages/Signup';
@@ -16,10 +17,23 @@ import Settings from "./pages/Settings";
 import TTW from "./pages/TestTW";
 import BoardLayout from './components/BoardLayout';
 import BoardCopy from "./pages/BoardCopy";
+import LandingPage2 from "./pages/LandingPage2";
+import FlowBoardLandingPage from "./pages/FlowBoardLandingPage";
 
+
+
+function GuestRoute() {
+  const token = localStorage.getItem("token");
+
+  return token ? <Navigate to="/dashboard" replace /> : <Outlet />;
+}
 
 
 function App() {
+
+
+  
+
 
 
   return (
@@ -34,11 +48,27 @@ function App() {
 
 
         {/* Not Protected + No Layout */}
-        <Route path="/" element={<NewLandingPage/>} />
-        <Route path="/signup" element={<Signup/>} />
-        <Route path="/login" element={<Login/>} />
+        <Route path="/1" element={<NewLandingPage/>} />
+        <Route path="/2" element={<LandingPage2/>} />
+        <Route path="/" element={<FlowBoardLandingPage/>} />
+        {/* <Route path="/signup" element={<Signup/>} /> */}
+        {/* <Route path="/login" element={<Login/>} /> */}
         <Route path="/TW" element={<TTW/>} />
         {/* <Route path="/dashboardtemp" element={<Dashboardtemp/>} /> */}
+
+
+      
+
+
+       <Route element={<GuestRoute />}>
+  {/* <Route path="/" element={<FlowBoardLandingPage />} /> */}
+  <Route path="/login" element={<Login />} />
+  <Route path="/signup" element={<Signup />} />
+  </Route>
+
+     
+
+
 
 
 

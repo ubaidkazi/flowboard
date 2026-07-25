@@ -82,12 +82,12 @@ export default function LandingPage() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Features
-            </Link>
-            <Link href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            </a>
+            <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               How it Works
-            </Link>
+            </a>
             <Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Pricing
             </Link>
@@ -98,17 +98,17 @@ export default function LandingPage() {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="text-muted-foreground hover:text-foreground"
+              className=" flex items-center text-muted-foreground hover:text-foreground"
             >
               <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <span className="sr-only">Toggle theme</span>
             </button>
             <button variant="ghost" asChild className="hidden sm:inline-flex">
-              <Link href="/dashboard">Log in</Link>
+              <Link to="/login" className="flex items-center">Log in</Link>
             </button>
             <button asChild>
-              <Link href="/dashboard">
+              <Link to="/dashboard" className="flex items-center">
                 Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -131,22 +131,22 @@ export default function LandingPage() {
             <span className="block text-primary">projects and teams</span>
           </h1>
           
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground text-pretty">
+          <h3 className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground text-pretty">
             FlowBoard brings your team together with intuitive Kanban boards, real-time collaboration, 
             and powerful analytics. Ship faster, stress less.
-          </p>
+          </h3>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button size="lg" asChild className="h-12 px-8 text-base">
-              <Link href="/dashboard">
+              <Link to="/dashboard" className="flex items-center">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </button>
             <button size="lg" variant="outline" asChild className="h-12 px-8 text-base">
-              <Link href="#features">
+              <a href="#features" className="flex items-center">
                 See Features
-              </Link>
+              </a>
             </button>
           </div>
 
@@ -196,15 +196,15 @@ export default function LandingPage() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-20 lg:py-32">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+      <section id="how-it-works" className="py-20 lg:py-32 ">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8 flex-col justify-center items-center" >
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
               Get started in minutes
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <h3 className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto flex justify-center">
               Three simple steps to transform how your team works together.
-            </p>
+            </h3>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-3">
@@ -237,7 +237,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button size="lg" asChild className="h-12 px-8 text-base">
-              <Link href="/dashboard">
+              <Link href="/dashboard" className="flex items-center">
                 Start Your Free Trial
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
