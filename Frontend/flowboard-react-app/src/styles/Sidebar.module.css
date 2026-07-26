@@ -176,14 +176,14 @@
   color: red;
   border: none;
 
-  transition: all 0.2s ease;
+  transition: all 0.5s ease;
   
 }
 
 .logout-button:hover {
   cursor: pointer;
-  background-color: var(--primary);
-  color: white;
+  background-color: rgba(255, 0, 0, 0.192);
+  /* color: white; */
 }
 
 .logout-icon-div {
@@ -195,7 +195,7 @@
 
 /* -------------------- Icons -------------------- */
 .link-icon {
-  color: #000000ef;
+  
   align-content: center;
 }
 

@@ -30,7 +30,7 @@ function Board() {
   const isDownRef = useRef(false);
   const mousePosition = useRef({ x: 0, y: 0 });
   const autoScrollTimer = useRef(null);
-  const [boardBackground, setBoardBackground] = useState(styles.bgGradientBlue);
+  const [boardBackground, setBoardBackground] = useState(styles.bgGradientPurple);
   const [projectMembersData, setProjectMembersData] = useState([]);
 
 

@@ -400,7 +400,7 @@ function HeroScreenshot({ src }) {
       </div>
       <div className={styles.heroVisualCaption}>
         <span><Radio size={14} /> Board updates synchronize in real time</span>
-        <span>Deployed on flowboardapp.live</span>
+        {/* <span>Deployed on flowboardapp.live</span> */}
       </div>
     </div>
   );
@@ -599,7 +599,7 @@ function EngineeringSection() {
 export default function FlowBoardLandingPage({
   appUrl = DEFAULT_LINKS.app,
   githubUrl = DEFAULT_LINKS.github,
-  heroImageSrc = "/images/flowboard-board.png",
+  heroImageSrc = "src/assets/demo-board-blue.png",
 }) {
 
   const navigate =useNavigate();
@@ -742,7 +742,9 @@ export default function FlowBoardLandingPage({
         <section className={styles.hero}>
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy}>
-              <div className={styles.heroStatus}><span /><strong>LIVE PRODUCT</strong><span>FLOWBOARDAPP.LIVE</span></div>
+              <div className={styles.heroStatus}><span /><strong>LIVE NOW</strong>
+              {/* <span>FLOWBOARDAPP.LIVE</span> */}  
+              </div>
               <h1>Plan the work.<br /><span>See every change.</span></h1>
               <p className={styles.heroLead}>
                 A real-time collaborative Kanban application designed, engineered, and deployed across the full stack.
