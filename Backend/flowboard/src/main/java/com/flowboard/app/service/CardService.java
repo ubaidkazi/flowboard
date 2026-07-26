@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.flowboard.app.enums.EventType.*;
 
@@ -54,7 +55,12 @@ public class CardService {
     UserService userService;
 
     @Autowired
+    ActivityService activityService;
+
+    @Autowired
     CardMapper cardMapper;
+
+
 
 
 
@@ -100,6 +106,11 @@ public class CardService {
 
         outboxRepository.save(outboxEvent);
 
+        activityService.recordCardCreated(
+                savedCard,
+                userService.getCurrentUser()
+        );
+
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
@@ -128,6 +139,8 @@ public class CardService {
         outboxEvent.setCreatedAt(Instant.now());
 
         outboxRepository.save(outboxEvent);
+
+        activityService.recordCardDeleted(cardToDelete,getCurrentUser());
 
         return new ResponseEntity<>(cardToDelete, HttpStatus.OK);
     }
@@ -216,6 +229,8 @@ public class CardService {
 //        return updatedCard;
 //    }
 
+
+    //OLD METHOD
     @Transactional
     public Card updatePartially(int id, Map<String, Object> updates) {
         Card card = cardRepo.findById(id)
@@ -260,6 +275,8 @@ public class CardService {
         card.setUpdatedAt(LocalDateTime.now());
         Card updatedCard = cardRepo.save(card);
 
+        activityService.recordCardUpdated( updatedCard,getCurrentUser());
+
         // --- Emit event ---
         int boardId = (int) updatedCard.getColumn().getBoard().getId();
         CardUpdatedEvent event = new CardUpdatedEvent(
@@ -290,6 +307,163 @@ public class CardService {
 
         return updatedCard;
     }
+
+
+
+//    @Transactional
+//    public Card updatePartially(int id, Map<String, Object> updates) {
+//        Card card = cardRepo.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Card not found"));
+//
+//        User currentUser = userService.getCurrentUser();
+//
+//        // Capture the state before applying updates.
+//        String oldProgress = card.getProgress();
+//        boolean wasChecked = card.isChecked();
+//
+//        boolean generalCardUpdated = false;
+//
+//        // Keep your original working progress logic.
+//        if (updates.containsKey("progress")) {
+//            String newProgress = (String) updates.get("progress");
+//
+//            if (newProgress != null && !newProgress.isBlank()) {
+//                card.setProgress(newProgress);
+//
+//                // Progress remains the source of truth.
+//                card.setChecked(
+//                        "Completed".equalsIgnoreCase(newProgress)
+//                );
+//            }
+//        }
+//
+//        if (updates.containsKey("priority")) {
+//            String newPriority = (String) updates.get("priority");
+//
+//            if (newPriority != null && !newPriority.isBlank()) {
+//                if (!Objects.equals(card.getPriority(), newPriority)) {
+//                    generalCardUpdated = true;
+//                }
+//
+//                card.setPriority(newPriority);
+//            }
+//        }
+//
+//        if (updates.containsKey("title")) {
+//            String newTitle = (String) updates.get("title");
+//
+//            if (newTitle != null && !newTitle.isBlank()) {
+//                if (!Objects.equals(card.getTitle(), newTitle)) {
+//                    generalCardUpdated = true;
+//                }
+//
+//                card.setTitle(newTitle);
+//            }
+//        }
+//
+//        if (updates.containsKey("description")) {
+//            String newDescription = (String) updates.get("description");
+//
+//            if (newDescription != null) {
+//                if (!Objects.equals(card.getDescription(), newDescription)) {
+//                    generalCardUpdated = true;
+//                }
+//
+//                card.setDescription(newDescription);
+//            }
+//        }
+//
+//        if (updates.containsKey("dueDate")
+//                && updates.get("dueDate") != null) {
+//
+//            LocalDate newDueDate =
+//                    LocalDate.parse((String) updates.get("dueDate"));
+//
+//            if (!Objects.equals(card.getDueDate(), newDueDate)) {
+//                generalCardUpdated = true;
+//            }
+//
+//            card.setDueDate(newDueDate);
+//        }
+//
+//        card.setUpdatedAt(LocalDateTime.now());
+//
+//        Card updatedCard = cardRepo.save(card);
+//
+//        String newProgress = updatedCard.getProgress();
+//        boolean isChecked = updatedCard.isChecked();
+//
+//        boolean cardStarted =
+//                !"In progress".equalsIgnoreCase(oldProgress)
+//                        && "In progress".equalsIgnoreCase(newProgress);
+//
+//        boolean cardCompleted =
+//                !wasChecked && isChecked;
+//
+//        boolean cardReopened =
+//                wasChecked && !isChecked;
+//
+//        if (cardStarted) {
+//            activityService.recordCardStarted(
+//                    updatedCard,
+//                    currentUser
+//            );
+//        }
+//
+//        if (cardCompleted) {
+//            activityService.recordCardCompleted(
+//                    updatedCard,
+//                    currentUser
+//            );
+//        }
+//
+//        if (cardReopened) {
+//            activityService.recordCardReopened(
+//                    updatedCard,
+//                    currentUser
+//            );
+//        }
+//
+//        if (generalCardUpdated) {
+//            activityService.recordCardUpdated(
+//                    updatedCard,
+//                    currentUser
+//            );
+//        }
+//
+//        // Existing outbox logic remains unchanged.
+//        long boardId = updatedCard.getColumn()
+//                .getBoard()
+//                .getId();
+//
+//        CardUpdatedEvent event = new CardUpdatedEvent(
+//                CARD_UPDATED,
+//                id,
+//                updatedCard.getColumn().getBoard().getId(),
+//                updatedCard.getColumn().getId().intValue(),
+//                currentUser.getId(),
+//                Instant.now(),
+//                updatedCard.getTitle(),
+//                updatedCard.getDescription(),
+//                updatedCard.getPriority(),
+//                updatedCard.getProgress(),
+//                updatedCard.getDueDate(),
+//                updatedCard.isChecked()
+//        );
+//
+//        String payload = JsonUtils.toJson(event);
+//
+//        OutboxEvent outboxEvent = new OutboxEvent();
+//        outboxEvent.setEventType("CARD_UPDATED");
+//        outboxEvent.setTopic("/topic/boards/");
+//        outboxEvent.setDestinatonId((int)boardId);
+//        outboxEvent.setPayload(payload);
+//        outboxEvent.setCreatedAt(Instant.now());
+//
+//        outboxRepository.save(outboxEvent);
+//
+//        return updatedCard;
+//    }
 
 
 
@@ -462,6 +636,11 @@ public class CardService {
         return ResponseEntity.status(HttpStatus.OK).body(assignees);
 
 
+    }
+
+    private User getCurrentUser()
+    {
+        return userService.getCurrentUser();
     }
 
 

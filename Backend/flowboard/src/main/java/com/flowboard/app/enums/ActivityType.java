@@ -1,7 +1,7 @@
 package com.flowboard.app.enums;
 
-public enum EventType
-{
+public enum ActivityType {
+
     PROJECT_CREATED,
     PROJECT_UPDATED,
 
@@ -15,16 +15,16 @@ public enum EventType
 
     CARD_CREATED,
     CARD_UPDATED,
+    CARD_STARTED,
     CARD_MOVED,
     CARD_ASSIGNED,
     CARD_UNASSIGNED,
+    CARD_REASSIGNED,
     CARD_COMPLETED,
     CARD_REOPENED,
     CARD_DELETED,
 
     MEMBER_ADDED,
     MEMBER_REMOVED,
-
-
 
 }

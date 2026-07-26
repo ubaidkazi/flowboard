@@ -40,6 +40,8 @@ public class TaskColumnService
     @Autowired
     OutboxRepository outboxRepository;
 
+    @Autowired
+    ActivityService activityService;
 
     @Autowired
     BoardEventPublisher eventPublisher;
@@ -92,6 +94,10 @@ public class TaskColumnService
         outboxEvent.setCreatedAt(Instant.now());
 
         outboxRepository.save(outboxEvent);
+
+
+
+
 
         return new ResponseEntity<TaskColumn>(column, HttpStatus.OK);
     }

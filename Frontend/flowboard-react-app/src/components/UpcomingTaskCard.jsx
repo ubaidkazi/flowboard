@@ -24,9 +24,9 @@ function UpcomingTaskCard({title, description,tags, date})
                     <h3 className={styles["title"]}>{title}</h3>
                     <div className={styles["badges"]}>
 
-                        <TaskBadge badgeTitle={"Badge 1"}  />
-                        <TaskBadge badgeTitle={"Badge 1"}  />   
-                        <TaskBadge badgeTitle={"Badge 1"}  />
+                        <TaskBadge badgeTitle={"Tag 1"}  />
+                        <TaskBadge badgeTitle={"Tag 2"}  />   
+                        <TaskBadge badgeTitle={"Tag 3"}  />
 
                     </div>
                     

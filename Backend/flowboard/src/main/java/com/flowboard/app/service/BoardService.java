@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.flowboard.app.enums.EventType.*;
@@ -44,6 +45,9 @@ public class BoardService {
     private BoardDataMapper boardDataMapper;
 
     @Autowired
+    ActivityService activityService;
+
+    @Autowired
     private BoardResponseMapper boardResponseMapper;
 
 
@@ -63,6 +67,8 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         board.setProject(project);
+        project.setTimeUpdated(LocalDateTime.now());
+        projectRepo.save(project);
 
         BoardAddedEvent event = new BoardAddedEvent(
                 BOARD_CREATED,
@@ -83,6 +89,8 @@ public class BoardService {
 
 
         outboxRepository.save(outboxEvent);
+        activityService.recordBoardCreated(board, getCurrentUser());
+
 
         return new ResponseEntity<>(boardRepo.save(board), HttpStatus.OK);
     }
@@ -114,6 +122,8 @@ public class BoardService {
     public ResponseEntity<Board> deleteBoard(int id) {
         try {
             Board board = boardRepo.findById(id).get();
+
+
             boardRepo.deleteById(id);
             return new ResponseEntity<>(board, HttpStatus.OK);
         } catch (Exception e) {
@@ -176,6 +186,7 @@ public class BoardService {
         boardRepo.save(board);
 
         String updatedName = boardRepo.findById(boardId).get().getName();
+
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedName);
     }
@@ -259,6 +270,12 @@ public class BoardService {
 //
 //        return
 //    }
+
+
+    private User getCurrentUser()
+    {
+        return userService.getCurrentUser();
+    }
 
 
 

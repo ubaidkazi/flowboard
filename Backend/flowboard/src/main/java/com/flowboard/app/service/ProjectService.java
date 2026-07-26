@@ -24,6 +24,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,16 +57,24 @@ public class ProjectService
     @Autowired
     ProjectMemberMapper projectMemberMapper;
 
+    @Autowired
+    ActivityService activityService;
+
 
     public ResponseEntity<Project> createProject(Project project)
     {
+        project.setTimeCreated(LocalDateTime.now());
+        project.setTimeUpdated(LocalDateTime.now());
         Project newProject = projectRepo.save(project);
 
-        String userName = userService.getCurrentUser().getUsername();
+        User user  = userService.getCurrentUser();
+        String userName = user.getUsername();
 
         //Add owner as a project member with OWNER role.
         AddMemberRequest request = new AddMemberRequest(userName, Role.OWNER);
         addProjectMember(request, newProject.getId());
+
+        activityService.recordProjectCreated(newProject,user);
 
         return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
@@ -125,8 +135,14 @@ public class ProjectService
     {
         Project project = projectRepo.findById(id).get();
         project.setName(projectName);
+        project.setTimeUpdated(LocalDateTime.now());
         projectRepo.save(project);
         String message = "Project name updated to " + project.getName();
+        User currentUser = userService.getCurrentUser();
+
+        activityService.recordProjectUpdated(project, currentUser);
+
+
         return new ResponseEntity<>(projectName, HttpStatus.OK);
     }
 
@@ -141,8 +157,12 @@ public class ProjectService
     {
         Project project = projectRepo.findById(id).get();
         project.setDescription(projectDesc);
+        project.setTimeUpdated(LocalDateTime.now());
         projectRepo.save(project);
         String message = "Project desc updated to " + project.getDescription();
+        User currentUser = userService.getCurrentUser();
+        activityService.recordProjectUpdated(project, currentUser);
+
         return new ResponseEntity<>(projectDesc, HttpStatus.OK);
     }
 
@@ -176,11 +196,17 @@ public class ProjectService
         member.setUser(user);
         member.setRole(request.getRole());
 
+        User currentUser = userService.getCurrentUser();
+
         // find project, set project, save...
         Project project = projectRepo.findById(projectId).get();
+        project.setTimeUpdated(LocalDateTime.now());
+        projectRepo.save(project);
         member.setProject(project);
         ProjectMember savedMember = projectMemberRepo.save(member);
         ProjectMemberDTO dto = projectMemberMapper.toDTO(savedMember);
+
+        activityService.recordMemberAdded(project,savedMember.getUser(),currentUser );
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
 
@@ -226,7 +252,14 @@ public class ProjectService
                     .body("The project owner cannot be removed.");
         }
 
+        project.setTimeUpdated(LocalDateTime.now());
+        projectRepo.save(project);
+
         projectMemberRepo.delete(member);
+
+
+
+        activityService.recordMemberRemoved(project, member.getUser(), currentUser);
 
         return ResponseEntity.ok("Member removed successfully.");
     }

@@ -119,6 +119,34 @@ function Dashboard()
                             title={"Design new landing page"}
                             description={"Create mockups for the new landing page design"}
                             />
+                            <UpcomingTaskCard  
+                            title={"Design new landing page"}
+                            description={"Create mockups for the new landing page design"}
+                            />
+                            <UpcomingTaskCard  
+                            title={"Design new landing page"}
+                            description={"Create mockups for the new landing page design"}
+                            />
+                            <UpcomingTaskCard  
+                            title={"Design new landing page"}
+                            description={"Create mockups for the new landing page design"}
+                            />
+                            <UpcomingTaskCard  
+                            title={"Design new landing page"}
+                            description={"Create mockups for the new landing page design"}
+                            />
+                            <UpcomingTaskCard  
+                            title={"Design new landing page"}
+                            description={"Create mockups for the new landing page design"}
+                            />
+                            <UpcomingTaskCard  
+                            title={"Design new landing page"}
+                            description={"Create mockups for the new landing page design"}
+                            />
+                            <UpcomingTaskCard  
+                            title={"Design new landing page"}
+                            description={"Create mockups for the new landing page design"}
+                            />
                            
 
                         </div>
@@ -133,6 +161,9 @@ function Dashboard()
                             
                         <div className={styles["recentactivity-card-container"]}>
                             <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"Design system update"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
+                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
                             <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
                             <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
                             <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
