@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../api/config";
+import demoBoard from "../assets/demo-board-blue.png";
 import {
   ArrowDown,
   ArrowRight,
@@ -599,7 +600,7 @@ function EngineeringSection() {
 export default function FlowBoardLandingPage({
   appUrl = DEFAULT_LINKS.app,
   githubUrl = DEFAULT_LINKS.github,
-  heroImageSrc = "src/assets/demo-board-blue.png",
+  heroImageSrc = demoBoard,
 }) {
 
   const navigate =useNavigate();
