@@ -90,7 +90,7 @@ const goToProfile=()=>
             <Button variant="ghost" className="relative h-9 w-9 rounded-full">
               <Avatar className="h-9 w-9">
                 <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                <AvatarFallback>{currentUser?.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{currentUser?.name?.charAt(0)}</AvatarFallback>
               </Avatar>
               {/* <div className="h-9 w-9 rounded-full">
               <Avatar className="h-9 w-9 rounded-full"  userId={userId} fullName={currentUser?.name}></Avatar>
