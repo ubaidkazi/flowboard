@@ -13,7 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Search, Bell, Moon, Sun, LogOut, User, Settings, Layers } from "lucide-react"
 import { API_BASE_URL } from "../api/config"
-
+// import Avatar from "./ui/avatar-new"
 
 const fullName = localStorage.getItem("fullName");
 const email = localStorage.getItem("userEmail");
@@ -90,8 +90,12 @@ const goToProfile=()=>
             <Button variant="ghost" className="relative h-9 w-9 rounded-full">
               <Avatar className="h-9 w-9">
                 <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{currentUser?.name.charAt(0)}</AvatarFallback>
               </Avatar>
+              {/* <div className="h-9 w-9 rounded-full">
+              <Avatar className="h-9 w-9 rounded-full"  userId={userId} fullName={currentUser?.name}></Avatar>
+
+              </div> */}
             </Button>
           </DropdownMenuTrigger>
 
