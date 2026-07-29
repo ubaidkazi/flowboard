@@ -242,7 +242,12 @@ public class CardService {
             if (newProgress != null && !newProgress.isBlank()) {
                 card.setProgress(newProgress);
                 // Derive checked from progress
-                card.setChecked("Completed".equalsIgnoreCase(newProgress));
+                if ("Completed".equalsIgnoreCase(newProgress))
+                {
+                    card.setChecked(true);
+                    activityService.recordCardCompleted(card, getCurrentUser());
+                }
+                //card.setChecked("Completed".equalsIgnoreCase(newProgress));
             }
         }
 
@@ -251,6 +256,7 @@ public class CardService {
             String newPriority = (String) updates.get("priority");
             if (newPriority != null && !newPriority.isBlank()) {
                 card.setPriority(newPriority);
+                activityService.recordCardUpdated( card,getCurrentUser());
             }
         }
 
@@ -258,6 +264,7 @@ public class CardService {
             String newTitle = (String) updates.get("title");
             if (newTitle != null && !newTitle.isBlank()) {
                 card.setTitle(newTitle);
+                activityService.recordCardUpdated( card,getCurrentUser());
             }
         }
 
@@ -265,17 +272,20 @@ public class CardService {
             String newDescription = (String) updates.get("description");
             if (newDescription != null) {
                 card.setDescription(newDescription);
+                activityService.recordCardUpdated( card,getCurrentUser());
             }
         }
 
         if (updates.containsKey("dueDate") && updates.get("dueDate") != null) {
             card.setDueDate(LocalDate.parse((String) updates.get("dueDate")));
+            activityService.recordCardUpdated( card,getCurrentUser());
+
         }
 
         card.setUpdatedAt(LocalDateTime.now());
         Card updatedCard = cardRepo.save(card);
 
-        activityService.recordCardUpdated( updatedCard,getCurrentUser());
+        //activityService.recordCardUpdated( updatedCard,getCurrentUser());
 
         // --- Emit event ---
         int boardId = (int) updatedCard.getColumn().getBoard().getId();

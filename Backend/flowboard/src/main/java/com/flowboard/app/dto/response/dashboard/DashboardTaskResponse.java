@@ -13,10 +13,10 @@ public record DashboardTaskResponse(
         String progress,
         LocalDate dueDate,
         String dueStatus,
-        List<TaskAssigneeResponse> assignees
+        List<TaskAssigneeResponse> assignees,
 //        Long columnId,
 //        String columnName,
-//        Long boardId,
+        Long boardId
 //        String boardName,
 //        Long projectId,
 //        String projectName

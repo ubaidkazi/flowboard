@@ -17,7 +17,7 @@ const user1 =
 
 
 
-export default function NewRecentActivityCard({userName, actionType, action, timeStamp, avatarVariant }){
+export default function NewRecentActivityCard({actorName, actorId, actionType, action, timeStamp="sometime ago", avatarVariant }){
 
 
 
@@ -30,7 +30,7 @@ export default function NewRecentActivityCard({userName, actionType, action, tim
 
             <div className={styles["left-section"]}>
 
-                <Avatar fullName={user1.name} userId={user1.id} variant={avatarVariant} className={styles["avatars"] }  />
+                <Avatar fullName={actorName} userId={actorId} variant={avatarVariant} className={styles["avatars"] }  />
 
             </div>
 
@@ -38,7 +38,7 @@ export default function NewRecentActivityCard({userName, actionType, action, tim
             <div className={styles["right-section"]}>
 
                 <div className={styles["upper-right-section"]}>
-                    <div className={styles["user-name"]}> {userName} </div>
+                    <div className={styles["user-name"]}> {actorName} </div>
                     <div className={styles["action-type"]}> {actionType} </div>
                     <div className={styles["action"]}> {action}  </div>
                 </div>

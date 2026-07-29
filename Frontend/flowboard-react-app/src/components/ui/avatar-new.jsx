@@ -5,10 +5,11 @@ import { API_BASE_URL } from "..//../api/config.js";
 const colors = [
   "#2563eb",
   "#0dbeddb7",
-  "#ea580c",
+  "#ed6d28",
   "#9333ea",
   "#dc2626",
   "#0891b2",
+  "#a2f446",
 ];
 
 const sizes = {
@@ -40,6 +41,7 @@ export default function Avatar({ fullName, userId, variant = "small" }) {
     .toUpperCase();
 
   const backgroundColor = colors[userId % colors.length];
+  
 
   const dimension = sizes[variant];
 
@@ -47,6 +49,7 @@ export default function Avatar({ fullName, userId, variant = "small" }) {
     width: dimension,
     height: dimension,
     backgroundColor,
+    
   };
 
   if (userId && !imageError) {

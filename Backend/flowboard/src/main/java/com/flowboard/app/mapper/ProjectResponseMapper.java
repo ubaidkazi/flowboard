@@ -30,6 +30,7 @@ public class ProjectResponseMapper {
                 project.getName(),
                 project.getDescription(),
                 role,
+                project.getTimeUpdated(),
                 members
         );
     }

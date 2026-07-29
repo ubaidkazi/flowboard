@@ -170,7 +170,7 @@ function Settings()
 
                   <button className={styles["dp-upload-btn"]} onClick={handleUploadClick}>
                     <Upload size={16} className={styles["camera-icon"]} />
-                    Upload Photo
+                    Update Photo
                   </button>
 
                   <h3 className={styles["dp-instructions"]}>

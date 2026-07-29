@@ -51,6 +51,7 @@ function BoardNavbar({boardData, boardBackground, setBoardBackground,}) {
   const [boardName, setBoardName] = useState(boardData?.title)
   const [isEditingName, setIsEditingName] = useState(false)
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
+  const [projectName, setProjectName] = useState("");
   
   const [inviteEmail, setInviteEmail] = useState("");
 
@@ -66,6 +67,9 @@ function BoardNavbar({boardData, boardBackground, setBoardBackground,}) {
 
 
 
+useEffect(() => {
+  getProjectName(boardData?.projectId);
+}, [[boardData?.projectId]]);
 
 
 
@@ -91,12 +95,41 @@ function BoardNavbar({boardData, boardBackground, setBoardBackground,}) {
           setBoardName(updatedName);
         }
       } catch (err) {
-        console.error("Error getting project description:", err);
+        console.error("Error updating board name:", err);
         
       }
 
      
     };
+
+
+    const getProjectName = async (projectId) => {
+      const token = localStorage.getItem("token");
+      
+
+     
+      try {
+        const response = await fetch(`${API_BASE_URL}/project/name/${projectId}`, {
+          method: "Get",
+          headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        }
+          
+        });
+
+        if (response.ok) {
+          const nameReceived = await response.text();
+          setProjectName(nameReceived);
+        }
+      } catch (err) {
+        console.error("Error getting project name:", err);
+        
+      }
+
+     
+    };
+
 
 
 
@@ -179,7 +212,20 @@ const goToSettings = ()=>
   navigate("/dashboard/settings");
 }
 
+const goToProject =(projectId, projectName)=>
+{
 
+  const url = `/Dashboard/Projects/${projectId}/${encodeURIComponent(projectName)}`;
+
+  console.log(url);
+
+  navigate(url);
+
+  // navigate(`/dashboard/projects/${projectId}/${encodeURIComponent(projectName)}`);
+  console.log("projectId" + projectId);
+  console.log("projectName" + projectName);
+  console.log("go back  ")
+}
 
 
 
@@ -211,10 +257,15 @@ const goToSettings = ()=>
         
         <div className="flex items-center gap-4" >
 
-          <Link  className={`flex items-center gap-2 hover:text-foreground transition-colors ${styles["goBackBtn"]}`} onClick={()=>navigate(-1)}>
+          <button  className={`flex items-center gap-2 hover:text-foreground transition-colors ${styles["goBackBtn"]}`} onClick={()=> {if (projectName) {goToProject(boardData.projectId, projectName)}}}>
             <ArrowLeft className="h-4 w-4" />
-            <span className=" hidden sm:inline">{"Project"}</span>
-          </Link>
+            <span className=" hidden sm:inline">
+              {projectName || "Project"}
+              
+              
+              
+              </span>
+          </button>
           
           <div className="h-6 w-px bg-border" />
 
@@ -226,7 +277,7 @@ const goToSettings = ()=>
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleNameChange()
                 if (e.key === "Escape") {
-                  setBoardName(boardData.name)
+                  setBoardName(boardData.title)
                   setIsEditingName(false)
                 }
               }}

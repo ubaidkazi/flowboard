@@ -28,12 +28,7 @@ public class HomeController
         return "This is home page!";
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/dashboard")
-    public ResponseEntity<String> getDashboard()
-    {
-        return ResponseEntity.ok("Welcome to your dashboard!");
-    }
+
 
 
 //    @GetMapping("/users/search")

@@ -16,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,12 +45,58 @@ public class DashboardService
         User currentUser = userRepo.findByUsername(userName).orElseThrow(() -> new RuntimeException("User not found"));
         long userId = (long)currentUser.getId();
         LocalDate today = LocalDate.now();
+        LocalDateTime startOfWeek = today.with(DayOfWeek.MONDAY).atStartOfDay();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime currentWeekStart =
+                now.toLocalDate()
+                        .with(DayOfWeek.MONDAY)
+                        .atStartOfDay();
+
+        LocalDateTime previousWeekStart =
+                currentWeekStart.minusWeeks(1);
+
+        LocalDateTime previousPeriodEnd =
+                now.minusWeeks(1);
 
 
         //Metrics
         long accessibleProjects = projectRepo.countAccessibleProjects(userId);
         long tasksDueToday = cardRepo.countTasksDueToday(userId, today);
-        long completedTasks = cardRepo.countCompletedTasksForUser(userId);
+
+        long taskCompletedThisWeek =
+                activityEventRepository.countCompletedCardsForUserBetween(
+                        userId,
+                        ActivityType.CARD_COMPLETED,
+                        startOfWeek,
+                        now
+                );
+
+
+        //not used any more
+        //long completedTasks = cardRepo.countCompletedTasksForUser(userId);
+        long completedThisWeek =
+                activityEventRepository.countCompletedCardsForUserBetween(
+                        userId,
+                        ActivityType.CARD_COMPLETED,
+                        currentWeekStart,
+                        now
+                );
+
+        long completedLastWeekSamePeriod =
+                activityEventRepository.countCompletedCardsForUserBetween(
+                        userId,
+                        ActivityType.CARD_COMPLETED,
+                        previousWeekStart,
+                        previousPeriodEnd
+                );
+
+        Double completedTasksTrend =
+                calculatePercentageTrend(
+                        completedThisWeek,
+                        completedLastWeekSamePeriod
+                );
+
+
         long activeCollabortors = projectRepo.countActiveCollaborators(userId);
 
         List<DashboardTaskResponse> myTasks = getDashboardTasks(userId);
@@ -56,11 +104,27 @@ public class DashboardService
         List<RecentProjectResponse> recentProjects = getRecentProjects(userId);
 
 
-        DashboardSummaryResponse summaryResponse =  new DashboardSummaryResponse(accessibleProjects, tasksDueToday,completedTasks,activeCollabortors);
+        DashboardSummaryResponse summaryResponse =  new DashboardSummaryResponse(accessibleProjects, tasksDueToday,taskCompletedThisWeek,completedTasksTrend, activeCollabortors);
         DashboardResponse response = new DashboardResponse(summaryResponse, myTasks, recentActivities, recentProjects);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    private Double calculatePercentageTrend(
+            long current,
+            long previous
+    ) {
+        if (previous == 0) {
+            return null;
+        }
+
+        double percentage =
+                ((double) (current - previous) / previous) * 100;
+
+        return Math.round(percentage * 10.0) / 10.0;
+    }
+
 
 
 
@@ -103,7 +167,8 @@ public class DashboardService
                 card.getProgress(),
                 card.getDueDate(),
                 determineDueStatus(card.getDueDate(), today),
-                assignees
+                assignees,
+                card.getColumn().getBoard().getId()
         );
     }
 
@@ -171,8 +236,8 @@ public class DashboardService
             case COLUMN_MOVED -> "moved column";
             case COLUMN_DELETED -> "deleted column";
 
-            case CARD_CREATED -> "created";
-            case CARD_UPDATED -> "updated";
+            case CARD_CREATED -> "created task";
+            case CARD_UPDATED -> "updated task";
             case CARD_STARTED -> "stared task";
             case CARD_MOVED -> "moved";
             case CARD_ASSIGNED -> "assigned";

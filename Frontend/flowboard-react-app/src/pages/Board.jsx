@@ -1,12 +1,13 @@
 import styles from "../styles/Board.module.css";
 import { useState, useEffect,useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import Column from "../components/Column.jsx";
 import { Plus, X, CircleArrowLeft, LogOut, User} from "lucide-react";
 import CardOpenModal from "../components/CardOpenModal.jsx";
 import BoardNavbar from "../components/BoardNavBar.jsx";
 import { API_BASE_URL } from "../api/config.js";
+
 
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
@@ -51,6 +52,11 @@ const boardDataRef = useRef(null);
 
 
 const projectId = boardData?.projectId;
+
+const [searchParams, setSearchParams] = useSearchParams();
+
+const requestedCardId = searchParams.get("cardId");
+
 
 
 const backgrounds = [
@@ -148,7 +154,13 @@ useEffect(() => {
 const closeModal = ()=>
 {
   setShowModal(false);
+  setSelectedCardId(null);
 
+  setSearchParams((currentParams) => {
+    const nextParams = new URLSearchParams(currentParams);
+    nextParams.delete("cardId");
+    return nextParams;
+  });
 }
 
 
@@ -169,6 +181,22 @@ const closeModal = ()=>
       console.error(err);
     }
   };
+
+
+ useEffect(() => {
+  if (!requestedCardId || !boardData?.columns?.length) {
+    return;
+  }
+
+  const cardToOpen = boardData.columns
+    .flatMap((column) => column.cards ?? [])
+    .find((card) => card.id === Number(requestedCardId));
+
+  if (cardToOpen) {
+    setSelectedCardId(cardToOpen.id);
+    setShowModal(true);
+  }
+}, [requestedCardId, boardData]);
 
 
 
@@ -1046,8 +1074,13 @@ const selectedCard = boardData?.columns
 
         {/* Board Navbar */}
         <div className={styles["nav-bar"]}>
-                  <BoardNavbar boardData={boardData} boardBackground={backgrounds}
-        setBoardBackground={setBoardBackground}></BoardNavbar>
+                  
+                  <BoardNavbar 
+                  boardData={boardData} 
+                  boardBackground={backgrounds}
+                  setBoardBackground={setBoardBackground}>
+                  
+        </BoardNavbar>
 
 
         </div>

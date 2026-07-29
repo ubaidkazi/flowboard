@@ -9,7 +9,7 @@ import TabSwitchComponent from '../components/ui/tab-switch-component';
 import NewMemberModal from '../components/NewMemberModal';
 import { API_BASE_URL } from '../api/config';
 import {getProjects} from '../service/projectService';
-
+import { getRelativeTime } from '../lib/dateUtils';
 
 
 
@@ -366,12 +366,13 @@ const addProject = async(newProjectData) => {
                                 : styles["project-grid-div"]
                             }
                           >
-                            {projectsData.map((project) => (
+                            {projectsData?.map((project) => (
                               <ProjectCardNew
                                 key={project.id}
                                 title={project.name}
                                 description={project.description}
                                 members={project.projectMembers}
+                                timeStamp={getRelativeTime(project.lastActivityAt)}
                                 openProject={() =>
                                   handleOpenProject(
                                     project.id,

@@ -15,45 +15,85 @@ import NewRecentActivityCard from '../components/NewRecentActivityCard';
 import QuickActionCard from '../components/QuickActionCard';
 import ProjectCardNew from '../components/ProjectCardNew';
 import { API_BASE_URL } from '../api/config';
+import { fetchDashboardData } from "../api/dashboardApi";
+import { useNavigate } from 'react-router-dom';
+import {getRelativeTime, formatDate} from '../lib/dateUtils';
 
 function Dashboard()
 {
 
     const [projectsData, setProjectsData] = useState([]);
 
+    const [dashboardData, setDashboardData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-    // GET ALL THE Projects
-        //display the name and desc of each projects
-        useEffect(() => {
-          const fetchProjects = async () => {
-            const token = localStorage.getItem("token");
-            // console.log(token);
+
+    useEffect(() => {
+    const loadDashboard = async () => {
+        try {
+        setIsLoading(true);
+        setError(null);
+
+        const data = await fetchDashboardData();
+        setDashboardData(data);
+       
+        } catch (error) {
+        console.error("Unable to load dashboard:", error);
+        setError("Unable to load dashboard.");
+        } finally {
+        setIsLoading(false);
+        }
+    };
+
+    loadDashboard();
+    }, []);
+
+
+    console.log(getRelativeTime("2026-07-26T16:04:11.771727"));
+
+    const openTask = (task) => {
+    navigate(
+      `/board/${task.boardId}?cardId=${task.cardId}`
+    );
+  };
+
+
+
+
+    // // GET ALL THE Projects
+    //     //display the name and desc of each projects
+    //     useEffect(() => {
+    //       const fetchProjects = async () => {
+    //         const token = localStorage.getItem("token");
+    //         // console.log(token);
       
-            try {
-              const response = await fetch(`${API_BASE_URL}/project`, {
-                method: "GET",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
+    //         try {
+    //           const response = await fetch(`${API_BASE_URL}/project`, {
+    //             method: "GET",
+    //             headers: {
+    //               Authorization: `Bearer ${token}`,
+    //             },
+    //           });
       
-              if (response.ok) {
-                // const text = await response.text();
-                // setMessage(text);
-                const data = await response.json();
-                // console.log("Fetched boards:", data);
-                setProjectsData(data);
-              } else {
-                console.log("Failed to load projects data");
-              }
-            } catch (err) {
-              console.error("Error fetching project:", err);
-              console.log("Server error");
-            }
-          };
+    //           if (response.ok) {
+    //             // const text = await response.text();
+    //             // setMessage(text);
+    //             const data = await response.json();
+    //             // console.log("Fetched boards:", data);
+    //             setProjectsData(data);
+    //           } else {
+    //             console.log("Failed to load projects data");
+    //           }
+    //         } catch (err) {
+    //           console.error("Error fetching project:", err);
+    //           console.log("Server error");
+    //         }
+    //       };
       
-          fetchProjects();
-        }, []);
+    //       fetchProjects();
+    //     }, []);
     
     
         const fullUserName = localStorage.getItem("fullName");
@@ -61,6 +101,19 @@ function Dashboard()
         const names = fullUserName.trim().split(' ');
 
         const firstName = names[0];
+
+
+         
+    const handleOpenProject = (id, name, desc) => {
+      navigate(`/Dashboard/Projects/${id}/${encodeURIComponent(name)}`, {
+      state: { projectDesc: desc }
+    });
+};
+
+const completedTrend = dashboardData?.summary?.completedTasksTrend;
+
+
+
 
 
 
@@ -78,14 +131,54 @@ function Dashboard()
                     <h3 className={styles["dashboard-text"]}> Here's what's happening with your projects today. </h3>
 
                 </div>
+
+
+                {dashboardData?.summary?.totalProjects === 0 && (
+                    <div className={styles["onboarding-banner"]}>
+                    <h2>Welcome to FlowBoard</h2>
+
+                    <p>
+                        Create your first project to start organizing tasks and collaborating.
+                    </p>
+
+                    <Link to="/Dashboard/Projects">
+                        Create your first project
+                    </Link>
+                    </div>
+                )}
+
                 
 
 
                 <div className={styles["card-container"]}>
-                    <DashboardCard title="Total Projects" value={12}  icon={FolderKanban} trend={{ value: 12, positive: true }}></DashboardCard>
-                    <DashboardCard title="Tasks Due Today" value={12}  icon={CalendarCheck} trend={{ value: 12, positive: false }}></DashboardCard>
-                    <DashboardCard title="Completed Tasks" value={12}  icon={CheckCircle2} trend={{ value: 12, positive: true }}></DashboardCard>
-                    <DashboardCard title="Active Collaborators" value={12}  icon={Users} ></DashboardCard>
+                    <DashboardCard title="Total Projects" value={dashboardData?.summary.totalProjects}  icon={FolderKanban} description={"Across your workspace"} toolTip={"Projects you own and you are collaborating on accross your workspace"}></DashboardCard>
+                    <DashboardCard title="Tasks Due Today" value={dashboardData?.summary.tasksDueToday}  icon={CalendarCheck} description={"Across all projects"} toolTip={"Tasks assigned to you and are due today"}></DashboardCard>
+                    <DashboardCard title="Completed Tasks" value={dashboardData?.summary.completedTasksThisWeek}  icon={CheckCircle2} 
+                                trend={
+                                    completedTrend != null
+                                    ? {
+                                        value: Math.abs(completedTrend),
+                                        positive: completedTrend >= 0
+                                    }
+                                    : null
+                            }
+                            showTrendPlaceholder={true}
+                            toolTip={"Tasks assigned to you and marked completed. Percentage below is comparison to your completed tasks at this point in previous week"}>
+                
+                    </DashboardCard>
+                    {/* <DashboardCard title="Completed Tasks" value={dashboardData?.summary.completedTasksThisWeek}  icon={CheckCircle2} 
+                                trend={{
+                                    
+                                        value: Math.abs(49),
+                                        positive: 49 >= 0
+                                    }
+                                    
+                            }
+                            showTrendPlaceholder={true}
+                            toolTip={"Tasks assigned to you and marked completed. Percentage below is comparison to your completed tasks at this point in previous week"}>
+                
+                    </DashboardCard> */}
+                    <DashboardCard title="Active Collaborators" value={dashboardData?.summary.activeCollaborators}  icon={Users} description={"Across all projects"} toolTip={"Active Collaborators across workspace"} ></DashboardCard>
                    
                 </div>
 
@@ -99,7 +192,7 @@ function Dashboard()
                     <div className={styles["upcoming-tasks"]}>
 
                         <div className={styles["heading-and-navlink"]}>
-                            <h3 className={styles["upcoming-tasks-heading"]}>Upcoming Tasks</h3>
+                            <h3 title="Unfinished Tasks that are assigned to you and are due within a week or overdue or have no due date" className={styles["upcoming-tasks-heading"]}>My Tasks</h3>
                             <Link className={styles["view-all-navlink"]} to="/Dashboard/Projects"> 
                                 View All
                                 <ArrowRight className="ml-1 h-4 w-4"/>
@@ -107,6 +200,53 @@ function Dashboard()
                         </div>
 
                         <div className={styles["task-cards-container"]}>
+
+                            {/* {
+                                dashboardData?.tasks.map((task, index)=>(
+                                    <UpcomingTaskCard  
+                                    key={index}
+                            title={task.title}
+                            description={task.description}
+                            dueDate={formatDate(task.dueDate)}
+                            assignees={task.assignees}
+                            onClick={()=>{openTask(task)}}
+                            />
+                                    
+                                ))
+                            } */}
+
+
+                            {dashboardData?.tasks?.length > 0 ? (
+                            dashboardData.tasks.map((task, index)=>(
+                                    <UpcomingTaskCard  
+                                    key={index}
+                            title={task.title}
+                            description={task.description}
+                            dueDate={formatDate(task.dueDate)}
+                            assignees={task.assignees}
+                            onClick={()=>{openTask(task)}}
+                            />
+                                    
+                                ))
+                            ) : (
+                            <div className={styles["empty-state"]}>
+                                <h4>No tasks assigned yet</h4>
+                                <p>Assigned and upcoming tasks will appear here.</p>
+                                <Link to="/Dashboard/Projects">View projects</Link>
+                            </div>
+                            )}
+
+
+
+
+
+
+
+
+
+
+
+{/* 
                             <UpcomingTaskCard  
                             title={"Design new landing page"}
                             description={"Create mockups for the new landing page design"}
@@ -146,7 +286,7 @@ function Dashboard()
                             <UpcomingTaskCard  
                             title={"Design new landing page"}
                             description={"Create mockups for the new landing page design"}
-                            />
+                            /> */}
                            
 
                         </div>
@@ -160,16 +300,44 @@ function Dashboard()
                         <div className={styles["recent-activity-heading"]}>  Recent Activity </div>
                             
                         <div className={styles["recentactivity-card-container"]}>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"Design system update"} timeStamp={'5 minutes ago'}  />
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"3 cards"}  timeStamp={'5 minutes ago'}/>
+
+
+                            {/* {
+                                dashboardData?.recentActivities.map((activity, index)=>(
+                                   <NewRecentActivityCard key={index} actorName={activity.actorName} actorId={activity.actorUserId} actionType={activity.actionText} action={activity.entityName} timeStamp={getRelativeTime(activity.occurredAt)}  />
+                                    
+                                ))
+                            } */}
+
+
+                            {dashboardData?.recentActivities?.length > 0 ? (
+                                dashboardData.recentActivities.map((activity, index)=>(
+                                   <NewRecentActivityCard key={index} actorName={activity.actorName} actorId={activity.actorUserId} actionType={activity.actionText} action={activity.entityName} timeStamp={getRelativeTime(activity.occurredAt)}  />
+                                    
+                                ))
+                                ) : (
+                                <div className={styles["empty-state"]}>
+                                    <h4>No recent activity</h4>
+                                    <p>Project and task activity will appear here.</p>
+                                </div>
+                                )}
+
+
+
+
+                            {/* <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"Design system update"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"} timeStamp={'5 minutes ago'}  />
+                            <NewRecentActivityCard actorId={1} actorName={"Sara Chen"} actionType={"created"} action={"3 cards"}   /> */}
+                            
 
                         </div>
 
@@ -211,6 +379,43 @@ function Dashboard()
 
                         <div className={styles["recent-projects-container"]}>
 
+
+                             {/* {
+                                dashboardData?.recentProjects.map((project, index)=>(
+                                     <ProjectCardNew key={index} title={project.name} description={project.description} timeStamp={getRelativeTime(project.lastActivityAt)} openProject={() =>
+                                  handleOpenProject(
+                                    project.projectId,
+                                    project.name,
+                                    project.description
+                                  )
+                                }/>
+                                    
+                                ))
+                            } */}
+
+
+                            {dashboardData?.recentProjects?.length > 0 ? (
+                           dashboardData.recentProjects.map((project, index)=>(
+                                     <ProjectCardNew key={index} title={project.name} description={project.description} timeStamp={getRelativeTime(project.lastActivityAt)}  openProject={() =>
+                                  handleOpenProject(
+                                    project.projectId,
+                                    project.name,
+                                    project.description
+                                  )
+                                }/>
+                                    
+                                ))
+                            ) : (
+                            <div className={styles["empty-state"]}>
+                                <h4>No projects yet</h4>
+                                <p>Create your first project to start organizing your work.</p>
+                                <Link to="/Dashboard/Projects">Create a project</Link>
+                            </div>
+                            )}
+
+
+
+                            {/* <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
                             <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
                             <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
                             <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
@@ -218,8 +423,7 @@ function Dashboard()
                             <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
                             <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
                             <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
-                            <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
-                            <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/>
+                            <ProjectCardNew title={"Website Redesign"} description={"Complete overhaul of the company website with modern design"}/> */}
 
                         </div>
 

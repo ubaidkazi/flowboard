@@ -3,19 +3,22 @@ import TaskBadge from './ui/task-badge';
 import {users} from './MockData';
 import Avatar  from './ui/avatar-new';
 import {Calendar} from 'lucide-react';
+import AvatarGroup from './AvatarGroup';
 
-function UpcomingTaskCard({title, description,tags, date})
+function UpcomingTaskCard({title, description,tags, dueDate="No Date Set", assignees, onClick})
 {
 
-
-    const visible = users.slice(0, 3);
-    const remaining = users.length - visible.length;
+    
+    // const visible = assignees?.slice(0, 3);
+    // const remaining = assignees?.length - visible.length;    
+    
+    
 
 
 
     return(
         <>
-        <div className={styles["card"]}>
+        <div className={styles["card"]} onClick={onClick}>
 
             <div className={styles["left-section"]}>
 
@@ -33,7 +36,7 @@ function UpcomingTaskCard({title, description,tags, date})
                 </div>
 
                 <div className={styles["description"]}>
-                    {description}
+                    {description !== "" ? description : "No Description"}
                 </div>
 
                 
@@ -45,7 +48,7 @@ function UpcomingTaskCard({title, description,tags, date})
             <div className={styles["right-section"]}>
                 
                 <div className={styles["avatar-group"]}>
-                    {visible.map((user) => (
+                    {/* {visible.map((user) => (
                         <Avatar key={user.id} user={user} />
                     ))}
 
@@ -53,14 +56,17 @@ function UpcomingTaskCard({title, description,tags, date})
                         <div className={`${styles.avatar} ${styles["avatar-more"]}`}>
                             +{remaining}
                         </div>
-                     )}
+                     )} */}
+                     
                 </div>
-                {date}
+                <AvatarGroup users={assignees} > </AvatarGroup>
+            
 
                 <div className={styles["due-date"]}>
                     <Calendar className="h-3.5 w-3.5" />
 
-                    24 march 
+                    {dueDate}
+                    
 
                 </div>
 

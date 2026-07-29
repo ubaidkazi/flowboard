@@ -3,13 +3,13 @@ import styles from '../styles/DashboardCard.module.css';
 // import { Kanban, CircleCheckBig} from 'lucide-react';
 import { cn } from "../lib/utils"; 
 
-function DashboardCard({icon: Icon, value, description, trend, title})
+function DashboardCard({title, description, icon: Icon, value, trend, toolTip, showTrendPlaceholder=false})
 {
 
     return(
         <>
 
-        <div className={styles["dash-card"]}>
+        <div className={styles["dash-card"]} title={toolTip}>
 
             <div className={styles["card-content"]}>
 
@@ -29,14 +29,23 @@ function DashboardCard({icon: Icon, value, description, trend, title})
             {description && (
               <p className="mt-1 text-sm text-muted-foreground">{description}</p>
             )}
-            {trend && (
+            {trend ? (
               <p className={cn(
                 "mt-2 text-sm font-medium",
                 trend.positive ? "text-success" : "text-destructive"
               )}>
                 {trend.positive ? "+" : "-"}{Math.abs(trend.value)}% from last week
               </p>
-            )}
+            )
+             : showTrendPlaceholder ? (
+  <p className="mt-2 text-sm text-muted-foreground">
+    No prior week data to display trend
+  </p>
+) : null}
+
+
+
+            
           </div>
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
             <Icon className="h-6 w-6 text-primary" />

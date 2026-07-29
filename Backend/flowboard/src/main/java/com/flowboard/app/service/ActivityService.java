@@ -172,6 +172,7 @@ public class ActivityService {
         );
 
         setCardDetails(activity, card);
+        setAffectedUsers(activity, card);
 
         activity.setEntityName(card.getTitle());
 
@@ -335,6 +336,28 @@ public class ActivityService {
         }
     }
 
+    private void setAffectedUsers(
+            ActivityEvent activity,
+            Card card
+    ) {
+        if (card.getAssignedMembers() == null) {
+            return;
+        }
+
+        for (User user : card.getAssignedMembers()) {
+
+            ActivityEventUser affectedUser =
+                    new ActivityEventUser(
+                            activity,
+                            (long)user.getId(),
+                            getUserDisplayName(user)
+                    );
+
+            activity.getAffectedUsers().add(affectedUser);
+        }
+    }
+
+
     private void setTargetUserDetails(
             ActivityEvent activity,
             User targetUser
@@ -350,9 +373,9 @@ public class ActivityService {
     }
 
     private String getUserDisplayName(User user) {
-        /*
-         * Replace this with the getter used by your User entity.
-         */
+
+        //Replace this with the getter used by your User entity.
+
         return user.getFullName();
     }
 }

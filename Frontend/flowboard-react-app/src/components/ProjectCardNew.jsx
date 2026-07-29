@@ -2,7 +2,7 @@ import styles from '../styles/ProjectCardNew.module.css';
 import { FolderKanban } from 'lucide-react';
 import AvatarGroup from './AvatarGroup';
 
-export default function ProjectCardNew({title, description, timeStamp, openProject, members})
+export default function ProjectCardNew({title, description, timeStamp="sometime ago", openProject, members})
 {
 
 
@@ -35,7 +35,7 @@ export default function ProjectCardNew({title, description, timeStamp, openProje
                 </div>
 
                 <div >
-                    <h3 className={styles["activity-timestamp"]}> 2 hours ago</h3>
+                    <h3 className={styles["activity-timestamp"]}> {timeStamp}</h3>
                 </div>    
                 
              </div>
