@@ -17,9 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -45,20 +44,28 @@ public class DashboardService
     {
         User currentUser = userRepo.findByUsername(userName).orElseThrow(() -> new RuntimeException("User not found"));
         long userId = (long)currentUser.getId();
-        LocalDate today = LocalDate.now();
-        LocalDateTime startOfWeek = today.with(DayOfWeek.MONDAY).atStartOfDay();
-        LocalDateTime now = LocalDateTime.now();
 
-        LocalDateTime currentWeekStart =
-                now.toLocalDate()
-                        .with(DayOfWeek.MONDAY)
-                        .atStartOfDay();
 
-        LocalDateTime previousWeekStart =
-                currentWeekStart.minusWeeks(1);
+        ZoneId zone = ZoneId.of("America/Chicago");
 
-        LocalDateTime previousPeriodEnd =
-                now.minusWeeks(1);
+        LocalDate today = LocalDate.now(zone);
+        Instant now = Instant.now();
+
+        Instant currentWeekStart =
+                today.with(DayOfWeek.MONDAY)
+                        .atStartOfDay(zone)
+                        .toInstant();
+
+        Instant previousWeekStart =
+                today.with(DayOfWeek.MONDAY)
+                        .minusWeeks(1)
+                        .atStartOfDay(zone)
+                        .toInstant();
+
+        Instant previousPeriodEnd =
+                now.minus(7, ChronoUnit.DAYS);
+
+
 
 
         //Metrics
@@ -69,20 +76,11 @@ public class DashboardService
                 activityEventRepository.countCompletedCardsForUserBetween(
                         userId,
                         ActivityType.CARD_COMPLETED,
-                        startOfWeek,
-                        now
-                );
-
-
-        //not used any more
-        //long completedTasks = cardRepo.countCompletedTasksForUser(userId);
-        long completedThisWeek =
-                activityEventRepository.countCompletedCardsForUserBetween(
-                        userId,
-                        ActivityType.CARD_COMPLETED,
                         currentWeekStart,
                         now
                 );
+
+
 
         long completedLastWeekSamePeriod =
                 activityEventRepository.countCompletedCardsForUserBetween(
@@ -95,6 +93,8 @@ public class DashboardService
         boolean hasPreviousWeekData =
                 currentUser.getCreatedAt() != null
                         && currentUser.getCreatedAt()
+                        .atZone(zone)
+                        .toInstant()
                         .isBefore(previousPeriodEnd);
 
 

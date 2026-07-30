@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,8 +45,8 @@ public interface ActivityEventRepository
     long countCompletedCardsForUserBetween(
             @Param("userId") Long userId,
             @Param("type") ActivityType type,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
+            @Param("start") Instant start,
+            @Param("end") Instant end
     );
 
 }
