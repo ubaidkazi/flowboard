@@ -1,5 +1,6 @@
 package com.flowboard.app.dto.response.dashboard;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public record RecentActivityResponse(Long activityId,
@@ -13,6 +14,6 @@ public record RecentActivityResponse(Long activityId,
                                      Long projectId,
                                      Long boardId,
                                      Long cardId,
-                                     LocalDateTime occurredAt
+                                     Instant occurredAt
 ) {
 }

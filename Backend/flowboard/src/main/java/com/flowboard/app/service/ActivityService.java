@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Service
@@ -284,7 +285,7 @@ public class ActivityService {
         activity.setType(type);
         activity.setActorUserId((long)actor.getId());
         activity.setActorName(getUserDisplayName(actor));
-        activity.setOccurredAt(LocalDateTime.now());
+        activity.setOccurredAt(Instant.now());
 
         return activity;
     }

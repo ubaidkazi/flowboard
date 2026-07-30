@@ -4,6 +4,7 @@ import com.flowboard.app.enums.ActivityType;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ActivityEvent {
     private String entityName;
 
     @Column(name = "occurred_at", nullable = false)
-    private LocalDateTime occurredAt;
+    private Instant occurredAt;
 
     @Column(name = "previous_target_user_id")
     private Long previousTargetUserId;
