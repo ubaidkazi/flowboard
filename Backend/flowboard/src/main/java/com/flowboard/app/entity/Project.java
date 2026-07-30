@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -32,8 +32,8 @@ public class Project
     @JsonManagedReference
     private List<Board> boards;
 
-    private LocalDateTime timeCreated;
-    private LocalDateTime timeUpdated;
+    private Instant timeCreated;
+    private Instant timeUpdated;
 
 
     @ManyToOne

@@ -63,8 +63,9 @@ public class ProjectService
 
     public ResponseEntity<Project> createProject(Project project)
     {
-        project.setTimeCreated(LocalDateTime.now());
-        project.setTimeUpdated(LocalDateTime.now());
+        Instant now = Instant.now();
+        project.setTimeCreated(now);
+        project.setTimeUpdated(now);
         Project newProject = projectRepo.save(project);
 
         User user  = userService.getCurrentUser();
@@ -135,9 +136,8 @@ public class ProjectService
     {
         Project project = projectRepo.findById(id).get();
         project.setName(projectName);
-        project.setTimeUpdated(LocalDateTime.now());
+        project.setTimeUpdated(Instant.now());
         projectRepo.save(project);
-        String message = "Project name updated to " + project.getName();
         User currentUser = userService.getCurrentUser();
 
         activityService.recordProjectUpdated(project, currentUser);
@@ -157,9 +157,8 @@ public class ProjectService
     {
         Project project = projectRepo.findById(id).get();
         project.setDescription(projectDesc);
-        project.setTimeUpdated(LocalDateTime.now());
+        project.setTimeUpdated(Instant.now());
         projectRepo.save(project);
-        String message = "Project desc updated to " + project.getDescription();
         User currentUser = userService.getCurrentUser();
         activityService.recordProjectUpdated(project, currentUser);
 
@@ -200,7 +199,7 @@ public class ProjectService
 
         // find project, set project, save...
         Project project = projectRepo.findById(projectId).get();
-        project.setTimeUpdated(LocalDateTime.now());
+        project.setTimeUpdated(Instant.now());
         projectRepo.save(project);
         member.setProject(project);
         ProjectMember savedMember = projectMemberRepo.save(member);
@@ -252,7 +251,7 @@ public class ProjectService
                     .body("The project owner cannot be removed.");
         }
 
-        project.setTimeUpdated(LocalDateTime.now());
+        project.setTimeUpdated(Instant.now());
         projectRepo.save(project);
 
         projectMemberRepo.delete(member);

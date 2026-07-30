@@ -67,7 +67,7 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         board.setProject(project);
-        project.setTimeUpdated(LocalDateTime.now());
+        project.setTimeUpdated(Instant.now());
         projectRepo.save(project);
 
         BoardAddedEvent event = new BoardAddedEvent(
