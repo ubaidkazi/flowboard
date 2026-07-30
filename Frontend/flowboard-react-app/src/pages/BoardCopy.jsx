@@ -183,7 +183,6 @@ const handleBoardEvent = (event) => {
     id: event.cardId,
     title: event.title,
     position: event.position,
-    checked: false,
     description: "",
     dueDate: null,
     priority: null,

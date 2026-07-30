@@ -4,6 +4,7 @@ import com.flowboard.app.dto.response.ProjectResponse;
 import com.flowboard.app.dto.response.dashboard.*;
 import com.flowboard.app.entity.*;
 import com.flowboard.app.enums.ActivityType;
+import com.flowboard.app.enums.CardProgress;
 import com.flowboard.app.repository.ActivityEventRepository;
 import com.flowboard.app.repository.CardRepo;
 import com.flowboard.app.repository.ProjectRepo;
@@ -47,6 +48,7 @@ public class DashboardService
         LocalDate today = LocalDate.now();
         LocalDateTime startOfWeek = today.with(DayOfWeek.MONDAY).atStartOfDay();
         LocalDateTime now = LocalDateTime.now();
+
         LocalDateTime currentWeekStart =
                 now.toLocalDate()
                         .with(DayOfWeek.MONDAY)
@@ -61,7 +63,7 @@ public class DashboardService
 
         //Metrics
         long accessibleProjects = projectRepo.countAccessibleProjects(userId);
-        long tasksDueToday = cardRepo.countTasksDueToday(userId, today);
+        long tasksDueToday = cardRepo.countTasksDueToday(userId, today, CardProgress.COMPLETED);
 
         long taskCompletedThisWeek =
                 activityEventRepository.countCompletedCardsForUserBetween(
@@ -90,12 +92,25 @@ public class DashboardService
                         previousPeriodEnd
                 );
 
-        Double completedTasksTrend =
-                calculatePercentageTrend(
-                        completedThisWeek,
-                        completedLastWeekSamePeriod
-                );
+        boolean hasPreviousWeekData =
+                currentUser.getCreatedAt() != null
+                        && currentUser.getCreatedAt()
+                        .isBefore(previousPeriodEnd);
 
+
+        Double completedTasksTrend = null;
+
+        if (hasPreviousWeekData && completedLastWeekSamePeriod > 0) {
+
+            completedTasksTrend =
+                    ((double) (
+                            taskCompletedThisWeek
+                                    - completedLastWeekSamePeriod
+                    ) / completedLastWeekSamePeriod) * 100;
+
+            completedTasksTrend =
+                    Math.round(completedTasksTrend * 10.0) / 10.0;
+        }
 
         long activeCollabortors = projectRepo.countActiveCollaborators(userId);
 
@@ -104,7 +119,7 @@ public class DashboardService
         List<RecentProjectResponse> recentProjects = getRecentProjects(userId);
 
 
-        DashboardSummaryResponse summaryResponse =  new DashboardSummaryResponse(accessibleProjects, tasksDueToday,taskCompletedThisWeek,completedTasksTrend, activeCollabortors);
+        DashboardSummaryResponse summaryResponse =  new DashboardSummaryResponse(accessibleProjects, tasksDueToday,taskCompletedThisWeek,completedLastWeekSamePeriod, completedTasksTrend, hasPreviousWeekData, activeCollabortors);
         DashboardResponse response = new DashboardResponse(summaryResponse, myTasks, recentActivities, recentProjects);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -138,6 +153,7 @@ public class DashboardService
                         userId,
                         today,
                         weekEnd,
+                        CardProgress.COMPLETED,
                         taskLimit
                 )
                 .stream()

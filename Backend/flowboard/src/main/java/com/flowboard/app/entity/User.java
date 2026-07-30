@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -18,6 +20,7 @@ public class User
     private String fullName;
     private String email;
     private String passwordHash;
+    private LocalDateTime createdAt;
 
 
     @Lob

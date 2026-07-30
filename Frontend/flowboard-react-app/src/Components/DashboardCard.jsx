@@ -3,7 +3,7 @@ import styles from '../styles/DashboardCard.module.css';
 // import { Kanban, CircleCheckBig} from 'lucide-react';
 import { cn } from "../lib/utils"; 
 
-function DashboardCard({title, description, icon: Icon, value, trend, toolTip, showTrendPlaceholder=false})
+function DashboardCard({title, description, icon: Icon, value, trend, toolTip, showTrendPlaceholder=false, trendDisplay})
 {
 
     return(
@@ -29,6 +29,9 @@ function DashboardCard({title, description, icon: Icon, value, trend, toolTip, s
             {description && (
               <p className="mt-1 text-sm text-muted-foreground">{description}</p>
             )}
+
+
+
             {trend ? (
               <p className={cn(
                 "mt-2 text-sm font-medium",
@@ -38,12 +41,28 @@ function DashboardCard({title, description, icon: Icon, value, trend, toolTip, s
               </p>
             )
              : showTrendPlaceholder ? (
-  <p className="mt-2 text-sm text-muted-foreground">
-    No prior week data to display trend
-  </p>
-) : null}
+              <p className="mt-2 text-sm text-muted-foreground">
+                No prior week data to display trend
+              </p>
+            ) : null}
 
+            
 
+            {trendDisplay && (
+              <p
+                className={cn(
+                  "mt-2 text-sm font-medium",
+                  trendDisplay.type === "positive" &&
+                    "text-success",
+                  trendDisplay.type === "negative" &&
+                    "text-destructive",
+                  trendDisplay.type === "neutral" &&
+                    "text-muted-foreground"
+                )}
+                >
+                {trendDisplay.text}
+              </p>
+            )}
 
             
           </div>
@@ -57,6 +76,7 @@ function DashboardCard({title, description, icon: Icon, value, trend, toolTip, s
             
 
         </div>
+        
         
         
         

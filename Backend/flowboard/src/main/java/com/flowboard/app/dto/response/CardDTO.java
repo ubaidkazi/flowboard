@@ -1,5 +1,6 @@
 package com.flowboard.app.dto.response;
 
+import com.flowboard.app.enums.CardProgress;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,8 @@ public class CardDTO
     private String description;
     private int position;
     private String priority;
-    private String progress;
+    private CardProgress progress;
     private LocalDate dueDate;
-    private boolean checked;
     private List<UserResponseDTO> assignedMembers;
 
 }

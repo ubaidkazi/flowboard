@@ -14,7 +14,7 @@ public class CardMapper {
 
     public CardDTO toDTO(Card card)
     {
-        return new CardDTO(card.getId().intValue(), card.getTitle(), card.getDescription(), card.getPosition(),card.getPriority(), card.getProgress(), card.getDueDate(), card.isChecked(), card.getAssignedMembers()
+        return new CardDTO(card.getId().intValue(), card.getTitle(), card.getDescription(), card.getPosition(),card.getPriority(), card.getProgress(), card.getDueDate(), card.getAssignedMembers()
                 .stream()
                 .map(this::userToDTO)
                 .toList()

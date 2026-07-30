@@ -1,7 +1,6 @@
-import Avatar from './/ui/avatar-new';
 import styles from "../styles/CardOpenModal.module.css";
-import { X, Check, UserRoundPlus, Tag, Trash2, Save, PlusCircle, Plus, Database } from "lucide-react";
-import { useState, useEffect } from "react";
+import { X, Check, UserRoundPlus, Tag, Trash2, Save, Plus } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import TaskBadge from './ui/task-badge';
 import MemberSearchCard from './ui/MemberSearchCard';
 import AvatarGroup from './AvatarGroup';
@@ -13,6 +12,16 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
   const [editedTitle, setEditedTitle] = useState(card.title);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
   const [memberSearch, setMemberSearch] = useState("");
+
+
+  const cancelTitleEditRef = useRef(false);
+
+  const [editedDescription, setEditedDescription] = useState(
+  card.description ?? ""
+);
+
+const [descriptionDirty, setDescriptionDirty] = useState(false);
+
 
   // Keep editedTitle in sync when card changes
   useEffect(() => {
@@ -32,6 +41,14 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
 
   //   onUpdate(card.id, updates);
   // };
+
+
+  useEffect(() => {
+  if (!descriptionDirty) {
+    setEditedDescription(card.description ?? "");
+  }
+}, [card.id, card.description, descriptionDirty]);
+
 
 
 
@@ -66,10 +83,75 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
 
 
 
-  const toggleAddMemberModal = (state)=>
-  {
-    setAddMemberModalOpen(!state);
+  const toggleAddMemberModal = () => {
+  setAddMemberModalOpen((current) => !current);
+};
+
+
+  const isCompleted = card?.progress === "COMPLETED";
+
+
+
+  const saveDescription = () => {
+  if (!descriptionDirty) {
+    return;
   }
+
+  const currentDescription = card.description ?? "";
+
+  if (editedDescription !== currentDescription) {
+    updateCard({
+      description: editedDescription
+    });
+  }
+
+  setDescriptionDirty(false);
+};
+
+
+const handleClose = () => {
+  saveDescription();
+  onClose();
+};
+
+
+const saveTitle = () => {
+
+
+   if (cancelTitleEditRef.current) {
+    cancelTitleEditRef.current = false;
+    setEditedTitle(card.title);
+    setIsEditingTitle(false);
+    return;
+  }
+
+  const trimmedTitle = editedTitle.trim();
+
+  if (!trimmedTitle) {
+    setEditedTitle(card.title);
+    setIsEditingTitle(false);
+    return;
+  }
+
+  if (trimmedTitle !== card.title) {
+    updateCard({
+      title: trimmedTitle,
+    });
+  }
+
+  setEditedTitle(trimmedTitle);
+  setIsEditingTitle(false);
+};
+
+const closeMemberModal = () => {
+  setAddMemberModalOpen(false);
+  setMemberSearch("");
+};
+
+
+
+
+
 
 
 
@@ -78,7 +160,7 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
 
   return (
     <>
-      <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalOverlay} onClick={handleClose}>
         <div></div>
         <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
           
@@ -94,11 +176,17 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
                 <label className={styles["card-checkbox"]}>
                 <input
                   type="checkbox"
-                  checked={card.checked}
-                  onChange={(e) => updateCard({ checked: e.target.checked })}
+                  checked={isCompleted}
+                  onChange={(e) => {
+                      updateCard({
+                        progress: e.target.checked
+                          ? "COMPLETED"
+                          : "IN_PROGRESS"
+                      });
+                    }}
                 />
                 <span className={styles.circle}>
-                  {card.checked && <Check size={14} strokeWidth={3} color="#fff" />}
+                  {isCompleted && <Check size={18} strokeWidth={3} color="#fff" />}
                 </span>
               </label>
 
@@ -113,19 +201,17 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
                   type="text"
                   value={editedTitle}
                   onChange={(e) => setEditedTitle(e.target.value)}
-                  onBlur={() => {
-                    if (editedTitle.trim() !== "") updateCard({ title: editedTitle });
-                    setIsEditingTitle(false);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      updateCard({ title: editedTitle });
-                      setIsEditingTitle(false);
+                  onBlur={saveTitle}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
                     }
-                    if (e.key === "Escape")
+                    if (event.key === "Escape")
                     {
-                      setIsEditingTitle(false);
-                      setEditedTitle(card.title);
+                      event.preventDefault();
+                      cancelTitleEditRef.current = true;
+                      event.currentTarget.blur();
                     }
                   }}
                   autoFocus
@@ -139,7 +225,8 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
               )}
             </div>
 
-            <div className={styles.closeBtn} onClick={onClose}>
+            <div className={styles.closeBtn}
+             onClick={handleClose}>
               <X size={20} />
             </div>
 
@@ -168,12 +255,12 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
              
 
               <div className={styles["add-members"]}>
-                <button className={styles["addMembers-button"]} onClick={()=>{toggleAddMemberModal(addMemberModalOpen)}}> <Plus size={21} color={"white"}> </Plus> </button>
+                <button className={styles["addMembers-button"]} onClick={() => setAddMemberModalOpen(true)}> <Plus size={21} color={"white"}> </Plus> </button>
                 
                 
                 {addMemberModalOpen &&
                 (
-                  <div onClick={toggleAddMemberModal} className={styles["search-member-modal-overlay"]}>
+                  <div onClick={closeMemberModal} className={styles["search-member-modal-overlay"]}>
 
                     <div className={styles["search-member-modal"]}  onClick={ (e) => {e.stopPropagation()}}>
 
@@ -183,13 +270,13 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
 
                       <h3 className={styles["member-modal-heading"]}> Members </h3>
                       
-                      <X className={styles["member-modal-close-btn"]} onClick={()=>{toggleAddMemberModal(addMemberModalOpen)}}></X>
+                      <X className={styles["member-modal-close-btn"]} onClick={closeMemberModal}></X>
                   </div>
 
 
                   <div className={styles["member-search-container"]}>
 
-                    <input type='text' placeholder='Seach Members' className={styles["search-member-input"]} value={memberSearch} onChange={(e) => setMemberSearch(e.target.value)}/>
+                    <input type='text' placeholder='Search Members' className={styles["search-member-input"]} value={memberSearch} onChange={(e) => setMemberSearch(e.target.value)}/>
 
                     <div className={styles["member-search-result"]}>
 
@@ -197,8 +284,8 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
 
 
 
-                     { filteredMembers.map((projectMember, index)=>(
-                            <MemberSearchCard  key={index} userId={projectMember.id} fullName={projectMember.fullName} onClick={()=>{
+                     { filteredMembers?.map((projectMember)=>(
+                            <MemberSearchCard  key={projectMember.id} userId={projectMember.id} fullName={projectMember.fullName} onClick={()=>{
 
                                                                           if(isAssigned(projectMember.id))
                                                                             {onRemoveMember(projectMember.id);}
@@ -302,12 +389,12 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
             <div className={styles["option"]}>
               <label>Progress</label>
               <select
-                value={card.progress || "Not Started"}
+                value={card.progress ?? "NOT_STARTED"}
                 onChange={(e) => updateCard({ progress: e.target.value })}
               >
-                <option value="Not Started">Not Started</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
+                <option value="NOT_STARTED">Not Started</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="COMPLETED">Completed</option>
               </select>
             </div>
 
@@ -326,11 +413,14 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
           <div className={styles.section}>
             <h4>Description</h4>
             <textarea
-              value={card.description || ""}
-              placeholder="Write a comment..."
+              value={editedDescription}
+              placeholder="Write a description..."
               className={styles["des-box"]}
-              onChange={(e) => updateCard({ description: e.target.value })}
-            />
+              onChange={(e) => {
+                  setEditedDescription(e.target.value);
+                  setDescriptionDirty(true);
+                }}          
+                />
           </div>
 
           {/* Actions */}
@@ -344,7 +434,9 @@ function CardOpenModal({ CurrentCard, onClose, onUpdate, onDelete, columnId, pro
                   onClose();
                 }}
               />
-              <Save size={30} className={styles["action-icon-save"]} onClick={onClose} />
+              <Save size={30} className={styles["action-icon-save"]}
+              onClick={handleClose}
+             />
             </div>
           </div>
         </div>

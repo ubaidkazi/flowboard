@@ -13,11 +13,20 @@ function Card({ card, index, onDelete, onClick, onUpdate }) {
 
 
    
+  
+
   const handleCheckChange = (e) => {
-    e.stopPropagation();
-    const newChecked = e.target.checked;
-    onUpdate(card.id, { checked: newChecked });
-  };
+  e.stopPropagation();
+
+  const isNowChecked = e.target.checked;
+
+  onUpdate(card.id, {
+    progress: isNowChecked
+      ? "COMPLETED"
+      : "IN_PROGRESS"
+  });
+};
+
 
   useEffect(() => {
   setEditedCardTitle(card.title);
@@ -82,7 +91,7 @@ const formatDueDate = (dueDate) => {
                     onClick={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
                   >
-                    <input type="checkbox" checked={card.checked} onChange={handleCheckChange} />
+                    <input type="checkbox" checked={card.progress === "COMPLETED"} onChange={handleCheckChange} />
                     <span className={styles.circle}>
                       {<Check size={14} strokeWidth={3} color="#fff" />}
                     </span>

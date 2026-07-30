@@ -6,6 +6,7 @@ import com.flowboard.app.dto.response.BoardMemberDataResponse;
 import com.flowboard.app.dto.response.CardDTO;
 import com.flowboard.app.dto.response.UserResponseDTO;
 import com.flowboard.app.entity.*;
+import com.flowboard.app.enums.CardProgress;
 import com.flowboard.app.mapper.CardMapper;
 import com.flowboard.app.mapper.UserMapper;
 import com.flowboard.app.repository.*;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -230,78 +232,333 @@ public class CardService {
 //    }
 
 
-    //OLD METHOD
+    //CURRENT METHOD - 729
+//    @Transactional
+//    public Card updatePartially(int id, Map<String, Object> updates) {
+//        Card card = cardRepo.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Card not found"));
+
+        // --- Handle progress (single source of truth) ---
+//        if (updates.containsKey("progress")) {
+//            CardProgress newProgress = updates.get("progress");
+//            if (newProgress != null && !newProgress.isBlank()) {
+//                card.setProgress(newProgress);
+//                // Derive checked from progress
+//                if ("Completed".equalsIgnoreCase(newProgress))
+//                {
+//                    card.setChecked(true);
+//                    activityService.recordCardCompleted(card, getCurrentUser());
+//                }
+//                //card.setChecked("Completed".equalsIgnoreCase(newProgress));
+//            }
+//        }
+//
+//        // --- Handle other independent fields ---
+//        if (updates.containsKey("priority")) {
+//            String newPriority = (String) updates.get("priority");
+//            if (newPriority != null && !newPriority.isBlank()) {
+//                card.setPriority(newPriority);
+//                activityService.recordCardUpdated( card,getCurrentUser());
+//            }
+//        }
+//
+//        if (updates.containsKey("title")) {
+//            String newTitle = (String) updates.get("title");
+//            if (newTitle != null && !newTitle.isBlank()) {
+//                card.setTitle(newTitle);
+//                activityService.recordCardUpdated( card,getCurrentUser());
+//            }
+//        }
+//
+//        if (updates.containsKey("description")) {
+//            String newDescription = (String) updates.get("description");
+//            if (newDescription != null) {
+//                card.setDescription(newDescription);
+//                activityService.recordCardUpdated( card,getCurrentUser());
+//            }
+//        }
+//
+//        if (updates.containsKey("dueDate") && updates.get("dueDate") != null) {
+//            card.setDueDate(LocalDate.parse((String) updates.get("dueDate")));
+//            activityService.recordCardUpdated( card,getCurrentUser());
+//
+//        }
+//
+//        card.setUpdatedAt(LocalDateTime.now());
+//        Card updatedCard = cardRepo.save(card);
+//
+//        //activityService.recordCardUpdated( updatedCard,getCurrentUser());
+//
+//        // --- Emit event ---
+//        int boardId = (int) updatedCard.getColumn().getBoard().getId();
+//        CardUpdatedEvent event = new CardUpdatedEvent(
+//                CARD_UPDATED,
+//                id,
+//                updatedCard.getColumn().getBoard().getId(),
+//                updatedCard.getColumn().getId().intValue(),
+//                userService.getCurrentUser().getId(),
+//                Instant.now(),
+//                updatedCard.getTitle(),
+//                updatedCard.getDescription(),
+//                updatedCard.getPriority(),
+//                updatedCard.getProgress(),
+//                updatedCard.getDueDate(),
+//                updatedCard.isChecked()
+//        );
+//
+//        String payload = JsonUtils.toJson(event);
+//
+//        OutboxEvent outboxEvent = new OutboxEvent();
+//        outboxEvent.setEventType("CARD_UPDATED");
+//        outboxEvent.setTopic("/topic/boards/");
+//        outboxEvent.setDestinatonId(boardId);
+//        outboxEvent.setPayload(payload);
+//        outboxEvent.setCreatedAt(Instant.now());
+//
+//        outboxRepository.save(outboxEvent);
+
+
+        Card updatedCard = new Card();
+
+//        return updatedCard;
+//    }
+//
+
     @Transactional
-    public Card updatePartially(int id, Map<String, Object> updates) {
+    public Card updatePartially(
+            int id,
+            Map<String, Object> updates
+    ) {
         Card card = cardRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Card not found"));
 
-        // --- Handle progress (single source of truth) ---
+        User currentUser = userService.getCurrentUser();
+
+        // Capture the original state before applying updates.
+        CardProgress oldProgress = card.getProgress();
+
+        boolean generalCardDetailsUpdated = false;
+
+        /*
+         * Progress update
+         *
+         * CardProgress is the source of truth.
+         * checked is synchronized temporarily until that field is removed.
+         */
         if (updates.containsKey("progress")) {
-            String newProgress = (String) updates.get("progress");
-            if (newProgress != null && !newProgress.isBlank()) {
-                card.setProgress(newProgress);
-                // Derive checked from progress
-                if ("Completed".equalsIgnoreCase(newProgress))
-                {
-                    card.setChecked(true);
-                    activityService.recordCardCompleted(card, getCurrentUser());
+            Object progressValue = updates.get("progress");
+
+            if (progressValue != null) {
+                String normalizedProgress = progressValue
+                        .toString()
+                        .trim()
+                        .toUpperCase()
+                        .replace(" ", "_");
+
+                try {
+                    CardProgress newProgress =
+                            CardProgress.valueOf(normalizedProgress);
+
+                    card.setProgress(newProgress);
+
+
+                } catch (IllegalArgumentException exception) {
+                    throw new IllegalArgumentException(
+                            "Invalid card progress: " + progressValue
+                    );
                 }
-                //card.setChecked("Completed".equalsIgnoreCase(newProgress));
             }
         }
 
-        // --- Handle other independent fields ---
+        /*
+         * Priority update
+         */
         if (updates.containsKey("priority")) {
-            String newPriority = (String) updates.get("priority");
-            if (newPriority != null && !newPriority.isBlank()) {
+            Object priorityValue = updates.get("priority");
+
+            String newPriority =
+                    priorityValue != null
+                            ? priorityValue.toString().trim()
+                            : null;
+
+            if (!Objects.equals(card.getPriority(), newPriority)) {
                 card.setPriority(newPriority);
-                activityService.recordCardUpdated( card,getCurrentUser());
+                generalCardDetailsUpdated = true;
             }
         }
 
+        /*
+         * Title update
+         */
         if (updates.containsKey("title")) {
-            String newTitle = (String) updates.get("title");
-            if (newTitle != null && !newTitle.isBlank()) {
-                card.setTitle(newTitle);
-                activityService.recordCardUpdated( card,getCurrentUser());
+            Object titleValue = updates.get("title");
+
+            if (titleValue != null) {
+                String newTitle = titleValue.toString().trim();
+
+                if (newTitle.isBlank()) {
+                    throw new IllegalArgumentException(
+                            "Card title cannot be blank"
+                    );
+                }
+
+                if (!Objects.equals(card.getTitle(), newTitle)) {
+                    card.setTitle(newTitle);
+                    generalCardDetailsUpdated = true;
+                }
             }
         }
 
+        /*
+         * Description update
+         *
+         * An empty description is allowed.
+         */
         if (updates.containsKey("description")) {
-            String newDescription = (String) updates.get("description");
-            if (newDescription != null) {
+            Object descriptionValue = updates.get("description");
+
+            String newDescription =
+                    descriptionValue != null
+                            ? descriptionValue.toString()
+                            : "";
+
+            if (!Objects.equals(
+                    card.getDescription(),
+                    newDescription
+            )) {
                 card.setDescription(newDescription);
-                activityService.recordCardUpdated( card,getCurrentUser());
+                generalCardDetailsUpdated = true;
             }
         }
 
-        if (updates.containsKey("dueDate") && updates.get("dueDate") != null) {
-            card.setDueDate(LocalDate.parse((String) updates.get("dueDate")));
-            activityService.recordCardUpdated( card,getCurrentUser());
+        /*
+         * Due-date update
+         *
+         * Supports both setting and removing the due date.
+         */
+        if (updates.containsKey("dueDate")) {
+            Object dueDateValue = updates.get("dueDate");
 
+            LocalDate newDueDate = null;
+
+            if (dueDateValue != null
+                    && !dueDateValue.toString().isBlank()) {
+                try {
+                    newDueDate = LocalDate.parse(
+                            dueDateValue.toString()
+                    );
+                } catch (DateTimeParseException exception) {
+                    throw new IllegalArgumentException(
+                            "Invalid due date. Expected format: yyyy-MM-dd"
+                    );
+                }
+            }
+
+            if (!Objects.equals(card.getDueDate(), newDueDate)) {
+                card.setDueDate(newDueDate);
+                generalCardDetailsUpdated = true;
+            }
+        }
+
+        /*
+         * Determine progress transitions after applying the update.
+         */
+        CardProgress newProgress = card.getProgress();
+
+        boolean cardStarted =
+                oldProgress != CardProgress.IN_PROGRESS
+                        && newProgress == CardProgress.IN_PROGRESS;
+
+        boolean cardCompleted =
+                oldProgress != CardProgress.COMPLETED
+                        && newProgress == CardProgress.COMPLETED;
+
+        boolean cardReopened =
+                oldProgress == CardProgress.COMPLETED
+                        && newProgress != CardProgress.COMPLETED;
+
+        boolean progressChanged =
+                oldProgress != newProgress;
+
+        /*
+         * Only update the timestamp when something actually changed.
+         */
+        boolean cardChanged =
+                progressChanged || generalCardDetailsUpdated;
+
+        if (!cardChanged) {
+            return card;
         }
 
         card.setUpdatedAt(LocalDateTime.now());
+
         Card updatedCard = cardRepo.save(card);
 
-        //activityService.recordCardUpdated( updatedCard,getCurrentUser());
+        /*
+         * Record permanent activity history.
+         *
+         * These conditions ensure that events are only recorded when the
+         * card transitions into or out of a particular state.
+         */
+        if (cardStarted) {
+            activityService.recordCardStarted(
+                    updatedCard,
+                    currentUser
+            );
+        }
 
-        // --- Emit event ---
-        int boardId = (int) updatedCard.getColumn().getBoard().getId();
+        if (cardCompleted) {
+            activityService.recordCardCompleted(
+                    updatedCard,
+                    currentUser
+            );
+        }
+
+        if (cardReopened) {
+            activityService.recordCardReopened(
+                    updatedCard,
+                    currentUser
+            );
+        }
+
+        /*
+         * Record a generic CARD_UPDATED activity only when ordinary card
+         * details changed.
+         *
+         * This prevents a progress-only update from producing both
+         * CARD_STARTED/CARD_COMPLETED and a generic CARD_UPDATED entry.
+         */
+        if (generalCardDetailsUpdated) {
+            activityService.recordCardUpdated(
+                    updatedCard,
+                    currentUser
+            );
+        }
+
+        /*
+         * Publish one WebSocket/outbox event containing the complete
+         * updated card state.
+         */
+        long boardId =
+                updatedCard
+                        .getColumn()
+                        .getBoard()
+                        .getId();
+
         CardUpdatedEvent event = new CardUpdatedEvent(
                 CARD_UPDATED,
-                id,
-                updatedCard.getColumn().getBoard().getId(),
+                updatedCard.getId(),
+                boardId,
                 updatedCard.getColumn().getId().intValue(),
-                userService.getCurrentUser().getId(),
+                currentUser.getId(),
                 Instant.now(),
                 updatedCard.getTitle(),
                 updatedCard.getDescription(),
                 updatedCard.getPriority(),
                 updatedCard.getProgress(),
-                updatedCard.getDueDate(),
-                updatedCard.isChecked()
+                updatedCard.getDueDate()
+
+
         );
 
         String payload = JsonUtils.toJson(event);
@@ -309,7 +566,7 @@ public class CardService {
         OutboxEvent outboxEvent = new OutboxEvent();
         outboxEvent.setEventType("CARD_UPDATED");
         outboxEvent.setTopic("/topic/boards/");
-        outboxEvent.setDestinatonId(boardId);
+        outboxEvent.setDestinatonId((int) boardId);
         outboxEvent.setPayload(payload);
         outboxEvent.setCreatedAt(Instant.now());
 

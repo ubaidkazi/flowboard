@@ -3,7 +3,7 @@ import { useState, useEffect,useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import Column from "../components/Column.jsx";
-import { Plus, X, CircleArrowLeft, LogOut, User} from "lucide-react";
+import { Plus, X} from "lucide-react";
 import CardOpenModal from "../components/CardOpenModal.jsx";
 import BoardNavbar from "../components/BoardNavBar.jsx";
 import { API_BASE_URL } from "../api/config.js";
@@ -24,7 +24,6 @@ function Board() {
   const [boardData, setBoardData] = useState(null);
   const [columnName, setColumnName] = useState("");
   const [cardName, setCardName] = useState("");
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const isDraggingRef = useRef(false);
   const scrollRef = useRef(null);
@@ -264,17 +263,17 @@ const handleBoardEvent = (event) => {
   case "CARD_CREATED":
 
   const newCard = {
-    id: event.cardId,
-    title: event.title,
-    position: event.position,
-    checked: false,
-    description: "",
-    dueDate: null,
-    priority: null,
-    progress: null,
-    createdAt: event.createdAt,
-    updatedAt: event.updatedAt
-  };
+  id: event.cardId,
+  title: event.title,
+  position: event.position,
+  description: "",
+  dueDate: null,
+  priority: null,
+  progress: event.progress ?? "NOT_STARTED",
+  assignedMembers: [],
+  createdAt: event.createdAt,
+  updatedAt: event.updatedAt
+};
 
   setBoardData(prev => {
     if (!prev) return prev;
@@ -331,16 +330,15 @@ break;
   console.log(`Card updated event received from the board topic.. by user: ${event.updatedBy} CARD ID: ${event.cardId}  Updated AT:${event.updatedAt} `);
   console.log(event);
   const updatedCard = {
-      id: event.cardId,
-      title: event.cardTitle,
-      checked: event.checked,
-      description: event.description,
-      dueDate: event.dueDate,
-      priority: event.priority,
-      progress: event.progress,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt
-    };
+  id: event.cardId,
+  title: event.cardTitle,
+  description: event.description,
+  dueDate: event.dueDate,
+  priority: event.priority,
+  progress: event.progress,
+  createdAt: event.createdAt,
+  updatedAt: event.updatedAt
+};
 
     setBoardData(prev => {
   if (!prev) return prev;
@@ -585,17 +583,17 @@ const addOptimisticCard = (columnId, cardTitle) => {
   const tempId = "temp-" + Date.now();
 
   const optimisticCard = {
-    id: tempId,
-    title: cardTitle,
-    position: 0,
-    checked: false,
-    description: "",
-    dueDate: null,
-    priority: null,
-    progress: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  id: tempId,
+  title: cardTitle,
+  position: 0,
+  description: "",
+  dueDate: null,
+  priority: null,
+  progress: "NOT_STARTED",
+  assignedMembers: [],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
 
   setBoardData(prev => {
     if (!prev) return prev;
@@ -942,34 +940,29 @@ const handleDeleteCard = async (cardId, columnId) => {
   }
 
 
-  function debounce(fn, delay) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
-}
+  
 
 
 
- const debouncedSendUpdate = useRef(
-  debounce(async (cardId, updates) => {
-    const token = localStorage.getItem("token");
 
-    try {
-      await fetch(`${API_BASE_URL}/cards/${cardId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      });
-    } catch (err) {
-      console.error("Failed to update card:", err);
-    }
-  }, 500)
-).current;
+
+const sendCardUpdate = async (cardId, updates) => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE_URL}/cards/${cardId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updates),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update card: ${response.status}`);
+  }
+};
+
 
 
 // const handleCardUpdate = (cardId, updates) => {
@@ -1008,39 +1001,32 @@ const handleDeleteCard = async (cardId, columnId) => {
 
 
 const handleCardUpdate = (cardId, updates) => {
-  if (!updates) return;
-
-  const finalUpdates = { ...updates };
-
-  // Checkbox toggle
-  if (updates.checked !== undefined) {
-    finalUpdates.progress = updates.checked
-      ? "Completed"
-      : "Not started";
+  if (!updates || Object.keys(updates).length === 0) {
+    return;
   }
 
-  // Progress dropdown change
-  if (updates.progress !== undefined) {
-    finalUpdates.checked = updates.progress === "Completed";
-  }
-
-  setBoardData(prev => {
-    if (!prev) return prev;
+  setBoardData((previousBoard) => {
+    if (!previousBoard) return previousBoard;
 
     return {
-      ...prev,
-      columns: prev.columns.map(col => ({
-        ...col,
-        cards: col.cards.map(card =>
+      ...previousBoard,
+      columns: previousBoard.columns.map((column) => ({
+        ...column,
+        cards: column.cards.map((card) =>
           card.id === cardId
-            ? { ...card, ...finalUpdates }
+            ? { ...card, ...updates }
             : card
-        )
-      }))
+        ),
+      })),
     };
   });
 
-  debouncedSendUpdate(cardId, finalUpdates);
+  sendCardUpdate(cardId, updates).catch((error) => {
+    console.error("Failed to update card:", error);
+
+    // Ideally show an error and refetch to restore server state.
+    fetchBoard();
+  });
 };
 
 
@@ -1222,7 +1208,6 @@ onDragEnd={(result)=>{
     onClose={closeModal}
     onUpdate={handleCardUpdate}
     onDelete={handleDeleteCard}
-    projectMembers={projectMembersData}
     onAddMember={addMemberToCard}
     onRemoveMember={removeMemberFromCard}
   />

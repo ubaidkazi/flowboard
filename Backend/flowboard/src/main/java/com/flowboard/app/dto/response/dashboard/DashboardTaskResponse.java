@@ -1,5 +1,6 @@
 package com.flowboard.app.dto.response.dashboard;
 
+import com.flowboard.app.enums.CardProgress;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ public record DashboardTaskResponse(
         String title,
         String description,
         String priority,
-        String progress,
+        CardProgress progress,
         LocalDate dueDate,
         String dueStatus,
         List<TaskAssigneeResponse> assignees,

@@ -1,5 +1,6 @@
 package com.flowboard.app.websocket.cardevents;
 
+import com.flowboard.app.enums.CardProgress;
 import com.flowboard.app.enums.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class CardUpdatedEvent
 {
 
     private EventType type;
-    private int cardId;
+    private long cardId;
     private long boardId;
     private int columnId;
     private int updatedBy;
@@ -24,9 +25,8 @@ public class CardUpdatedEvent
     private String cardTitle;
     private String description;
     private String priority;
-    private String progress;
+    private CardProgress progress;
     private LocalDate dueDate;
-    private boolean checked;
 
 
 

@@ -72,7 +72,6 @@ public class BoardResponseMapper {
         dto.setPriority(card.getPriority());
         dto.setProgress(card.getProgress());
         dto.setDueDate(card.getDueDate());
-        dto.setChecked(card.isChecked());
         dto.setAssignedMembers(toUserDTOList(card.getAssignedMembers()));
 
         return dto;

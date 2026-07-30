@@ -30,6 +30,249 @@ function Dashboard()
     const navigate = useNavigate();
 
 
+
+    //temp experiment
+// const tempDashboardData = {
+//   summary: {
+//     totalProjects: 4,
+//     tasksDueToday: 0,
+//     completedTasksThisWeek: 5,
+//     completedTasksPreviousWeek: 0,
+//     completedTasksTrend: 20.3,
+//     hasPreviousWeekData: true,
+//     activeCollaborators: 6,
+//   },
+//   tasks: [
+//     {
+//       cardId: 341,
+//       title: "Dev/Prod Timezone Mismatch",
+//       description: "Prod is +5hrs so seems UTC maybe\n",
+//       priority: null,
+//       progress: null,
+//       dueDate: null,
+//       dueStatus: "NO_DUE_DATE",
+//       assignees: [
+//         {
+//           id: 1,
+//           fullName: "Ubaid H",
+//         },
+//       ],
+//       boardId: 122,
+//     },
+//     {
+//       cardId: 340,
+//       title: "Task Progress Update Issue",
+//       description:
+//         "Task Progress Update Issue / Update Design Improvement. Checkbox sync issue\n\n",
+//       priority: null,
+//       progress: null,
+//       dueDate: null,
+//       dueStatus: "NO_DUE_DATE",
+//       assignees: [
+//         {
+//           id: 1,
+//           fullName: "Ubaid H",
+//         },
+//       ],
+//       boardId: 122,
+//     },
+//     {
+//       cardId: 337,
+//       title: "Fix Task Assignment",
+//       description:
+//         "When a member is removed from a project, all the task they are assigned should be updated as well\n",
+//       priority: null,
+//       progress: null,
+//       dueDate: null,
+//       dueStatus: "NO_DUE_DATE",
+//       assignees: [
+//         {
+//           id: 1,
+//           fullName: "Ubaid H",
+//         },
+//       ],
+//       boardId: 122,
+//     },
+//     {
+//       cardId: 328,
+//       title: "Fix navigation bug",
+//       description: "Navigation menu not closing on mobile",
+//       priority: null,
+//       progress: null,
+//       dueDate: null,
+//       dueStatus: "NO_DUE_DATE",
+//       assignees: [
+//         {
+//           id: 1,
+//           fullName: "Ubaid H",
+//         },
+//       ],
+//       boardId: 111,
+//     },
+//     {
+//       cardId: 325,
+//       title: "User testing sessions",
+//       description: "Conduct usability testing with 10 users",
+//       priority: null,
+//       progress: null,
+//       dueDate: null,
+//       dueStatus: "NO_DUE_DATE",
+//       assignees: [
+//         {
+//           id: 1,
+//           fullName: "Ubaid H",
+//         },
+//       ],
+//       boardId: 111,
+//     },
+//   ],
+//   recentActivities: [
+//     {
+//       activityId: 146,
+//       actorUserId: 1,
+//       actorName: "Ubaid H",
+//       activityType: "CARD_UPDATED",
+//       actionText: "updated task",
+//       entityName: "Dev/Prod Timezone Mismatch",
+//       targetUserId: null,
+//       targetUserName: null,
+//       projectId: 121,
+//       boardId: 122,
+//       cardId: 341,
+//       occurredAt: "2026-07-29T09:53:19.224951",
+//     },
+//     {
+//       activityId: 145,
+//       actorUserId: 1,
+//       actorName: "Ubaid H",
+//       activityType: "CARD_UPDATED",
+//       actionText: "updated task",
+//       entityName: "Dev/Prod Timezone Mismatch",
+//       targetUserId: null,
+//       targetUserName: null,
+//       projectId: 121,
+//       boardId: 122,
+//       cardId: 341,
+//       occurredAt: "2026-07-29T09:53:17.300274",
+//     },
+//     {
+//       activityId: 144,
+//       actorUserId: 1,
+//       actorName: "Ubaid H",
+//       activityType: "CARD_UPDATED",
+//       actionText: "updated task",
+//       entityName: "Dev/Prod Timezone Mismatch",
+//       targetUserId: null,
+//       targetUserName: null,
+//       projectId: 121,
+//       boardId: 122,
+//       cardId: 341,
+//       occurredAt: "2026-07-28T22:12:06.315171",
+//     },
+//     {
+//       activityId: 143,
+//       actorUserId: 1,
+//       actorName: "Ubaid H",
+//       activityType: "CARD_UPDATED",
+//       actionText: "updated task",
+//       entityName: "Dev/Prod Timezone Mismatch",
+//       targetUserId: null,
+//       targetUserName: null,
+//       projectId: 121,
+//       boardId: 122,
+//       cardId: 341,
+//       occurredAt: "2026-07-28T22:12:00.968561",
+//     },
+//     {
+//       activityId: 142,
+//       actorUserId: 1,
+//       actorName: "Ubaid H",
+//       activityType: "CARD_UPDATED",
+//       actionText: "updated task",
+//       entityName: "Dev/Prod Timezone Mismatch",
+//       targetUserId: null,
+//       targetUserName: null,
+//       projectId: 121,
+//       boardId: 122,
+//       cardId: 341,
+//       occurredAt: "2026-07-28T22:11:57.670763",
+//     },
+//     {
+//       activityId: 141,
+//       actorUserId: 1,
+//       actorName: "Ubaid H",
+//       activityType: "CARD_UPDATED",
+//       actionText: "updated task",
+//       entityName: "Dev/Prod Timezone Mismatch",
+//       targetUserId: null,
+//       targetUserName: null,
+//       projectId: 121,
+//       boardId: 122,
+//       cardId: 341,
+//       occurredAt: "2026-07-28T22:11:57.113814",
+//     },
+//     {
+//       activityId: 140,
+//       actorUserId: 1,
+//       actorName: "Ubaid H",
+//       activityType: "CARD_UPDATED",
+//       actionText: "updated task",
+//       entityName: "Dev/Prod Timezone Mismatch",
+//       targetUserId: null,
+//       targetUserName: null,
+//       projectId: 121,
+//       boardId: 122,
+//       cardId: 341,
+//       occurredAt: "2026-07-28T22:11:53.401163",
+//     },
+//   ],
+//   recentProjects: [
+//     {
+//       projectId: 85,
+//       name: "Website",
+//       description: "",
+//       role: "OWNER",
+//       lastActivityAt: "2026-07-28T11:21:39.037222",
+//     },
+//     {
+//       projectId: 121,
+//       name: "FLOWBOARD",
+//       description: "All tasks related to flowboard project",
+//       role: "OWNER",
+//       lastActivityAt: "2026-07-28T08:47:06.662899",
+//     },
+//     {
+//       projectId: 84,
+//       name: "2",
+//       description: "2",
+//       role: "MEMBER",
+//       lastActivityAt: "2026-07-28T08:44:11.141106",
+//     },
+//     {
+//       projectId: 105,
+//       name: "Website Redesign",
+//       description: "Complete overhaul of the company website with modern design",
+//       role: "MEMBER",
+//       lastActivityAt: "2026-07-26T16:04:15.880931",
+//     },
+//   ],
+// };
+
+
+
+
+//   useEffect(() => {
+//     setDashboardData(tempDashboardData)
+    
+//     }, []);
+
+
+
+
+
+
+
+
     useEffect(() => {
     const loadDashboard = async () => {
         try {
@@ -38,6 +281,7 @@ function Dashboard()
 
         const data = await fetchDashboardData();
         setDashboardData(data);
+        console.log(dashboardData);
        
         } catch (error) {
         console.error("Unable to load dashboard:", error);
@@ -58,6 +302,56 @@ function Dashboard()
       `/board/${task.boardId}?cardId=${task.cardId}`
     );
   };
+
+
+
+  const completedThisWeek =
+  dashboardData?.summary?.completedTasksThisWeek ?? 0;
+
+const completedPreviousWeek =
+  dashboardData?.summary?.completedTasksPreviousWeek ?? 0;
+
+const completedTrend =
+  dashboardData?.summary?.completedTasksTrend;
+
+const hasPreviousWeekData =
+  dashboardData?.summary?.hasPreviousWeekData ?? false;
+
+
+
+  let completedTrendDisplay = null;
+
+if (!hasPreviousWeekData) {
+  completedTrendDisplay = {
+    text: "No prior week data",
+    type: "neutral"
+  };
+} else if (completedTrend != null) {
+  completedTrendDisplay = {
+    text: `${completedTrend > 0 ? "+" : ""}${completedTrend}% from last week`,
+    type:
+      completedTrend > 0
+        ? "positive"
+        : completedTrend < 0
+          ? "negative"
+          : "neutral"
+  };
+} else if (
+  completedPreviousWeek === 0 &&
+  completedThisWeek > 0
+) {
+  completedTrendDisplay = {
+    text: "Up from 0 last week",
+    type: "positive"
+  };
+} else {
+  completedTrendDisplay = {
+    text: "No change from last week",
+    type: "neutral"
+  };
+}
+
+
 
 
 
@@ -110,7 +404,7 @@ function Dashboard()
     });
 };
 
-const completedTrend = dashboardData?.summary?.completedTasksTrend;
+//const completedTrend = dashboardData?.summary?.completedTasksTrend;
 
 
 
@@ -153,33 +447,16 @@ const completedTrend = dashboardData?.summary?.completedTasksTrend;
                 <div className={styles["card-container"]}>
                     <DashboardCard title="Total Projects" value={dashboardData?.summary.totalProjects}  icon={FolderKanban} description={"Across your workspace"} toolTip={"Projects you own and you are collaborating on accross your workspace"}></DashboardCard>
                     <DashboardCard title="Tasks Due Today" value={dashboardData?.summary.tasksDueToday}  icon={CalendarCheck} description={"Across all projects"} toolTip={"Tasks assigned to you and are due today"}></DashboardCard>
-                    <DashboardCard title="Completed Tasks" value={dashboardData?.summary.completedTasksThisWeek}  icon={CheckCircle2} 
-                                trend={
-                                    completedTrend != null
-                                    ? {
-                                        value: Math.abs(completedTrend),
-                                        positive: completedTrend >= 0
-                                    }
-                                    : null
-                            }
-                            showTrendPlaceholder={true}
-                            toolTip={"Tasks assigned to you and marked completed. Percentage below is comparison to your completed tasks at this point in previous week"}>
-                
-                    </DashboardCard>
-                    {/* <DashboardCard title="Completed Tasks" value={dashboardData?.summary.completedTasksThisWeek}  icon={CheckCircle2} 
-                                trend={{
-                                    
-                                        value: Math.abs(49),
-                                        positive: 49 >= 0
-                                    }
-                                    
-                            }
-                            showTrendPlaceholder={true}
-                            toolTip={"Tasks assigned to you and marked completed. Percentage below is comparison to your completed tasks at this point in previous week"}>
-                
-                    </DashboardCard> */}
+                    <DashboardCard
+                        title="Completed This Week"
+                        value={completedThisWeek}
+                        icon={CheckCircle2}
+                        trendDisplay={completedTrendDisplay}
+                        toolTip="Tasks assigned to you that were completed this week. The comparison uses the same elapsed portion of last week."
+                        />
                     <DashboardCard title="Active Collaborators" value={dashboardData?.summary.activeCollaborators}  icon={Users} description={"Across all projects"} toolTip={"Active Collaborators across workspace"} ></DashboardCard>
-                   
+                    
+
                 </div>
 
 
