@@ -26,8 +26,7 @@ public class ProjectController
     @Autowired
     ProjectService projectService;
 
-    @Autowired
-    UserService userService;
+
 
 
 
@@ -39,14 +38,12 @@ public class ProjectController
 
 
     @GetMapping("")
-    public ResponseEntity<List<ProjectResponse>> getProject(@AuthenticationPrincipal UserDetails userDetails)
+    public ResponseEntity<List<ProjectResponse>> getProjects()
     {
-        String username = userDetails.getUsername();
 
 
-        User user = userService.findUserByUsername(username);
-        return projectService.getProjectsByUserId(user.getId());
-        //return projectService.getProjectsByUserId(1);
+        return projectService.getCurrentUserProjects();
+
     }
 
     @DeleteMapping("/{id}")

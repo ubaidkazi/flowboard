@@ -70,14 +70,13 @@ public class BoardController
         return  boardService.createBoard(board, projectId);
     }
 
-    //Get all boards linked with a project
+    //Get all boards for the current user
     @GetMapping("")
-    public ResponseEntity<List<Board>> getBoard(@AuthenticationPrincipal UserDetails userDetails)
+    public ResponseEntity<List<Board>> getBoards()
     {
-        String username = userDetails.getUsername();
-        User user = userService.findUserByUsername(username);
-        return boardService.getBoardsByUserId(user.getId());
-        //return boardService.getBoardsByUserId(1);
+
+        return boardService.getCurrentUserBoards();
+
     }
 
 
@@ -104,15 +103,6 @@ public class BoardController
     public ResponseEntity<BoardResponseDTO> getBoardById(@PathVariable int id)
     {
         BoardResponseDTO board = boardService.getBoardById(id);
-
-//        Users currentUser = userService.getCurrentUser();
-//        boolean isOwner =  board.getUser().getId().equals(currentUser.getId());
-//
-//        if (!isOwner)
-//        {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        }
-
         return ResponseEntity.ok(board);
 
     }

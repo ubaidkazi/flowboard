@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -68,20 +69,21 @@ public class ProjectService
         project.setTimeUpdated(now);
         Project newProject = projectRepo.save(project);
 
-        User user  = userService.getCurrentUser();
-        String userName = user.getUsername();
+        User currentUser  = userService.getCurrentUser();
 
         //Add owner as a project member with OWNER role.
-        AddMemberRequest request = new AddMemberRequest(userName, Role.OWNER);
-        addProjectMember(request, newProject.getId());
+        createOwnerMembership(newProject,currentUser );
 
-        activityService.recordProjectCreated(newProject,user);
+        activityService.recordProjectCreated(newProject,currentUser);
 
         return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
 
 
-    public ResponseEntity<List<ProjectResponse>> getProjectsByUserId(int userId) {
+    public ResponseEntity<List<ProjectResponse>> getCurrentUserProjects() {
+
+        User currentUser = userService.getCurrentUser();
+        int userId = currentUser.getId();
 
         List<Project> owned = projectRepo.findOwnedProjects(userId);
         List<Project> shared = projectRepo.findSharedProjects(userId);
@@ -113,6 +115,9 @@ public class ProjectService
     }
 
 
+    @PreAuthorize(
+            "@projectSecurity.isProjectOwner(#id, authentication)"
+    )
     public ResponseEntity<String> deleteProject(Long id)
     {
         try {
@@ -126,12 +131,19 @@ public class ProjectService
         }
     }
 
+    @PreAuthorize(
+            "@projectSecurity.canAccessProject(#id, authentication)"
+    )
     public ResponseEntity<String> getProjectName(Long id)
     {
         String projectName = projectRepo.findNameById(id);
         return new ResponseEntity<>(projectName, HttpStatus.OK);
     }
 
+
+    @PreAuthorize(
+            "@projectSecurity.isProjectOwner(#id, authentication)"
+    )
     public ResponseEntity<String> updateProjectName(Long id, String projectName)
     {
         Project project = projectRepo.findById(id).get();
@@ -147,12 +159,20 @@ public class ProjectService
     }
 
 
+    @PreAuthorize(
+            "@projectSecurity.canAccessProject(#id, authentication)"
+    )
     public ResponseEntity<String> getProjectDesc(Long id)
     {
         String projectName = projectRepo.findDescriptionById(id);
         return new ResponseEntity<>(projectName, HttpStatus.OK);
     }
 
+
+
+    @PreAuthorize(
+            "@projectSecurity.isProjectOwner(#id, authentication)"
+    )
     public ResponseEntity<String> updateProjectDesc(Long id, String projectDesc)
     {
         Project project = projectRepo.findById(id).get();
@@ -165,7 +185,9 @@ public class ProjectService
         return new ResponseEntity<>(projectDesc, HttpStatus.OK);
     }
 
-
+    @PreAuthorize(
+            "@projectSecurity.isProjectOwner(#projectId, authentication)"
+    )
     public ResponseEntity<?> addProjectMember(AddMemberRequest request,  Long projectId)
     {
 
@@ -213,6 +235,23 @@ public class ProjectService
     }
 
 
+
+    private void createOwnerMembership(
+            Project project,
+            User owner
+    ) {
+        ProjectMember member = new ProjectMember();
+        member.setProject(project);
+        member.setUser(owner);
+        member.setRole(Role.OWNER);
+
+        projectMemberRepo.save(member);
+    }
+
+
+    @PreAuthorize(
+            "@projectSecurity.canAccessProject(#projectId, authentication)"
+    )
     public ResponseEntity<List<ProjectMemberDTO>> getProjectMembers(long projectId)
     {
         List<ProjectMemberDTO> members = projectMemberRepo.findByProjectId(projectId)
@@ -228,6 +267,9 @@ public class ProjectService
     }
 
 
+    @PreAuthorize(
+            "@projectSecurity.isProjectOwner(#projectId, authentication)"
+    )
     public ResponseEntity<String> deleteProjectMember(int projectId, int userId) {
 
         Project project = projectRepo.findById((long) projectId)
@@ -235,11 +277,7 @@ public class ProjectService
 
         User currentUser = userService.getCurrentUser();
 
-        // Only the project owner can remove members
-        if (!project.getOwner().getId().equals(currentUser.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("You don't have permission to remove other members :)");
-        }
+
 
         ProjectMember member = projectMemberRepo
                 .findByProjectIdAndUserId((long) projectId, userId)

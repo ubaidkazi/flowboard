@@ -33,6 +33,7 @@
     border-color: lightgray;
     border-radius: 8px;
     background-color: var(--foreground-muted);
+    background-color: white;
 }
 
 .icon-label

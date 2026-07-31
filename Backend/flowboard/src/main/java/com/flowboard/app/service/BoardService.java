@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -51,6 +52,9 @@ public class BoardService {
     private BoardResponseMapper boardResponseMapper;
 
 
+    @PreAuthorize(
+            "@projectSecurity.canAccessProject(#projectId, authentication)"
+    )
     public ResponseEntity<Board> createBoard(Board board, Long projectId) {
         if (board.getColumns() != null) {
             for (TaskColumn column : board.getColumns()) {
@@ -95,13 +99,17 @@ public class BoardService {
         return new ResponseEntity<>(boardRepo.save(board), HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Board>> getBoardsByUserId(int userId) {
-        List<Board> boards = boardRepo.findByUserId(userId);
+    public ResponseEntity<List<Board>> getCurrentUserBoards() {
+        User currentUser = userService.getCurrentUser();
+        List<Board> boards = boardRepo.findByUserId(currentUser.getId());
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 
 
     //old method, not used currently
+    @PreAuthorize(
+            "@projectSecurity.canAccessProject(#projectId, authentication)"
+    )
     public ResponseEntity<List<BoardDataResponseDTO>> getBoardsByProjectId(Long projectId) {
 
         List<BoardDataResponseDTO> boards = boardRepo.findByProjectId(projectId)
@@ -113,12 +121,17 @@ public class BoardService {
     }
 
 
+    @PreAuthorize(
+            "@projectSecurity.canAccessProject(#projectId, authentication)"
+    )
     public ResponseEntity<List<BoardCardDataResponse>> getBoardDataByProjectId(Long projectId) {
         List<BoardCardDataResponse> data = boardRepo.getBoardCardData(projectId.intValue());
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
-
+    @PreAuthorize(
+            "@boardSecurity.isProjectOwnerForBoard(#id, authentication)"
+    )
     public ResponseEntity<Board> deleteBoard(int id) {
         try {
             Board board = boardRepo.findById(id).get();
@@ -131,14 +144,15 @@ public class BoardService {
         }
     }
 
+    @PreAuthorize(
+            "@boardSecurity.canAccessBoard(#id, authentication)"
+    )
     public BoardResponseDTO getBoardById(int id) {
-        try {
-            Board board = boardRepo.findById(id).get();
-            Board sortedBoard = sortBoardData(board);
-            return boardResponseMapper.toDTO(sortedBoard);
-        } catch (Exception e) {
-            return null;
-        }
+
+        Board board = boardRepo.findById(id).get();
+        Board sortedBoard = sortBoardData(board);
+        return boardResponseMapper.toDTO(sortedBoard);
+
     }
 
     public Board sortBoardData(Board board)
@@ -178,6 +192,9 @@ public class BoardService {
         }
     }
 
+    @PreAuthorize(
+            "@boardSecurity.canManageBoard(#boardId, authentication)"
+    )
     public ResponseEntity<String> updateBoardName(int boardId, String newName)
     {
         Board board = boardRepo.findById(boardId).orElseThrow(()->new RuntimeException("board does not exist"));

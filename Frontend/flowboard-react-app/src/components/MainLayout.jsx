@@ -40,7 +40,7 @@ function MainLayout() {
               flex-1
             `}
           >
-            <div className="p-1 lg:px-2 py-10">
+            <div className="p-1 lg:px-2 py-10 ">
               <Outlet />
             </div>
           </main>
