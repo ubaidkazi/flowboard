@@ -32,6 +32,20 @@ public interface ActivityEventRepository
 
 
 
+    @Query("""
+    SELECT activity
+    FROM ActivityEvent activity
+    WHERE activity.projectId = :projectId
+    ORDER BY activity.occurredAt DESC
+""")
+    List<ActivityEvent> findRecentActivityByProjectId(
+            @Param("projectId") Long projectId,
+            Pageable pageable
+    );
+
+
+
+
 
     @Query("""
     SELECT COUNT(DISTINCT activity.cardId)

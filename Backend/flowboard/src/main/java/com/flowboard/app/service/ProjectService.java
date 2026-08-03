@@ -8,6 +8,8 @@ import com.flowboard.app.dto.request.AddMemberRequest;
 import com.flowboard.app.dto.response.ProjectMemberDTO;
 import com.flowboard.app.dto.response.ProjectResponse;
 import com.flowboard.app.dto.response.UserResponseDTO;
+import com.flowboard.app.dto.response.dashboard.RecentActivityResponse;
+import com.flowboard.app.entity.Card;
 import com.flowboard.app.entity.Project;
 import com.flowboard.app.entity.ProjectMember;
 import com.flowboard.app.entity.User;
@@ -15,10 +17,13 @@ import com.flowboard.app.enums.Role;
 import com.flowboard.app.mapper.ProjectMemberMapper;
 import com.flowboard.app.mapper.ProjectResponseMapper;
 import com.flowboard.app.mapper.UserMapper;
+import com.flowboard.app.repository.CardRepo;
 import com.flowboard.app.repository.ProjectMemberRepo;
 import com.flowboard.app.repository.ProjectRepo;
 import com.flowboard.app.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +52,9 @@ public class ProjectService
 
     @Autowired
     ProjectRepo projectRepo;
+
+    @Autowired
+    CardRepo cardRepo;
 
 
     @Autowired
@@ -292,6 +300,16 @@ public class ProjectService
         project.setTimeUpdated(Instant.now());
         projectRepo.save(project);
 
+        List<Card> assignedCards =
+                cardRepo.findAllAssignedToUserInProject((long )projectId, (long) userId);
+
+        for (Card card : assignedCards) {
+            card.getAssignedMembers()
+                    .removeIf(user -> user.getId().equals(userId));
+        }
+
+        cardRepo.saveAll(assignedCards);
+
         projectMemberRepo.delete(member);
 
 
@@ -300,4 +318,8 @@ public class ProjectService
 
         return ResponseEntity.ok("Member removed successfully.");
     }
+
+
+
+
 }

@@ -1,20 +1,29 @@
 package com.flowboard.app.service;
 
 
+import com.flowboard.app.dto.response.dashboard.RecentActivityResponse;
 import com.flowboard.app.entity.*;
 import com.flowboard.app.enums.ActivityType;
 import com.flowboard.app.repository.ActivityEventRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ActivityService {
 
     private final ActivityEventRepository activityEventRepository;
+
+    @Autowired
+    DashboardService dashboardService;
 
     public ActivityService(
             ActivityEventRepository activityEventRepository
@@ -379,4 +388,26 @@ public class ActivityService {
 
         return user.getFullName();
     }
+
+
+    @PreAuthorize(
+            "@projectSecurity.canAccessProject(#projectId, authentication)"
+    )
+    public List<RecentActivityResponse> getRecentActivityForProject(
+            Long projectId
+    ) {
+        Pageable pageable = PageRequest.of(0, 20);
+
+        return activityEventRepository
+                .findRecentActivityByProjectId(projectId, pageable)
+                .stream()
+                .map(dashboardService::mapToRecentActivityResponse)
+                .toList();
+    }
+
+
+
+
+
+
 }

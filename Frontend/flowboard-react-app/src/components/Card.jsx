@@ -1,8 +1,9 @@
 // src/Components/Card.jsx
 import React, { useState, useEffect, memo } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { Check, Trash2, Calendar } from 'lucide-react';
+import { Check, Trash2, Calendar, User2 } from 'lucide-react';
 import styles from '../styles/Card.module.css';
+import AvatarGroup from './AvatarGroup';
 
 function Card({ card, index, onDelete, onClick, onUpdate }) {
   
@@ -158,11 +159,30 @@ const formatDueDate = (dueDate) => {
                 </div>
               </div>
 
-              {card.dueDate && (
-                <div className={`${styles.dueDateDiv} ${statusClass}`}>
-                <Calendar size={13}/> <div>{formatDueDate(card.dueDate)}  </div>
+             
+              <div className={styles["members-duedate"]}>
+                
+              {card.assignedMembers && (
+                <div className={styles["members"]}>
+                  <AvatarGroup users={card.assignedMembers}></AvatarGroup>
+                
                 </div>
               )}
+<div  className={`${styles.dueDateDiv} ${statusClass}`}>
+              {card.dueDate && (
+                <>
+                <Calendar size={13}/> <div>{formatDueDate(card.dueDate)}  </div>
+                
+                </>
+                
+              )}
+              </div>
+
+
+
+              </div>
+              
+              
             </div>
           </div>
         );

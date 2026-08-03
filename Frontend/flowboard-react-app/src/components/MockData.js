@@ -11,7 +11,7 @@ export const currentUser = {
 export const users = [
   currentUser,
   {
-    id: '2',
+    userId: '2',
     name: 'Sarah Chen',
     email: 'sarah@flowboard.io',
     avatarUrl:

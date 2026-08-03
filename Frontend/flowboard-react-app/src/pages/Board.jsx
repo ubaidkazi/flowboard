@@ -163,23 +163,63 @@ const closeModal = ()=>
 }
 
 
- const fetchBoard = async () => {
+const fetchBoard = async () => {
   const token = localStorage.getItem("token");
-    try {
-      const res = await fetch(`${API_BASE_URL}/board/${boardId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+
+
+  if (!boardId) {
+    console.warn("No boardId available.");
+    return;
+  }
+
+
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+  try {
+    const res = await fetch(`${API_BASE_URL}/board/${boardId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.status === 401) {
+      localStorage.removeItem("token");
+      navigate("/login");
+      return;
+    }
+
+    if (res.status === 403) {
+      navigate("/dashboard", {
+        replace: true,
+        state: {
+          message: "You do not have access to this board.",
         },
       });
-
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      setBoardData(data);
-    } catch (err) {
-      console.error(err);
+      return;
     }
-  };
+
+    if (res.status === 404) {
+      navigate("/dashboard", {
+        replace: true,
+        state: {
+          message: "Board not found.",
+        },
+      });
+      return;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch board: ${res.status}`);
+    }
+
+    const data = await res.json();
+    setBoardData(data);
+  } catch (error) {
+    console.error("Failed to fetch board:", error);
+  }
+};
 
 
  useEffect(() => {
@@ -220,6 +260,10 @@ const closeModal = ()=>
     },
     onConnect: () => {
       console.log("STOMP connected");
+
+
+      if (!boardId) return;
+      
 
       stompClient.subscribe(
         `/topic/boards/${boardId}`,

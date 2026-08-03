@@ -1,7 +1,7 @@
 import styles from '../styles/Signup.module.css';
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Kanban, User, Lock, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers } from 'lucide-react';
+import { NavLink, useNavigate, Link } from "react-router-dom";
+import { Kanban, User, Lock, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers, ArrowLeft } from 'lucide-react';
 import { API_BASE_URL } from '../api/config';
 
 function Signup() {
@@ -67,6 +67,10 @@ function Signup() {
     }
   };
 
+  const goHome=()=>{
+    navigate("/");
+  }
+
   return (
     <>
     <div className={styles["wrapper"]}>
@@ -93,6 +97,13 @@ function Signup() {
 
       <div className={styles["right-section"]}>
       <div className={styles["form"]}>
+
+
+
+         <div className={styles["home-div"]} onClick={goHome}>
+          <Link className={styles["home-link"]} to={"/"}> <ArrowLeft size={20} ></ArrowLeft> Home</Link>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className={styles["label-div"]}>
           <div> 

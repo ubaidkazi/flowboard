@@ -1,6 +1,7 @@
 package com.flowboard.app.config;
 
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,17 +37,86 @@ public class SecurityConfig
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+            throws Exception {
+
         return http
-                .cors(Customizer.withDefaults()) //Enable CORS support
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/register", "/auth/login", "auth/demoLogin",  "/ws/**", "/user/*/profile-picture").permitAll()
+                        .requestMatchers(
+                                "/auth/register",
+                                "/auth/login",
+                                "/auth/demoLogin",
+                                "/ws/**",
+                                "/user/*/profile-picture"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
+
+//                .exceptionHandling(exception -> exception
+//                        .authenticationEntryPoint(
+//                                (request, response, authException) ->
+//                                        response.sendError(
+//                                                HttpServletResponse.SC_UNAUTHORIZED,
+//                                                "Authentication required"
+//                                        )
+//                        )
+//                        .accessDeniedHandler(
+//                                (request, response, accessDeniedException) ->
+//                                        response.sendError(
+//                                                HttpServletResponse.SC_FORBIDDEN,
+//                                                "You do not have permission to access this resource"
+//                                        )
+//                        )
+//                )
+//
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            System.out.println(
+                                    "401 authenticationEntryPoint: "
+                                            + authException.getClass().getName()
+                                            + " - "
+                                            + authException.getMessage()
+                            );
+
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"status\":401,\"message\":\"Authentication required\"}"
+                            );
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            System.out.println(
+                                    "403 accessDeniedHandler: "
+                                            + accessDeniedException.getClass().getName()
+                                            + " - "
+                                            + accessDeniedException.getMessage()
+                            );
+
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"status\":403,\"message\":\"You do not have permission to access this resource\"}"
+                            );
+                        })
+                )
+
+
+//                .httpBasic(httpBasic -> httpBasic.disable())
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
+
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
+
                 .build();
     }
 

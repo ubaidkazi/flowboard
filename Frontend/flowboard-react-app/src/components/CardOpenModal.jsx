@@ -282,11 +282,8 @@ const closeMemberModal = () => {
 
                      <p style={{ padding: "0.2rem" }}>Project Members</p>
 
-
-
                      { filteredMembers?.map((projectMember)=>(
                             <MemberSearchCard  key={projectMember.id} userId={projectMember.id} fullName={projectMember.fullName} onClick={()=>{
-
                                                                           if(isAssigned(projectMember.id))
                                                                             {onRemoveMember(projectMember.id);}
                                                                             else 
@@ -296,26 +293,9 @@ const closeMemberModal = () => {
                                                                             isMember={isAssigned(projectMember.id)}
                                                                             >                                                    
                             </MemberSearchCard>
-
                      ))
-
                      }
 
-
-
-
-
-
-
-                    
-                    
-                      {/* <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}} isMember={true}  />
-                       <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}}  />
-                       <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}}  />
-                       <MemberSearchCard userId={1} fullName={"Ubaid Kazi"} onClick={()=>{console.log("Add this member")}}  /> */}
-                       
-
-                      
                     </div>
 
                   </div>
@@ -340,7 +320,7 @@ const closeMemberModal = () => {
 
             <div className={styles["labels-heading"]}>
                 <Tag />
-                <p> Add Labels </p>
+                <p> Add Tags </p>
             </div>
 
 

@@ -84,7 +84,7 @@ const productFeatures = [
   {
     icon: ShieldCheck,
     title: "Access is protected",
-    copy: "JWT authentication, BCrypt password hashing, and secured API routes protect user and project data.",
+    copy: "JWT authentication, BCrypt password hashing, and backend authorization protect core project and board operations.",
     number: "04",
   },
 ];
@@ -94,10 +94,10 @@ const engineeringLayers = [
     id: "experience",
     label: "Experience",
     eyebrow: "01 / Product experience",
-    title: "A responsive workspace built around direct manipulation.",
+    title: "A responsive workspace built around real-time interaction.",
     summary:
-      "React powers a component-driven interface where users can create work, edit details, and reorganize boards without breaking their flow.",
-    outcome: "Users experience fast, clear interactions that behave like a real collaborative product—not a collection of forms.",
+      "React powers a component-driven workspace where users can create tasks, edit details, and reorganize boards through persistent drag-and-drop interactions.",
+    outcome: "Users get immediate visual feedback, persistent drag-and-drop updates, and consistent interactions across boards, cards, and modals.",
     icon: Layers3,
     technologies: [
       { name: "React", role: "Component-driven UI", icon: SiReact },
@@ -110,6 +110,7 @@ const engineeringLayers = [
       "Persistent drag-and-drop ordering",
       "Responsive layouts and accessible interaction states",
       "Initiating clients ignore their own broadcasts",
+      "Board changes persist through secured backend APIs"
     ],
     detailTitle: "Implementation notes",
     details: [
@@ -123,28 +124,28 @@ const engineeringLayers = [
     id: "application",
     label: "Application",
     eyebrow: "02 / Application logic",
-    title: "A secure API coordinates the rules behind every board action.",
+    title: "A layered API coordinates the rules behind every board action.",
     summary:
-      "Spring Boot handles authentication, authorization, business logic, validation, and the REST operations that connect the interface to persistent state.",
-    outcome: "The product stays predictable because permissions and workflow rules are enforced centrally rather than trusted to the browser.",
+      "Spring Boot handles JWT authentication, project and board authorization, business rules, and REST operations that connect the React interface to persistent data.",
+    outcome: "Core permissions and workflow rules are enforced in the backend rather than trusted to the browser.",
     icon: Code2,
     technologies: [
       { name: "Spring Boot", role: "Application platform", icon: SiSpringboot },
-      { name: "JWT", role: "Stateless sessions", icon: SiJsonwebtokens },
-      { name: "Spring Security", role: "Route protection", icon: LockKeyhole },
-      { name: "REST API", role: "Client communication", icon: Workflow },
+      { name: "JWT", role: "Stateless identity tokens", icon: SiJsonwebtokens },
+      { name: "Spring Security", role: "Authentication + authorization", icon: LockKeyhole },
+      { name: "REST API", role: "Frontend/backend contract", icon: Workflow },
     ],
     highlights: [
       "JWT-based stateless authentication",
       "BCrypt password hashing",
       "Controller, service, and repository boundaries",
-      "Protected project and board operations",
+      "Method-level project and board authorization",
     ],
     detailTitle: "Implementation notes",
     details: [
-      "Requests pass through a JWT filter before protected controller methods are reached.",
-      "Business operations are kept in services so controllers remain focused on HTTP concerns.",
-      "Authentication and domain operations use environment-based production configuration rather than embedded credentials.",
+      "Requests pass through a JWT filter that validates the token and establishes the authenticated user.",
+      "Protected service methods use @PreAuthorize to check project membership or ownership before business logic runs.",
+      "Controllers handle HTTP concerns, services coordinate domain rules, and repositories provide persistence access.",
     ],
     visual: "application",
   },
@@ -167,7 +168,7 @@ const engineeringLayers = [
       "Relational modeling for projects, boards, columns, and cards",
       "Durable position values for visual ordering",
       "Transaction boundaries for multi-step operations",
-      "Production schema validation",
+      "Database-backed activity and outbox records",
     ],
     detailTitle: "Implementation notes",
     details: [
@@ -181,9 +182,9 @@ const engineeringLayers = [
     id: "realtime",
     label: "Real-Time",
     eyebrow: "04 / Collaboration",
-    title: "Every saved change becomes a focused board event.",
+    title: "Saved changes become focused board events.",
     summary:
-      "Board-specific STOMP topics distribute updates to connected collaborators, while a transactional outbox coordinates durable state and event publication.",
+      "Board-specific STOMP topics distribute updates to connected collaborators, while a transactional outbox records domain changes and publication work in the same database transaction.",
     outcome: "People working on the same board see changes quickly without sacrificing confidence that the database reflects what they see.",
     icon: Radio,
     technologies: [
@@ -207,34 +208,38 @@ const engineeringLayers = [
     visual: "realtime",
   },
   {
-    id: "production",
-    label: "Production",
-    eyebrow: "05 / Infrastructure",
-    title: "The project runs as a secured production system.",
-    summary:
-      "FlowBoard is deployed to an Ubuntu VPS in Oracle Cloud, served through Nginx over HTTPS, and packaged with Docker for repeatable backend deployment.",
-    outcome: "Recruiters and users can evaluate a real application on a real domain—not a local demo or disconnected code sample.",
-    icon: ServerCog,
-    technologies: [
-      { name: "Oracle Cloud", role: "VPS hosting", icon: GrOracle },
-      { name: "Ubuntu", role: "Server OS", icon: SiUbuntu },
-      { name: "Docker", role: "Backend packaging", icon: SiDocker },
-      { name: "Nginx", role: "TLS + reverse proxy", icon: SiNginx },
-    ],
-    highlights: [
-      "Nginx routes frontend, REST API, and WebSocket traffic",
-      "HTTPS with a trusted SSL certificate",
-      "Environment-based production secrets and configuration",
-      "Repeatable deployment workflow on an Ubuntu server",
-    ],
-    detailTitle: "Production notes",
-    details: [
-      "Nginx is the public entry point and proxies application traffic to internal services.",
-      "Only required ports are exposed publicly; backend and database access remain behind the server boundary.",
-      "The deployment can be extended with GitHub Actions for automated build and release after the current repeatable workflow is fully standardized.",
-    ],
-    visual: "production",
-  },
+  id: "production",
+  label: "Production",
+  eyebrow: "05 / Infrastructure",
+  title: "The project runs as a secured production system.",
+  summary:
+    "FlowBoard runs on an Ubuntu VM in Oracle Cloud, where Nginx terminates HTTPS and routes frontend, REST API, and WebSocket traffic to containerized services.",
+  outcome:
+    "Recruiters and users can evaluate a live application on a real domain, with production updates deployed automatically from the repository.",
+  icon: ServerCog,
+  technologies: [
+    { name: "Oracle Cloud", role: "VPS hosting", icon: GrOracle },
+    { name: "Ubuntu", role: "Server OS", icon: SiUbuntu },
+    { name: "Docker", role: "Containerized services", icon: SiDocker },
+    { name: "Nginx", role: "TLS + reverse proxy", icon: SiNginx },
+    { name: "GitHub Actions", role: "Automated deployment", icon: SiGithubactions },
+  ],
+  highlights: [
+    "Nginx routes frontend, REST API, and WebSocket traffic",
+    "HTTPS with a trusted SSL certificate",
+    "Containerized frontend, backend, and MySQL services",
+    "Environment-based production secrets and configuration",
+    "GitHub Actions automatically deploy production updates",
+  ],
+  detailTitle: "Production notes",
+  details: [
+    "Nginx is the public HTTPS entry point and routes page requests, API calls, and WebSocket upgrades.",
+    "The React frontend, Spring Boot API, and MySQL database run as separate Docker containers on the Ubuntu VM.",
+    "The backend connects to MySQL over the internal Docker network; the browser never communicates with the database directly.",
+    "Production pushes trigger a GitHub Actions workflow that builds and deploys the latest application changes to the server.",
+  ],
+  visual: "production",
+},
 ];
 
 const challenges = [
@@ -243,7 +248,7 @@ const challenges = [
     title: "Reliable collaboration",
     problem: "A database update and a live notification should not drift apart.",
     solution:
-      "FlowBoard records collaboration events through a transactional outbox, then publishes them to board-specific WebSocket topics.",
+      "FlowBoard commits the domain change and outbox record together, then publishes the recorded event to the relevant board topic.",
   },
   {
     icon: GripVertical,
@@ -409,13 +414,22 @@ function HeroScreenshot({ src }) {
 
 function EngineeringVisual({ type }) {
   if (type === "realtime") {
+    const steps = [
+      "User action",
+      "Secured REST request",
+      "Domain + outbox transaction",
+      "Outbox publisher",
+      "Board STOMP topic",
+      "Collaborators",
+    ];
+
     return (
       <div className={styles.flowVisual}>
-        {["User action", "REST request", "Database + outbox", "WebSocket topic", "Collaborators"].map((item, index) => (
+        {steps.map((item, index) => (
           <div className={styles.flowStep} key={item}>
             <span>{String(index + 1).padStart(2, "0")}</span>
             <strong>{item}</strong>
-            {index < 4 && <ArrowDown aria-hidden="true" />}
+            {index < steps.length - 1 && <ArrowDown aria-hidden="true" />}
           </div>
         ))}
       </div>
@@ -425,15 +439,49 @@ function EngineeringVisual({ type }) {
   if (type === "production") {
     return (
       <div className={styles.infrastructureVisual}>
-        <div className={styles.infraNode}><Globe2 /><span>Browser</span><small>HTTPS</small></div>
-        <MoveRight />
-        <div className={`${styles.infraNode} ${styles.infraPrimary}`}><SiNginx /><span>Nginx</span><small>Public entry point</small></div>
-        <div className={styles.infraBranches}>
-          <div><ArrowDown /><div className={styles.infraNode}><SiReact /><span>React</span><small>Frontend</small></div></div>
-          <div><ArrowDown /><div className={styles.infraNode}><SiSpringboot /><span>Spring Boot</span><small>Docker container</small></div></div>
-          <div><ArrowDown /><div className={styles.infraNode}><SiMysql /><span>MySQL</span><small>Persistent data</small></div></div>
+        <div className={styles.infraNode}>
+          <Globe2 />
+          <span>Browser</span>
+          <small>HTTPS / WSS</small>
         </div>
-        <div className={styles.infraFooter}><GrOracle /> Oracle Cloud · Ubuntu VPS</div>
+
+        <MoveRight />
+
+        <div className={`${styles.infraNode} ${styles.infraPrimary}`}>
+          <SiNginx />
+          <span>Nginx</span>
+          <small>TLS termination + reverse proxy</small>
+        </div>
+
+        <div className={styles.infraBranches}>
+          <div>
+            <ArrowDown />
+            <div className={styles.infraNode}>
+              <SiReact />
+              <span>React frontend</span>
+              <small>Docker container</small>
+            </div>
+          </div>
+
+          <div>
+            <ArrowDown />
+            <div className={styles.infraNode}>
+              <SiSpringboot />
+              <span>Spring Boot API</span>
+              <small>REST + WebSocket · Docker</small>
+            </div>
+            <ArrowDown />
+            <div className={styles.infraNode}>
+              <SiMysql />
+              <span>MySQL</span>
+              <small>Internal Docker service</small>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.infraFooter}>
+          <GrOracle /> Oracle Cloud · Ubuntu VM
+        </div>
       </div>
     );
   }
@@ -442,30 +490,72 @@ function EngineeringVisual({ type }) {
     return (
       <div className={styles.dataVisual}>
         <div className={styles.schemaTable}>
-          <strong>project</strong><span>id</span><span>owner_id</span><span>name</span>
+          <strong>project</strong>
+          <span>id</span>
+          <span>owner_id</span>
+          <span>name</span>
         </div>
+
         <div className={styles.schemaLine} />
-        <div className={styles.schemaTable}>
-          <strong>board</strong><span>id</span><span>project_id</span><span>position</span>
-        </div>
-        <div className={styles.schemaLine} />
+
         <div className={styles.schemaGrid}>
-          <div className={styles.schemaTable}><strong>column</strong><span>board_id</span><span>position</span></div>
-          <div className={styles.schemaTable}><strong>card</strong><span>column_id</span><span>position</span></div>
-          <div className={`${styles.schemaTable} ${styles.schemaOutbox}`}><strong>outbox_event</strong><span>aggregate_id</span><span>event_type</span></div>
+          <div className={styles.schemaTable}>
+            <strong>project_member</strong>
+            <span>project_id</span>
+            <span>user_id</span>
+            <span>role</span>
+          </div>
+
+          <div className={styles.schemaTable}>
+            <strong>board</strong>
+            <span>id</span>
+            <span>project_id</span>
+          </div>
+        </div>
+
+        <div className={styles.schemaLine} />
+
+        <div className={styles.schemaGrid}>
+          <div className={styles.schemaTable}>
+            <strong>task_column</strong>
+            <span>board_id</span>
+            <span>position</span>
+          </div>
+
+          <div className={styles.schemaTable}>
+            <strong>card</strong>
+            <span>column_id</span>
+            <span>position</span>
+            <span>progress</span>
+          </div>
+
+          <div className={`${styles.schemaTable} ${styles.schemaOutbox}`}>
+            <strong>outbox_events</strong>
+            <span>event_type</span>
+            <span>topic</span>
+            <span>payload</span>
+          </div>
         </div>
       </div>
     );
   }
 
   if (type === "application") {
+    const layers = [
+      ["JWT filter", "Validate token + establish identity"],
+      ["Controllers", "HTTP request boundary"],
+      ["Method security", "Project membership + role checks"],
+      ["Services", "Business rules + transactions"],
+      ["Repositories", "JPA persistence access"],
+    ];
+
     return (
       <div className={styles.layerVisual}>
-        {["JWT filter", "Controllers", "Services", "Repositories", "Domain"].map((item, index) => (
-          <div key={item} style={{ "--layer-index": index }}>
+        {layers.map(([name, role], index) => (
+          <div key={name} style={{ "--layer-index": index }}>
             <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{item}</strong>
-            <small>{["Authenticate request", "HTTP boundary", "Business rules", "Data access", "Core entities"][index]}</small>
+            <strong>{name}</strong>
+            <small>{role}</small>
           </div>
         ))}
       </div>
@@ -493,7 +583,7 @@ function EngineeringVisual({ type }) {
           ))}
         </div>
       </div>
-      <div className={styles.cursorNote}><Zap size={13} /> optimistic update</div>
+      <div className={styles.cursorNote}><Zap size={13} /> Instant UI feedback</div>
     </div>
   );
 }
@@ -727,7 +817,9 @@ export default function FlowBoardLandingPage({
 
       <div className={`${styles.mobileMenu} ${mobileOpen ? styles.mobileMenuOpen : ""}`} ref={mobileMenuRef} aria-hidden={!mobileOpen}>
         <div className={styles.mobileMenuHeader}>
-          <a className={styles.brand} href="#top" onClick={closeMobile}><LogoMark /><span>FlowBoard</span></a>
+          <a className={styles.brand} href="#top" onClick={closeMobile}><div className="flex h-8 w-8 items-center justify-center rounded-sm bg-primary">
+              <Layers className="h-5 w-5 text-primary-foreground" />
+            </div> <span>FlowBoard</span></a>
           <button type="button" aria-label="Close navigation" onClick={closeMobile}><X /></button>
         </div>
         <nav>
@@ -736,7 +828,7 @@ export default function FlowBoardLandingPage({
           <a href="#challenges" onClick={closeMobile}>Challenges <ArrowRight /></a>
           <a href={githubUrl} target="_blank" rel="noreferrer">GitHub <ArrowUpRight /></a>
         </nav>
-        <a className={styles.mobileCta} href={appUrl} target="_blank" rel="noreferrer">Open live application <ArrowUpRight /></a>
+        <Link className={styles.mobileCta} to={"/login"} rel="noreferrer">Sign in <ArrowUpRight /></Link>
       </div>
 
       <main id="top">

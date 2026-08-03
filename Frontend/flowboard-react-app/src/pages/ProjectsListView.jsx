@@ -20,15 +20,10 @@ function ProjectsListView()
     const [projectsData, setProjectsData] = useState([]);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [isProjectModalOpen, setProjectModalOpen] = useState(false);
-
-
-
-
-
      const navigate = useNavigate();
 
 
-    //I could also only use labels and compare the labels, but having value will let let me change the lables without changing any logic.
+    //could also only use labels and compare the labels, but having value will let us change the labels without changing any logic.
     const tabs = [
     { label: "All Projects", value: "all projects" },
     { label: "Owned", value: "owned projects" },
@@ -38,9 +33,6 @@ function ProjectsListView()
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
-
-        // Whatever should happen when the tab changes
-        console.log(tab);
     };
 
 
@@ -62,11 +54,6 @@ function ProjectsListView()
 
 
 
-
-    
-    
-
-
   // GET ALL THE Projects
   //display the name and desc of each projects
   useEffect(() => {
@@ -76,7 +63,21 @@ function ProjectsListView()
         try {
 
             const data = await getProjects();
-            setProjectsData(data);
+
+
+            const sortedProjects = [...data].sort((a, b) => {
+              const dateA = new Date(
+                a.lastActivityAt ?? a.updatedAt ?? a.createdAt
+              );
+
+              const dateB = new Date(
+                b.lastActivityAt ?? b.updatedAt ?? b.createdAt
+              );
+
+              return dateB - dateA;
+            });
+
+            setProjectsData(sortedProjects);
 
         } catch(error) {
 
@@ -85,8 +86,6 @@ function ProjectsListView()
         }
 
     };
-
-
     fetchProjects();
 
 }, [refreshTrigger]);  
@@ -114,13 +113,9 @@ function ProjectsListView()
         
     }
 
-    
-
-
+  
     const deleteProject = async (projectId) => {
       const token = localStorage.getItem("token");
-      // const currentUser = localStorage.getItem("userId");
-      console.log(token);
 
      
       try {
@@ -157,15 +152,12 @@ function ProjectsListView()
 };
 
 
-
-
-
 const addProject = async(newProjectData) => {
 
         console.log(newProjectData);
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
-        console.log(token);
+        
 
         const newProject = {
         name  : newProjectData.projectName,
@@ -208,29 +200,45 @@ const addProject = async(newProjectData) => {
         refreshContent();
       
     }
-
-
-
     
-
-
-
-
-
-
-
-
-
     
-  
+  const ownedProjects = projectsData?.filter(project => project.role === "OWNER");
+  const sharedProjects = projectsData?.filter(project => project.role === "MEMBER")
+
+
+  const displayedProjects =
+    activeTab === "owned projects"
+        ? ownedProjects
+        : activeTab === "shared projects"
+        ? sharedProjects
+        : projectsData;
 
 
 
+const emptyMessage =
+  activeTab === "owned projects"
+    ? "You don't own any projects yet :)"
+    : activeTab === "shared projects"
+    ? "No Shared Projects :)"
+    : "You don't have any active projects :)";
 
 
+// <ProjectCardNew
+//                                 key={project.id}
+//                                 title={project.name}
+//                                 description={project.description}
+//                                 members={project.projectMembers}
+//                                 timeStamp={getRelativeTime(project.lastActivityAt)}
+//                                 openProject={() =>
+//                                   handleOpenProject(
+//                                     project.id,
+//                                     project.name,
+//                                     project.description 
+//                                   )
+//                                 }
+//                               />
 
     return(
-
         <>
         {/* <NewProjectModal  open={isOpen} close={closeModal}/> */}
         {isProjectModalOpen && (
@@ -245,7 +253,6 @@ const addProject = async(newProjectData) => {
 
 
         <div className={styles["main-div"]}>
-            
 
             <div className={styles["projects-content"]}>
 
@@ -266,33 +273,12 @@ const addProject = async(newProjectData) => {
                     
                 </div>
                 
-
-
                 <div className={styles["search-container"]}>
 
 
-                 
-                  
-
-
-
-                       
                     <div className={styles["project-type-tabs"]}>
-                        {/* <button onClick={() => handleTabChange(TABS.All)} className={`${styles["tab-btn"]} ${activeTab === TABS.All ? styles["tab-active"] : ""}`}>
-                                              All Projects
-                      
-                        </button>
-                        <button className={ `${styles["tab-btn"]}   ${activeTab == TABS.Owned ? styles["tab-active"] : "" } ` } onClick={() => handleTabChange(TABS.Owned)}>
-                                              Owned 
-                                              
-                        </button>
-                        <button className={ `${styles["tab-btn"]}   ${activeTab == TABS.Shared ? styles["tab-active"] : "" } ` } onClick={() => handleTabChange(TABS.Shared)}>
-                                              Shared 
-                                              
-                        </button> */}
 
                          <TabSwitchComponent options={tabs} activeTab={activeTab} onTabChange={handleTabChange} ></TabSwitchComponent>
-
 
 
                         
@@ -300,19 +286,6 @@ const addProject = async(newProjectData) => {
                     </div>
 
 
-                    
-
-
-                    
-                    
-                                          
-                                    
-
-
-
-
-
-                    
                         <div className={styles["search-view-container"]}>
                           <div className={styles["search"]}>
                             <div className={styles["input-wrapper"]}>
@@ -322,84 +295,49 @@ const addProject = async(newProjectData) => {
                            </div>
 
 
-
-                                                         
-
-
-                           
-                    {/* <div className={styles["filters"]}>
-                        <button className={styles["filter-btn"]}> <Funnel  color="black" size={20} strokeWidth={2.0} className={styles["funnel-icon"]}/>   Filters </button>
-                    </div> */}
+            
                     <div className={styles["view-container"]}>
+
+
                         <div className={styles["view-btns"]}>
-                            <button className={ `${styles["view-btn"]}   ${activeView == views.Grid ? styles["view-btn-active"] : "" } ` } onClick={()=>{handleViewChange(views.Grid)}}> <LayoutGrid  size={20} strokeWidth={2.0} className={styles["funnel-icon"]} /> </button>
-                            <button className={ `${styles["view-btn"]}   ${activeView == views.List ? styles["view-btn-active"] : "" } ` }  onClick={()=>{handleViewChange(views.List)}}> <List   size={20} strokeWidth={2.0} className={styles["funnel-icon"]} /> </button>
+                            <button className={ `${styles["view-btn"]}   ${activeView === views.Grid ? styles["view-btn-active"] : "" } ` } onClick={()=>{handleViewChange(views.Grid)}}> <LayoutGrid  size={20} strokeWidth={2.0} className={styles["funnel-icon"]} /> </button>
+                            <button className={ `${styles["view-btn"]}   ${activeView === views.List ? styles["view-btn-active"] : "" } ` }  onClick={()=>{handleViewChange(views.List)}}> <List   size={20} strokeWidth={2.0} className={styles["funnel-icon"]} /> </button>
                         </div>
                     </div>
 
-                        </div>
+                  </div>
                 </div>
-
-                
-                {/* <div className={styles["project-list-div"]}>
-                            <ProjectListCard title="Website Redesign" description={"Complete redesign of company website with modern UI/UX"}/>
-                            {projectsData.map((project, index) => (
-                            <ProjectListCard 
-                                key={index} 
-                                title={project.name} 
-                                description={project.description}
-                                onDelete={() => handleDeleteProject(project.id)}
-                                openProject={() => handleOpenProject(project.id, project.name, project.description)}
-                            />
-                            ))}
-                            
-                        
-                 </div> */}
-
-
-
-                 {projectsData && projectsData.length > 0 ? (
-                          <div
-                            className={
-                              activeView == views.List
-                                ? styles["project-list-div"]
-                                : styles["project-grid-div"]
-                            }
-                          >
-                            {projectsData?.map((project) => (
-                              <ProjectCardNew
-                                key={project.id}
-                                title={project.name}
-                                description={project.description}
-                                members={project.projectMembers}
-                                timeStamp={getRelativeTime(project.lastActivityAt)}
-                                openProject={() =>
-                                  handleOpenProject(
-                                    project.id,
-                                    project.name,
-                                    project.description
-                                  )
-                                }
-                              />
-                            ))}
-                          </div>
-                        ) : (
-                          <div className={styles.emptyState}>
-                            You don't have any active projects :)
-                          </div>
-                        )}
-
-               
-
-
+                <div
+                    className={
+                      activeView === views.List
+                        ? styles["project-list-div"]
+                        : styles["project-grid-div"]
+                    }
+                  >
+                    {displayedProjects?.length > 0 ? (
+                      displayedProjects.map((project) => (
+                        <ProjectCardNew
+                          key={project.id}
+                          title={project.name}
+                          description={project.description}
+                          members={project.projectMembers}
+                          timeStamp={getRelativeTime(project.lastActivityAt)}
+                          openProject={() =>
+                            handleOpenProject(
+                              project.id,
+                              project.name,
+                              project.description
+                            )
+                          }
+                        />
+                      ))
+                    ) : (
+                      <div className={styles.emptyState}>
+                        {emptyMessage}
+                      </div>
+                    )}
+                  </div>
             </div>
-
-
-
-            
-           
-
-
         </div>
         
         </>

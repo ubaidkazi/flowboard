@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css";
 import { Link, NavLink } from "react-router-dom";
-import { Kanban, User, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers } from "lucide-react";
+import { Kanban, User, Mail, KeyRound, CircleX, CheckCheck, Eye, EyeOff, Layers, ArrowLeft } from "lucide-react";
 import { API_BASE_URL } from "../api/config";
 
 
@@ -69,6 +69,7 @@ function Login()
             setShowSuccess(true);
             proceedFromLogin();
             //alert("Login successful!");
+
             
           } else {
             const error = await response.text();
@@ -91,6 +92,11 @@ function Login()
       };
 
 
+      const goHome = () => {
+          navigate("/");
+        
+    }
+
     
 
     
@@ -99,6 +105,10 @@ function Login()
       <>
 
       <div className={styles["wrapper"]}>
+
+       
+
+       
 
       <div className={styles["left-side"]}>
 
@@ -123,9 +133,18 @@ function Login()
       </div>
 
       <div className={styles["right-section"]}>
+
+
+        
       
       
       <div className={styles["form"]}>
+
+      <div className={styles["home-div"]} onClick={goHome}>
+          <Link className={styles["home-link"]} to={"/"}> <ArrowLeft size={20} ></ArrowLeft> Home</Link>
+      </div>
+
+
         
        
 
@@ -154,7 +173,7 @@ function Login()
         <div className={styles["input-wrapper"]}>
           
           <KeyRound size={28} className={styles["input-icon"]}> </KeyRound>
-          <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange}  placeholder='Set your password' required  className={styles["input"]}/>
+          <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange}  placeholder='Enter your password' required  className={styles["input"]}/>
           <span onClick={togglePasswordVisibility} className={styles["password-toggle-icon"]}>
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
@@ -175,20 +194,13 @@ function Login()
         <div className={styles["navlink-div"]}>
 
          <NavLink to="/signup" className={styles["nav-link"]}>Don't have an account?</NavLink>
+         {/* <NavLink to="/" className={styles["nav-link"]}>  HOME </NavLink> */}
         </div>
       </form>
 
 
 
-      <div className={styles["mobile-heading-logo"]}>
-
-            <div>
-              <Layers size={28} className={styles["mobile-logo"]}> </Layers>
-
-            </div>
-            
-            <h3  className={styles["mobile-heading"]} onClick={()=>navigate("/")}>FlowBoard  </h3>
-      </div>
+      
 
 
 

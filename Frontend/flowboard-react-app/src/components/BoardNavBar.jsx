@@ -63,14 +63,19 @@ function BoardNavbar({boardData, boardBackground, setBoardBackground,}) {
 
   useEffect(() => {
   setBoardName(boardData?.title ?? "");
-}, [boardData]);
+}, [boardData?.title]);
 
 
 
 useEffect(() => {
-  getProjectName(boardData?.projectId);
-}, [[boardData?.projectId]]);
+  const projectId = boardData?.projectId;
 
+  if (!projectId) {
+    return;
+  }
+
+  getProjectName(projectId);
+}, [boardData?.projectId]);
 
 
 
@@ -104,31 +109,48 @@ useEffect(() => {
 
 
     const getProjectName = async (projectId) => {
-      const token = localStorage.getItem("token");
-      
+  if (!projectId) return;
 
-     
-      try {
-        const response = await fetch(`${API_BASE_URL}/project/name/${projectId}`, {
-          method: "Get",
-          headers: {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/project/name/${projectId}`,
+      {
+        method: "GET",
+        headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        }
-          
-        });
-
-        if (response.ok) {
-          const nameReceived = await response.text();
-          setProjectName(nameReceived);
-        }
-      } catch (err) {
-        console.error("Error getting project name:", err);
-        
+        },
       }
+    );
 
-     
-    };
+    if (response.status === 401) {
+      navigate("/login");
+      return;
+    }
+
+    if (response.status === 403) {
+      navigate("/dashboard");
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to get project name: ${response.status}`
+      );
+    }
+
+    const nameReceived = await response.text();
+    setProjectName(nameReceived);
+  } catch (error) {
+    console.error("Error getting project name:", error);
+  }
+};
 
 
 

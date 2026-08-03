@@ -10,15 +10,17 @@ export default function LeaderBoardCard({rank, name, completedTasks, progressTas
     
 
 
-    const user122 = 
-    {
-        id: '2',
-        name: 'Sarah Chen',
+    const users777 = 
+      {
+        id: '1',
+        name: 'NOT FOUND',
         email: 'sarah@flowboard.io',
         avatarUrl:
           'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
         role: 'admin'
       }
+     
+    
     
 
 
@@ -41,7 +43,7 @@ export default function LeaderBoardCard({rank, name, completedTasks, progressTas
 
 
             <div className={styles["avatar-section"]}>
-                <Avatar user={user}></Avatar>
+                <Avatar userId={users777.id} fullName={users777.name}></Avatar>
 
             </div>
 

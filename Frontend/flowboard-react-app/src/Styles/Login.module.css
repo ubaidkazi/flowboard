@@ -160,6 +160,7 @@ button:hover
   height: 100dvh;
   /* background-color: rgb(9, 146, 232); */
   overflow-y: auto;
+ 
   
 }
 .left-side
@@ -251,7 +252,8 @@ button:hover
   align-items: center;
   height: 100%;
   width: 50%;
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
+   /* background-color: red;   */
   /* border-radius: 5px; */
 
   /* background-color: aqua; */
@@ -281,15 +283,41 @@ button:hover
             0 1px 2px -1px rgba(0, 0, 0, 0.542);
 } */
 
+.home-div
+{
+  
+  padding: 0.4rem 1rem;
+  position: absolute;
+  top:0.8rem;
+  color: black;
+  left:0.8rem;
+  margin: 0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: none;
+}
+.home-div:hover
+{
+  cursor: pointer;
+}
+.home-link
+{
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+.home-div:hover
+{
+  background-color: var(--primary);
+  color: white;
 
-
+}
 .label-div
 {
   margin: 10px 5px;
   padding: 1rem 2rem;
   display: flex;
   flex-direction: column;
- 
 }
 
 .form-label
@@ -303,6 +331,7 @@ button:hover
   font-size: 3rem;
   font-weight: bolder;
   white-space: nowrap;
+
   
 
 }
@@ -323,7 +352,7 @@ button:hover
   padding: 10px 4px;
   display: flex;
   flex-direction: column;
-  
+  gap:0.2rem;
   justify-content: center;
   
 }
@@ -382,7 +411,7 @@ button:hover
   text-align: center;
   /* color: white; */
   color: black;
-  padding: 10px 4px;
+  padding: 1px 4px;
 }
 .nav-link:hover
 {
@@ -432,6 +461,19 @@ button:hover
   border-radius: 14px;
   margin: 10px 5px;
 }
+.input::placeholder {
+    color: #9ca3af;
+}
+
+.input:focus {
+    /* border-color: #3b82f6; */
+
+    border-color: var(--ring);
+
+    box-shadow: 0 0 5px var(--ring);
+}
+
+
 .login-button
 {
   color: white;
@@ -485,6 +527,7 @@ button:hover
   text-align: center;
 }
 
+
 @media (max-width: 768px) {
   /* Mobile styles here */
   
@@ -509,8 +552,16 @@ button:hover
   padding-top: 8rem;
 
 
-  display: none;
+
   }
+  .right-section
+  {
+    width: 100%;
+  }
+  .home-div
+  {display: inline;}
+  
+  
 
 
 

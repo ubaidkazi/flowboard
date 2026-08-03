@@ -309,8 +309,9 @@
 
 }
 
-
-
+.project-grid-div > *:only-child {
+  max-width: 700px;
+}
 
 
 .quick-action h1
@@ -464,3 +465,11 @@
   font-size: 4rem;
   color: #6b7280;
 }
+
+
+
+
+
+
+
+

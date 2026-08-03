@@ -2,28 +2,18 @@
 
 .card
 {
-
-    
-
-
     display: flex;
     justify-content: space-between;
     border-bottom: 0.8px solid lightgray;
     padding: 0rem 0rem;
     padding-bottom: 0;
-
+    /* background-color: red; */
 }
-
-
 
 .card:hover .del-icon-div
 {
     display: flex;
 }
-
-
-
-
 
 .avatar-name
 {

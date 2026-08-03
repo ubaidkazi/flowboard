@@ -64,6 +64,22 @@ public interface CardRepo extends JpaRepository<Card, Integer>
             @Param("completedProgress") CardProgress completedProgress,
             Pageable pageable
     );
+
+
+
+
+        @Query("""
+        SELECT DISTINCT c
+        FROM Card c
+        JOIN c.assignedMembers member
+        WHERE c.column.board.project.id = :projectId
+          AND member.id = :userId
+        """)
+        List<Card> findAllAssignedToUserInProject(
+                @Param("projectId") Long projectId,
+                @Param("userId") Long userId
+        );
+
 }
 
 

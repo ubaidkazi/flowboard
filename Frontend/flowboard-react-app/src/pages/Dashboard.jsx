@@ -9,7 +9,7 @@ import QuickActionButtonBlack from '../components/QuickActionBtnBlack';
 import RecentActivityCard from '../components/RecentActivityCard';
 import { useState, useEffect } from 'react';
 import { Item } from '@radix-ui/react-dropdown-menu';
-import { href, Link, NavLink } from 'react-router-dom';
+import { href, Link, NavLink, useLocation } from 'react-router-dom';
 import UpcomingTaskCard from '../components/UpcomingTaskCard';
 import NewRecentActivityCard from '../components/NewRecentActivityCard';
 import QuickActionCard from '../components/QuickActionCard';
@@ -28,6 +28,25 @@ function Dashboard()
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
+
+
+    const message = location.state?.message;
+
+  useEffect(() => {
+    if (!message) return;
+
+    // Replace this with your toast library later
+    alert(message);
+
+    // Clear the navigation state so it does not show again
+    navigate(location.pathname, {
+      replace: true,
+      state: {},
+    });
+  }, [message, location.pathname, navigate]);
+
+
 
 
 

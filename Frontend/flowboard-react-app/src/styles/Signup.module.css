@@ -244,10 +244,11 @@ button:hover
   align-items: center;
   height: 100%;
   width: 50%;
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
   /* border-radius: 5px; */
 
   /* background-color: aqua; */
+
 
 }
 .form
@@ -274,6 +275,36 @@ button:hover
             0 1px 2px -1px rgba(0, 0, 0, 0.542);
 } */
 
+
+.home-div
+{
+  
+  padding: 0.4rem 1rem;
+  position: absolute;
+  top:0.8rem;
+  color: black;
+  left:0.8rem;
+  margin: 0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: none;
+}
+.home-div:hover
+{
+  cursor: pointer;
+}
+.home-link
+{
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+.home-div:hover
+{
+  background-color: var(--primary);
+  color: white;
+
+}
 
 
 .label-div
@@ -423,6 +454,18 @@ button:hover
   border-radius: 14px;
   margin: 10px 5px;
 }
+.input::placeholder {
+    color: #9ca3af;
+}
+
+.input:focus {
+    /* border-color: #3b82f6; */
+
+    border-color: var(--ring);
+
+    box-shadow: 0 0 5px var(--ring);
+}
+
 .login-button
 {
   color: white;
@@ -465,4 +508,10 @@ button:hover
   {
     display: none;
   }
+  .right-section
+  {
+    width: 100%;
+  }
+  .home-div
+  {display: inline;}
 }

@@ -21,6 +21,7 @@ import BoardCard from '../components/BoardCard';
 import MemberCard from '../components/MemberCard';
 import NewRecentActivityCard from '../components/NewRecentActivityCard';
 import CreateBoardCard from '../components/CreateBoardCard';
+import {getRelativeTime} from '../lib/dateUtils'
 
 function ProjectView()
 {
@@ -44,6 +45,8 @@ function ProjectView()
     //DESCRIPTION
     const [isEditingDesc, setIsEditingDesc] = useState(false);
     const [editedProjectDesc, setEditedProjectDesc] = useState(projectDescription);
+
+    const [activitiesData, setActivitiesData] = useState([]);
 
 
 
@@ -188,6 +191,14 @@ function ProjectView()
 }
 
 
+useEffect(() => {
+  if (activeTab === "activity") {
+    fetchProjectActivities();
+  }
+}, [activeTab, projectId, refreshTrigger]);
+
+
+
 
     
 
@@ -207,7 +218,6 @@ function ProjectView()
   const getProjectDescription = async (projectId) => {
       const token = localStorage.getItem("token");
       // const currentUser = localStorage.getItem("userId");
-      //console.log(token);
 
      
       try {
@@ -275,7 +285,7 @@ function ProjectView()
     const deleteProject = async (projectId) => {
       const token = localStorage.getItem("token");
       // const currentUser = localStorage.getItem("userId");
-      console.log(token);
+   
 
      
       try {
@@ -318,7 +328,6 @@ function ProjectView()
   useEffect(() => {
     const fetchBoards = async () => {
       const token = localStorage.getItem("token");
-      //console.log(token);
 
       try {
         const response = await fetch(`${API_BASE_URL}/board/project/${projectId}`, {
@@ -354,7 +363,6 @@ function ProjectView()
   useEffect(() => {
     const fetchMembers = async () => {
       const token = localStorage.getItem("token");
-      //console.log(token);
 
       try {
         const response = await fetch(`${API_BASE_URL}/project/member/all?projectId=${projectId}`, {
@@ -368,7 +376,7 @@ function ProjectView()
           // const text = await response.text();
           // setMessage(text);
           const data = await response.json();
-          console.log("Fetched Members:", data);
+          // console.log("Fetched Members:", data);
           setProjectMembersData(data);
         } else {
           //setMessage("Failed to load Members data");
@@ -399,7 +407,7 @@ function ProjectView()
     const deleteBoard = async (boardId) => {
       const token = localStorage.getItem("token");
       // const currentUser = localStorage.getItem("userId");
-      console.log(token);
+
 
      
       try {
@@ -432,7 +440,6 @@ function ProjectView()
     const deleteMember = async (userId) => {
       const token = localStorage.getItem("token");
       // const currentUser = localStorage.getItem("userId");
-      console.log(token);
 
      
       try {
@@ -486,7 +493,6 @@ function ProjectView()
     const addMember = async(projectId, userId) => {
 
         const token = localStorage.getItem("token");
-        console.log(token);
 
       try {
         const response = await fetch(`${API_BASE_URL}/project/${projectId}/members/${userId}`, {
@@ -522,7 +528,6 @@ function ProjectView()
 
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
-        //console.log(token);
         console.log(`Project ID: ${projectId}`)
 
         const newBoard = {
@@ -530,7 +535,11 @@ function ProjectView()
         user: {
           id: userId
         }
+
+        
       }
+      console.log(newBoard);
+
 
       try {
         const response = await fetch(`${API_BASE_URL}/board/${projectId}`, {
@@ -547,12 +556,20 @@ function ProjectView()
           // setMessage(text);
           // const data = await response.json();
           console.log("Board Added:", response);
+          const createdBoard = await response.json();
+
+      console.log("Created board:", createdBoard);
+
+      return createdBoard;
+
+          
         } else {
           setMessage("Failed to add Board");
         }
       } catch (err) {
         console.error("Error add Board:", err);
       }
+      return null;
       
     };
 
@@ -614,33 +631,70 @@ function ProjectView()
 };
 
 
-  const getProjectName  = async() => {
+  const getProjectName = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-    try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(`${API_BASE_URL}/project/name/${projectId}`, {
+    const response = await fetch(
+      `${API_BASE_URL}/project/name/${projectId}`,
+      {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+
+      navigate("/login", {
+        replace: true,
+        state: {
+          message: "Your session has expired. Please log in again.",
         },
       });
 
-      if (response.ok) {
-        const data = await response.text(); //await here
-      //console.log("Project name retrieved:", data);
-      setProjectName(data);
-      } else {
-        console.error("Failed to get project name");
-        // Optionally show an error
-      }
-    } catch (err) {
-      console.error("Error getting project name:", err);
+      return false;
     }
 
+    if (response.status === 403) {
+      navigate("/dashboard", {
+        replace: true,
+        state: {
+          message: "You do not have access to this project.",
+        },
+      });
 
+      return false;
+    }
+
+    if (response.status === 404) {
+      navigate("/dashboard", {
+        replace: true,
+        state: {
+          message: "This project could not be found.",
+        },
+      });
+
+      return false;
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to get project name: ${response.status}`
+      );
+    }
+
+    const data = await response.text();
+    setProjectName(data);
+
+    return true;
+  } catch (error) {
+    console.error("Error getting project name:", error);
+    return false;
   }
+};
 
   const handleSaveProjectDesc = async () => {
   if (editedProjectDesc.trim() === "") {
@@ -685,11 +739,16 @@ const handleOpenBoardModal = ()=>
 
 
 
-const handleAddBoard = (newBoardData)=> {
-        addBoard(newBoardData);
+const handleAddBoard =  async(newBoardData)=> {
+        const createdBoard = await addBoard(newBoardData);
+        if(createdBoard){
+          setBoardsData(prev => [
+            ...prev,
+            createdBoard
+          ])
+        }
         console.log("Add Board called");
         setIsMMOpen(false);
-        refreshContent();
       
     }
 
@@ -701,7 +760,7 @@ const addProjectMember = async (identifier, role) => {
 
     const body = { identifier, role };
 
-    console.log("Sending request body:", body);
+    //console.log("Sending request body:", body);
 
     const response = await fetch(
       `${API_BASE_URL}/project/member/add?projectId=${projectId}`,
@@ -729,6 +788,46 @@ const addProjectMember = async (identifier, role) => {
     console.error("Error:", err);
   }
 };
+
+
+const fetchProjectActivities = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${API_BASE_URL}/project/activities/${projectId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 403) {
+      navigate("/dashboard", {
+        replace: true,
+        state: {
+          message: "You do not have access to this project.",
+        },
+      });
+
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load project activity: ${response.status}`
+      );
+    }
+
+    const data = await response.json();
+    setActivitiesData(data);
+  } catch (error) {
+    console.error("Error fetching project activity:", error);
+  }
+};
+
 
 
 
@@ -976,6 +1075,7 @@ const handleAddMember = async (identifier, role)=>
                     </>)}
 
 
+    </div>
 
 
 
@@ -1037,12 +1137,34 @@ const handleAddMember = async (identifier, role)=>
                       <div className={styles["cards-container"]}>
                         <div className={styles["cards-container-heading"]}> Recent Activity </div>
                           <div className={styles["rac-container"]}>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"created"} action={"Design system update"} timeStamp={'5 minutes ago'} avatarVariant={'large'}  />
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
-                            <NewRecentActivityCard userName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'}/>
+
+
+                            {activitiesData.length > 0 ? (
+        activitiesData.map((activity) => (
+          <NewRecentActivityCard
+            key={activity.id}
+            actorName={activity.actorName}
+            actionType={activity.actionText}
+            action={activity.entityName}
+            actorId={activity.actorUserId}
+            timeStamp={getRelativeTime(activity.occurredAt)}
+            avatarVariant="large"
+          />
+        ))
+      ) : (
+        <p>No recent activity for this project.</p>
+      )}
+
+                            {/* <NewRecentActivityCard actorName={"Sara Chen"} actionType={"created"} action={"Design system update"} timeStamp={'5 minutes ago'} avatarVariant={'large'} actorId={2} />
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/>
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/>
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/>
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/>
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/>
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/>
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/>
+                            <NewRecentActivityCard actorName={"Sara Chen"} actionType={"updated"} action={"3 cards"}  timeStamp={'25 minutes ago'} avatarVariant={'large'} actorId={2}/> */}
+                            
 
                             
 
@@ -1080,8 +1202,7 @@ const handleAddMember = async (identifier, role)=>
 
 
 
-                      </div>
-
+                  
                       
 
 

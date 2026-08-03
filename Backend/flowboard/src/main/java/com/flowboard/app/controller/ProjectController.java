@@ -5,9 +5,11 @@ import com.flowboard.app.dto.request.AddMemberRequest;
 import com.flowboard.app.dto.response.ProjectMemberDTO;
 import com.flowboard.app.dto.response.ProjectResponse;
 import com.flowboard.app.dto.response.UserResponseDTO;
+import com.flowboard.app.dto.response.dashboard.RecentActivityResponse;
 import com.flowboard.app.entity.Project;
 import com.flowboard.app.entity.ProjectMember;
 import com.flowboard.app.entity.User;
+import com.flowboard.app.service.ActivityService;
 import com.flowboard.app.service.ProjectService;
 import com.flowboard.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class ProjectController
 
     @Autowired
     ProjectService projectService;
+
+    @Autowired
+    ActivityService activityService;
 
 
 
@@ -110,6 +115,17 @@ public class ProjectController
         return projectService.deleteProjectMember(projectId, userId);
     }
 
+
+
+    @GetMapping("/activities/{projectId}")
+    public ResponseEntity<List<RecentActivityResponse>>
+    getRecentActivityForProject(
+            @PathVariable Long projectId
+    ) {
+        return ResponseEntity.ok(
+                activityService.getRecentActivityForProject(projectId)
+        );
+    }
 
 
 
