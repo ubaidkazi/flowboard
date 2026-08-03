@@ -276,12 +276,20 @@ button:hover
   color: black;
   border-radius: 10px;
   /* background-color: red; */
+
+   width: 100%;
+  max-width: 520px;
+  min-width: 0;
+
 }
 /* .form:hover
 {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.655), 
             0 1px 2px -1px rgba(0, 0, 0, 0.542);
 } */
+
+
+
 
 .home-div
 {
@@ -343,7 +351,6 @@ button:hover
   text-align: center;
   padding: 0;
   margin: 0;
-    white-space: nowrap;
 
 }
 .navlink-div
@@ -356,7 +363,7 @@ button:hover
   justify-content: center;
   
 }
-.incorrect-creds
+.login-error
 {
   margin-top: 0;
   padding: 0;
@@ -369,8 +376,19 @@ button:hover
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:1rem;
+  gap:0.2rem;
   padding: 1rem;
+  text-wrap: wrap;
+  /* background-color: red; */
+  
+  
+}
+
+.error-icon
+{
+  min-width: 15px;
+  min-height: 15px;
+  margin: 0;
 }
 
 @keyframes fadeIn {

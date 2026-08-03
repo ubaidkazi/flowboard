@@ -305,6 +305,7 @@
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
     /* background-color: red; */
     justify-content: start;
+
     
 
 }
@@ -460,10 +461,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
+  width: 100%;
+  min-width: 100%;
+    justify-self: center;
   padding: 12rem;
   font-size: 4rem;
   color: #6b7280;
+  /* background-color: black; */
 }
 
 

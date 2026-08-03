@@ -48,7 +48,7 @@ public class UserController
         }
         catch (Exception e)
         {
-            return new ResponseEntity<>("Exception", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Exception", HttpStatus.UNAUTHORIZED);
         }
 
     }

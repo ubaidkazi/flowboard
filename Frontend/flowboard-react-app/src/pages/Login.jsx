@@ -15,6 +15,7 @@ function Login()
   const[showError, setShowError] = useState(false);
   const[showSuccess, setShowSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
 
   const togglePasswordVisibility = () => {
@@ -43,10 +44,17 @@ function Login()
           ...prev,
           [e.target.name]: e.target.value
         }));
+
+        setShowError(false);
+        setErrorMessage("");
+
       };
     
       const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage("");
+        setShowError(false);
+        setShowSuccess(false);
     
         try {
           const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -65,32 +73,41 @@ function Login()
             localStorage.setItem("userName", data.userName);
             localStorage.setItem("fullName", data.fullName);
             localStorage.setItem("userEmail", data.email);
-            setShowError(false);
+            // setShowError(false);
             setShowSuccess(true);
             proceedFromLogin();
             //alert("Login successful!");
+            return;
 
             
-          } else {
-            const error = await response.text();
-            setShowError(true);
-            setTimeout(() => {
-            setShowError(false);
-              }, 3000);
-            setShowSuccess(false);
-            // alert("Login failed: " + error);
           }
-        } catch (error) {
-          setShowError(true);
-          // alert("Error connecting to server.");
-          setTimeout(() => {
-          setShowError(false);
-              }, 3000);
-          setShowSuccess(false);
-          console.error(error);
-        }
-      };
 
+    if (response.status === 401) {
+      setErrorMessage("Incorrect username or password.");
+    } else if (response.status === 429) {
+      setErrorMessage(
+        "Too many login attempts. Please try again later."
+      );
+    } else if (response.status >= 500) {
+      setErrorMessage(
+        "FlowBoard is temporarily unavailable. Please try again shortly."
+      );
+    } else {
+      setErrorMessage(
+        "Unable to sign in. Please try again."
+      );
+    }
+
+    setShowError(true);
+  } catch (error) {
+    console.error("Login request failed:", error);
+
+    setErrorMessage(
+      "Unable to connect to FlowBoard. Check your connection or try again later."
+    );
+    setShowError(true);
+  }
+};
 
       const goHome = () => {
           navigate("/");
@@ -181,14 +198,16 @@ function Login()
 
         </div>
         <br />
-        
-        <div className={styles["button-wrapper"]}>
+
         { showError && (
-          <p  className={styles["incorrect-creds"]}> <CircleX size={16}> </CircleX> Invalid Username/Password </p>
+          <p  className={styles["login-error"]}> <CircleX size={16} className={styles["error-icon"]}> </CircleX> {errorMessage}</p>
         )}
         { showSuccess && (
           <h1  className={styles["reg-success"]}>   <CheckCheck size={16}> </CheckCheck> Login Successful. </h1>
         )}
+        
+        <div className={styles["button-wrapper"]}>
+        
        <button type="submit" className={styles["login-button"]}>Login</button>
         </div>
         <div className={styles["navlink-div"]}>

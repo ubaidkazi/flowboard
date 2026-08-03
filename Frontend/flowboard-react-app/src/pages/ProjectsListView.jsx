@@ -307,6 +307,9 @@ const emptyMessage =
 
                   </div>
                 </div>
+
+
+                
                 <div
                     className={
                       activeView === views.List
