@@ -35,7 +35,7 @@ public class UserService
     @Autowired
     AuthenticationManager authenticationManager;
 
-    private final static String DEMO_EMAIL = "demo@flowboardapp.live";
+    private final static String DEMO_EMAIL = "johndoe@flowboardapp.live";
 
 
 

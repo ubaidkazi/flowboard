@@ -21,7 +21,7 @@ public class DemoDataService {
 
 
 
-    private static final String DEMO_EMAIL = "demo@flowboardapp.live";
+    private static final String DEMO_EMAIL = "johndoe@flowboardapp.live";
 
 
     private final PasswordEncoder passwordEncoder;
@@ -74,14 +74,14 @@ public class DemoDataService {
 
         User user = new User();
 
-        user.setUsername("demo");
+        user.setUsername("johndoe");
 
-        user.setFullName("Demo Account");
+        user.setFullName("John Doe");
 
         user.setEmail(DEMO_EMAIL);
 
         user.setPasswordHash(
-                passwordEncoder.encode("demo")
+                passwordEncoder.encode("johndoe")
         );
 
         return userRepo.save(user);

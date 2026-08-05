@@ -478,12 +478,31 @@
   
   .heroVisual 
   { 
-    width: min(900px, 100%);
+    width: min(500px, 100%);
     margin-left: auto;
+    height: fit-content;
+    min-width: 100%;
+    
+
+    
   }
 
 
-  .heroVisualShell { transform: none; }
+  .heroVisualShell
+  { 
+    transform: none;
+    max-width: 100%;
+    max-height: fit-content;
+
+  }
+  .heroScreenshotFrame img
+  {
+  
+    /* max-height: fit-content; */
+    aspect-ratio: 1/1;
+    width: 98%;
+    
+  }
   .heroScroll { display: none; }
   .productFeatureGrid { grid-template-columns: repeat(2, 1fr); }
   .productStory { grid-template-columns: 1fr; }
@@ -508,7 +527,36 @@
   .heroVisualBar { min-height: 36px; }
   .addressBar { max-width: 150px; }
   .livePill { display: none; }
-  .heroScreenshotFrame { aspect-ratio: 1.12 / 1; }
+  
+  .heroVisual 
+  { 
+    /* width: min(100px, 100%); */
+    margin-left: auto;
+    height: fit-content;
+    min-width: 100%;
+    /* background-color: red; */
+    
+
+    
+  }
+
+
+  .heroVisualShell
+  { 
+    transform: none;
+    max-width: 100%;
+    max-height: fit-content;
+    /* background-color: red; */
+
+  }
+  .heroScreenshotFrame
+  {
+    /* width: 100%; */
+  }
+
+
+
+
   .heroVisualCaption { align-items: flex-start; flex-direction: column; padding: 10px 12px; }
   .productSection, .engineeringSection, .challengesSection, .aboutSection { padding: 84px 0; }
   .productIntro { grid-template-columns: 1fr; gap: 1.2rem; }
